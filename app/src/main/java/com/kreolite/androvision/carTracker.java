@@ -237,7 +237,7 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 		_opencvCameraView = (JavaCameraView) findViewById(R.id.aav_activity_surface_view);
 		_opencvCameraView.setCvCameraViewListener(this);
 
-		_opencvCameraView.setMaxFrameSize(352, 288); // (176, 144); //(320, 240); <-Callback buffer is too small for these resolutions.
+		_opencvCameraView.setMaxFrameSize(1280, 768); // (352, 288)
 		_mainController = new ActuatorController();
 		_countOutOfFrame = 0;
 
@@ -401,7 +401,9 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 				Imgproc.minEnclosingCircle(points, _centerPoint, null);
 				//Imgproc.circle(_rgbaImage, _centerPoint, 3, new Scalar(255, 0, 0), Core.FILLED);
 				if (_showContourEnable)
-					Imgproc.circle(_rgbaImage, _centerPoint, (int) Math.round(Math.sqrt(_contourArea / Math.PI)), new Scalar(255, 0, 0), 3, 8, 0);// Core.FILLED);
+					Imgproc.circle(_rgbaImage, _centerPoint,
+							       (int) Math.round(Math.sqrt(_contourArea / Math.PI)),
+							        new Scalar(255, 255, 0), 2, 8, 0);// Core.FILLED);
 				updateActuator();
 			}
 			contours.clear();

@@ -7,8 +7,7 @@
     <org.opencv.android.JavaCameraView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
         android:id="@+id/activity_camera"
-        opencv:show_fps="false"
+        opencv:show_fps="true"
         opencv:camera_id="any" />
 </LinearLayout>
