@@ -36,15 +36,15 @@ public class ActuatorController {
 
 	public static final int RANGE_PAN_PWM = MAX_PAN_PWM - MID_PAN_PWM;
 
-	public static final int RIGHT_FULL_TURN_WHEELS_PWM = 1200;
-	public static final int LEFT_FULL_TURN_WHEELS_PWM = 1800;
-	public static final int CENTER_FRONT_WHEELS_PWM = (LEFT_FULL_TURN_WHEELS_PWM + RIGHT_FULL_TURN_WHEELS_PWM) / 2;
+	public static final int RIGHT_FULL_TURN_WHEELS_PWM = 1910;
+	public static final int LEFT_FULL_TURN_WHEELS_PWM = 1370;
+	public static final int CENTER_FRONT_WHEELS_PWM = 1640;
 
-	public static final int RANGE_WHEELS_PWM = LEFT_FULL_TURN_WHEELS_PWM - CENTER_FRONT_WHEELS_PWM;
+	public static final int RANGE_WHEELS_PWM = RIGHT_FULL_TURN_WHEELS_PWM - CENTER_FRONT_WHEELS_PWM;
 
-	public static final int MOTOR_FORWARD_PWM = 1578;
-	public static final int MOTOR_REVERSE_PWM = 1420;
-	public static final int MOTOR_NEUTRAL_PWM = 1500;
+	public static final int MOTOR_FORWARD_PWM = 1540;
+	public static final int MOTOR_REVERSE_PWM = 1390;
+	public static final int MOTOR_NEUTRAL_PWM = 1490;
 
 	public static final int MAX_NEUTRAL_CONTOUR_AREA = 1700;
 	public static final int MIN_NEUTRAL_CONTOUR_AREA = 800;
