@@ -71,57 +71,7 @@ public class menu extends AppCompatActivity {
             toast.show();
         }
     }
-    public void blobDetect(View view) {
 
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.CAMERA)
-                == PackageManager.PERMISSION_GRANTED) {
-            Intent intent = new Intent(this, blob.class);
-            startActivity(intent);
-        }
-        else {
-            Context context = getApplicationContext();
-            CharSequence text = "Camera permissions not granted!";
-            int duration = Toast.LENGTH_SHORT;
-
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
-        }
-    }
-    public void faceDetect(View view) {
-
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.CAMERA)
-                == PackageManager.PERMISSION_GRANTED) {
-            Intent intent = new Intent(this, facedetect.class);
-            startActivity(intent);
-        }
-        else {
-            Context context = getApplicationContext();
-            CharSequence text = "Camera permissions not granted!";
-            int duration = Toast.LENGTH_SHORT;
-
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
-        }
-    }
-    public void trackMotion(View view) {
-
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.CAMERA)
-                == PackageManager.PERMISSION_GRANTED) {
-            Intent intent = new Intent(this, motiontracker.class);
-            startActivity(intent);
-        }
-        else {
-            Context context = getApplicationContext();
-            CharSequence text = "Camera permissions not granted!";
-            int duration = Toast.LENGTH_SHORT;
-
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
-        }
-    }
     public void carTracker(View view) {
 
         if (ContextCompat.checkSelfPermission(this,
