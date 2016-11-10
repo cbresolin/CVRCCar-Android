@@ -26,28 +26,28 @@ import org.opencv.core.Point;
 public class ActuatorController {
 	private static final String _TAG = "ActuatorController";
 
-	public static final int MIN_PAN_PWM = 600;
-	public static final int MAX_PAN_PWM = 2500;
+	public static final int MIN_PAN_PWM = 1360;
+	public static final int MAX_PAN_PWM = 1910;
 	public static final int MIN_TILT_PWM = 1400;
 	public static final int MAX_TILT_PWM = 2250;
 
-	public static final int MID_PAN_PWM = (MAX_PAN_PWM + MIN_PAN_PWM) / 2;
+	public static final int MID_PAN_PWM = 1640; // (MAX_PAN_PWM + MIN_PAN_PWM) / 2;
 	public static final int MID_TILT_PWM = 1800;// (MAX_TILT_PWM + MIN_TILT_PWM) / 2;
 
 	public static final int RANGE_PAN_PWM = MAX_PAN_PWM - MID_PAN_PWM;
 
 	public static final int RIGHT_FULL_TURN_WHEELS_PWM = 1910;
-	public static final int LEFT_FULL_TURN_WHEELS_PWM = 1370;
+	public static final int LEFT_FULL_TURN_WHEELS_PWM = 1360;
 	public static final int CENTER_FRONT_WHEELS_PWM = 1640;
 
 	public static final int RANGE_WHEELS_PWM = RIGHT_FULL_TURN_WHEELS_PWM - CENTER_FRONT_WHEELS_PWM;
 
-	public static final int MOTOR_FORWARD_PWM = 1540;
-	public static final int MOTOR_REVERSE_PWM = 1390;
+	public static final int MOTOR_FORWARD_PWM = 1550;
+	public static final int MOTOR_REVERSE_PWM = 1380;
 	public static final int MOTOR_NEUTRAL_PWM = 1490;
 
-	public static final int MAX_NEUTRAL_CONTOUR_AREA = 1700;
-	public static final int MIN_NEUTRAL_CONTOUR_AREA = 800;
+	public static final int MAX_NEUTRAL_CONTOUR_AREA = 150000;
+	public static final int MIN_NEUTRAL_CONTOUR_AREA = 40000;
 
 	public double _pwmPan;
 	public double _pwmTilt;
@@ -79,10 +79,10 @@ public class ActuatorController {
 	public synchronized String getPWMValuesToJson() {
 		try {
 			JSONObject jsonObj = new JSONObject();
-			jsonObj.put("pan", (int)_pwmPan);
-			jsonObj.put("tilt", (int)_pwmTilt);
+			// jsonObj.put("pan", (int)_pwmPan);
+			// jsonObj.put("tilt", (int)_pwmTilt);
 			jsonObj.put("throttle", (int)_pwmMotor);
-			jsonObj.put("steering", (int)_pwmFrontWheels);
+			jsonObj.put("steering", (int)_pwmPan); // (int)_pwmFrontWheels
 			return jsonObj.toString();
 		} catch (JSONException e) {
 			Log.e(_TAG, e.getMessage());
@@ -93,7 +93,7 @@ public class ActuatorController {
 	public void updateMotorPWM(double currentContourArea) throws InterruptedException {
 		updateWheelsPWM();
 		if (currentContourArea > MIN_NEUTRAL_CONTOUR_AREA && currentContourArea < MAX_NEUTRAL_CONTOUR_AREA) {
-			_pwmMotor = (_wasMoving) ? MOTOR_REVERSE_PWM - 250 : MOTOR_NEUTRAL_PWM;
+			_pwmMotor = (_wasMoving) ? MOTOR_REVERSE_PWM : MOTOR_NEUTRAL_PWM;
 			_wasMoving = false;
 			_pulseCounter = 2;
 		} else if (currentContourArea < MIN_NEUTRAL_CONTOUR_AREA) {

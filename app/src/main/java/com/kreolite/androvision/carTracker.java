@@ -65,7 +65,7 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 
 	private static final String _TAG = "carTrackerActivity";
 
-	static final double MIN_CONTOUR_AREA = 100;
+	static final double MIN_CONTOUR_AREA = 200;
 
 	private Mat _rgbaImage;
 
@@ -94,7 +94,7 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 	//
 	static {
 		if (!OpenCVLoader.initDebug()) {
-			Log.d("ERROR", "Unable to load OpenCV");
+			Log.e("ERROR", "Unable to load OpenCV");
 		}
 	}
 
@@ -199,7 +199,7 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 				case UsbService.MESSAGE_FROM_SERIAL_PORT:
 					String data = (String) msg.obj;
 					Log.d(_TAG, "Received data from serial: " + data);
-					Toast.makeText(mActivity.get(), "DATA_RCV: " + data, Toast.LENGTH_SHORT).show();
+					// Toast.makeText(mActivity.get(), "DATA_RCV: " + data, Toast.LENGTH_SHORT).show();
 					break;
 				case UsbService.CTS_CHANGE:
 					Toast.makeText(mActivity.get(), "CTS_CHANGE",Toast.LENGTH_LONG).show();
@@ -237,7 +237,7 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 		_opencvCameraView = (JavaCameraView) findViewById(R.id.aav_activity_surface_view);
 		_opencvCameraView.setCvCameraViewListener(this);
 
-		_opencvCameraView.setMaxFrameSize(1280, 768); // (352, 288)
+		_opencvCameraView.setMaxFrameSize(1920, 1080); // (352, 288)
 		_mainController = new ActuatorController();
 		_countOutOfFrame = 0;
 
@@ -339,8 +339,7 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 			}
 			_pwmValues = _mainController.getPWMValuesToJson();
 			if (_pwmValues != null) {
-				_pwmValues += "#"; // Add '#' to mark end of data
-				Log.d(_TAG, "Sending data to serial: " + _pwmValues);
+				Log.i(_TAG, "Sending data to serial: " + _pwmValues);
 				if (usbService != null) {
 					usbService.write(_pwmValues.getBytes());
 				}
@@ -362,6 +361,8 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 		_rgbaImage.release();
 		_centerPoint.x = -1;
 		_centerPoint.y = -1;
+
+		updateActuator();
 	}
 
 	@Override
@@ -388,9 +389,8 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 			MatOfPoint2f points = new MatOfPoint2f();
 			_contourArea = 7;
 			for (int i = 0, n = contours.size(); i < n; i++) {
-
 				current_contour = Imgproc.contourArea(contours.get(i));
-				Log.i(_TAG, "contour Area: " + current_contour);
+				Log.i(_TAG, "contour Area (" + i + ") : " + current_contour);
 				if (current_contour > _contourArea) {
 					_contourArea = current_contour;
 					contours.get(i).convertTo(points, CvType.CV_32FC2); // contours.get(x) is a single MatOfPoint, but to use minEnclosingCircle we need to pass a MatOfPoint2f so we need to do a
@@ -399,11 +399,12 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 			}
 			if (!points.empty() && _contourArea > MIN_CONTOUR_AREA) {
 				Imgproc.minEnclosingCircle(points, _centerPoint, null);
-				//Imgproc.circle(_rgbaImage, _centerPoint, 3, new Scalar(255, 0, 0), Core.FILLED);
+				// Imgproc.circle(_rgbaImage, _centerPoint, 2, new Scalar(255, 0, 0), Core.FILLED);
 				if (_showContourEnable)
-					Imgproc.circle(_rgbaImage, _centerPoint,
+					Imgproc.circle(_rgbaImage,
+							       _centerPoint,
 							       (int) Math.round(Math.sqrt(_contourArea / Math.PI)),
-							        new Scalar(255, 255, 0), 2, 8, 0);// Core.FILLED);
+							        new Scalar(255, 255, 10), 2, 0, 0);// Core.FILLED);
 				updateActuator();
 			}
 			contours.clear();
