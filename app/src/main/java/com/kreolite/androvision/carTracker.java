@@ -65,7 +65,7 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 
 	private static final String _TAG = "carTrackerActivity";
 
-	static final double MIN_CONTOUR_AREA = 200;
+	static final double MIN_CONTOUR_AREA = 1000;
 
 	private Mat _rgbaImage;
 
@@ -369,11 +369,6 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 	public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
 		synchronized (inputFrame) {
 			_rgbaImage = inputFrame.rgba();
-
-			if (android.os.Build.MODEL.equalsIgnoreCase("Nexus 5X")) {
-				Core.flip(_rgbaImage, _rgbaImage, -1);
-			}
-
 			double current_contour;
 
 			// In contrast to the C++ interface, Android API captures images in the RGBA format.
@@ -405,6 +400,14 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 							       _centerPoint,
 							       (int) Math.round(Math.sqrt(_contourArea / Math.PI)),
 							        new Scalar(255, 255, 10), 2, 0, 0);// Core.FILLED);
+				updateActuator();
+			}
+			else
+			{
+				_mainController.reset();
+				_centerPoint.x = -1;
+				_centerPoint.y = -1;
+
 				updateActuator();
 			}
 			contours.clear();

@@ -42,12 +42,12 @@ public class ActuatorController {
 
 	public static final int RANGE_WHEELS_PWM = RIGHT_FULL_TURN_WHEELS_PWM - CENTER_FRONT_WHEELS_PWM;
 
-	public static final int MOTOR_FORWARD_PWM = 1550;
-	public static final int MOTOR_REVERSE_PWM = 1380;
+	public static final int MOTOR_FORWARD_PWM = 1560;
+	public static final int MOTOR_REVERSE_PWM = 1370;
 	public static final int MOTOR_NEUTRAL_PWM = 1490;
 
-	public static final int MAX_NEUTRAL_CONTOUR_AREA = 150000;
-	public static final int MIN_NEUTRAL_CONTOUR_AREA = 40000;
+	public static final int MAX_NEUTRAL_CONTOUR_AREA = 90000;
+	public static final int MIN_NEUTRAL_CONTOUR_AREA = 30000;
 
 	public double _pwmPan;
 	public double _pwmTilt;
@@ -82,7 +82,7 @@ public class ActuatorController {
 			// jsonObj.put("pan", (int)_pwmPan);
 			// jsonObj.put("tilt", (int)_pwmTilt);
 			jsonObj.put("throttle", (int)_pwmMotor);
-			jsonObj.put("steering", (int)_pwmPan); // (int)_pwmFrontWheels
+			jsonObj.put("steering", CENTER_FRONT_WHEELS_PWM ); // (int)_pwmPan or (int)_pwmFrontWheels
 			return jsonObj.toString();
 		} catch (JSONException e) {
 			Log.e(_TAG, e.getMessage());
@@ -91,7 +91,9 @@ public class ActuatorController {
 	}
 
 	public void updateMotorPWM(double currentContourArea) throws InterruptedException {
-		updateWheelsPWM();
+
+        updateWheelsPWM();
+
 		if (currentContourArea > MIN_NEUTRAL_CONTOUR_AREA && currentContourArea < MAX_NEUTRAL_CONTOUR_AREA) {
 			_pwmMotor = (_wasMoving) ? MOTOR_REVERSE_PWM : MOTOR_NEUTRAL_PWM;
 			_wasMoving = false;
