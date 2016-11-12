@@ -27,18 +27,14 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -64,15 +60,14 @@ import java.util.Set;
 public class carTracker extends AppCompatActivity implements CvCameraViewListener2 {
 
 	private static final String _TAG = "carTrackerActivity";
-
-	static final double MIN_CONTOUR_AREA = 1000;
+	static final double MIN_CONTOUR_AREA = 2000;
 
 	private Mat _rgbaImage;
 
 	private JavaCameraView _opencvCameraView;
 	private ActuatorController _mainController;
 
-	volatile double _contourArea = 7;
+	volatile double _contourArea = MIN_CONTOUR_AREA;
 	volatile Point _centerPoint = new Point(-1, -1);
 	Point _screenCenterCoordinates = new Point(-1, -1);
 	int _countOutOfFrame = 0;
@@ -89,6 +84,7 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 	static int _trackingColor = 0;
 
 	private boolean _showContourEnable = true;
+    String _lastPwmValues = "";
 
 	// See Static Initialization of OpenCV (http://tinyurl.com/zof437m)
 	//
@@ -322,32 +318,6 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 						| View.SYSTEM_UI_FLAG_FULLSCREEN);
 	}
 
-	private void updateActuator(){
-		String _pwmValues;
-		try {
-			if (_contourArea > MIN_CONTOUR_AREA) {
-				Log.i(_TAG, "Update actuator");
-				_mainController.updatePanTiltPWM(_screenCenterCoordinates, _centerPoint);
-				_mainController.updateMotorPWM(_contourArea);
-				_countOutOfFrame = 0;
-			} else {
-				if (_countOutOfFrame > 5) {
-					_mainController.reset();
-					_countOutOfFrame = 0;
-				}
-				_countOutOfFrame++;
-			}
-			_pwmValues = _mainController.getPWMValuesToJson();
-			if (_pwmValues != null) {
-				Log.i(_TAG, "Sending data to serial: " + _pwmValues);
-				if (usbService != null) {
-					usbService.write(_pwmValues.getBytes());
-				}
-			}
-		} catch (InterruptedException e) {
-			Log.e(_TAG, e.getMessage());
-		}
-	}
 	@Override
 	public void onCameraViewStarted(int width, int height) {
 		_rgbaImage = new Mat(height, width, CvType.CV_8UC4);
@@ -361,7 +331,6 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 		_rgbaImage.release();
 		_centerPoint.x = -1;
 		_centerPoint.y = -1;
-
 		updateActuator();
 	}
 
@@ -381,37 +350,74 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 			// Imgproc.dilate(_processedMat, _dilatedMat, new Mat());
 			Imgproc.erode(_processedMat, _dilatedMat, new Mat());
 			Imgproc.findContours(_dilatedMat, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-			MatOfPoint2f points = new MatOfPoint2f();
-			_contourArea = 7;
+
+            MatOfPoint2f points = new MatOfPoint2f();
+			_contourArea = MIN_CONTOUR_AREA;
+
 			for (int i = 0, n = contours.size(); i < n; i++) {
 				current_contour = Imgproc.contourArea(contours.get(i));
-				Log.i(_TAG, "contour Area (" + i + ") : " + current_contour);
 				if (current_contour > _contourArea) {
 					_contourArea = current_contour;
-					contours.get(i).convertTo(points, CvType.CV_32FC2); // contours.get(x) is a single MatOfPoint, but to use minEnclosingCircle we need to pass a MatOfPoint2f so we need to do a
+                    contours.get(i).convertTo(points, CvType.CV_32FC2); // contours.get(x) is a single MatOfPoint, but to use minEnclosingCircle we need to pass a MatOfPoint2f so we need to do a
 					// conversion
 				}
 			}
+
 			if (!points.empty() && _contourArea > MIN_CONTOUR_AREA) {
 				Imgproc.minEnclosingCircle(points, _centerPoint, null);
-				// Imgproc.circle(_rgbaImage, _centerPoint, 2, new Scalar(255, 0, 0), Core.FILLED);
-				if (_showContourEnable)
-					Imgproc.circle(_rgbaImage,
-							       _centerPoint,
-							       (int) Math.round(Math.sqrt(_contourArea / Math.PI)),
-							        new Scalar(255, 255, 10), 2, 0, 0);// Core.FILLED);
-				updateActuator();
-			}
-			else
-			{
-				_mainController.reset();
-				_centerPoint.x = -1;
-				_centerPoint.y = -1;
+				if (_showContourEnable) {
+                    Imgproc.circle(_rgbaImage,
+                            _centerPoint,
+                            3,
+                            new Scalar(255, 255, 10),
+                            Core.FILLED);
 
-				updateActuator();
+                    Imgproc.circle(_rgbaImage,
+                            _centerPoint,
+                            (int) Math.round(Math.sqrt(_contourArea / Math.PI)),
+                            new Scalar(255, 255, 10), 2, 0, 0);// Core.FILLED);
+
+                }
 			}
+            updateActuator();
 			contours.clear();
 		}
 		return _rgbaImage;
 	}
+
+    private void updateActuator(){
+        String _pwmValues;
+
+        try {
+            if (_contourArea > MIN_CONTOUR_AREA) {
+                _mainController.updatePanTiltPWM(_screenCenterCoordinates, _centerPoint);
+                _mainController.updateMotorPWM(_contourArea);
+                _countOutOfFrame = 0;
+            } else
+            {
+                _countOutOfFrame++;
+                if (_countOutOfFrame > 3) {
+                    _mainController.reset();
+                    _centerPoint.x = -1;
+                    _centerPoint.y = -1;
+                    _countOutOfFrame = 0;
+                }
+            }
+
+            _pwmValues = _mainController.getPWMValuesToJson();
+            if ((_pwmValues != null) && !_pwmValues.contentEquals(_lastPwmValues)) {
+                Log.i(_TAG, "Update Actuator using:");
+                Log.i(_TAG, "ScreenCenterCoordinates = " + _screenCenterCoordinates);
+                Log.i(_TAG, "Center Point = " + _centerPoint);
+                Log.i(_TAG, "Contour Area = " + _contourArea);
+                Log.i(_TAG, "Sending PWM values: " + _pwmValues);
+                if (usbService != null) {
+                    usbService.write(_pwmValues.getBytes());
+                }
+                _lastPwmValues = _pwmValues;
+            }
+        } catch (InterruptedException e) {
+            Log.e(_TAG, e.getMessage());
+        }
+    }
 }
