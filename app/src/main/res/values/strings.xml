@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">androVision</string>
+    <string name="app_name">CVRCCar</string>
     <string name="settings_key">settingsKey</string>
     <string name="settings">Settings</string>
     <string name="color_key">colorKey</string>

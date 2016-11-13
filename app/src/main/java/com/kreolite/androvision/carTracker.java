@@ -60,16 +60,21 @@ import java.util.Set;
 public class carTracker extends AppCompatActivity implements CvCameraViewListener2 {
 
 	private static final String _TAG = "carTrackerActivity";
-	static final double MIN_CONTOUR_AREA = 2000;
+	static final double MIN_CONTOUR_AREA = 1500;
+	static final int SCREEN_WIDTH = 1920; // initially 352
+	static final int SCREEN_HEIGHT = 1080; // initially 288
+
+    static final double FORWARD_BOUNDARY_PERCENT = -0.03;
+    static final double REVERSE_BOUNDARY_PERCENT = 0.20;
 
 	private Mat _rgbaImage;
 
-	private JavaCameraView _opencvCameraView;
+	private JavaCameraView _openCvCameraView;
 	private ActuatorController _mainController;
 
 	volatile double _contourArea = MIN_CONTOUR_AREA;
-	volatile Point _centerPoint = new Point(-1, -1);
-	Point _screenCenterCoordinates = new Point(-1, -1);
+	volatile Point _targetCenter = new Point(-1, -1);
+	Point _screenCenter = new Point(-1, -1);
 	int _countOutOfFrame = 0;
 
 	Mat _hsvMat;
@@ -77,14 +82,15 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 	Mat _dilatedMat;
 	Scalar _lowerThreshold;
 	Scalar _upperThreshold;
-	final List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+	final List<MatOfPoint> contours = new ArrayList<>();
 
 	SharedPreferences _sharedPreferences;
 	GestureDetector _gestureDetector;
 	static int _trackingColor = 0;
 
 	private boolean _showContourEnable = true;
-    String _lastPwmValues = "";
+    String _lastPwmJsonValues = "";
+    boolean _isReversingHandled = false;
 
 	// See Static Initialization of OpenCV (http://tinyurl.com/zof437m)
 	//
@@ -99,7 +105,7 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 		public void onManagerConnected(int status) {
 			switch (status) {
 			case LoaderCallbackInterface.SUCCESS: {
-				_opencvCameraView.enableView();
+				_openCvCameraView.enableView();
 				_hsvMat = new Mat();
 				_processedMat = new Mat();
 				_dilatedMat = new Mat();
@@ -185,7 +191,7 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 	private static class MyHandler extends Handler {
 		private final WeakReference<carTracker> mActivity;
 
-		public MyHandler(carTracker activity) {
+		MyHandler(carTracker activity) {
 			mActivity = new WeakReference<>(activity);
 		}
 
@@ -230,10 +236,10 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 			_upperThreshold = new Scalar(60, 255, 255);
 		}
 		_showContourEnable = _sharedPreferences.getBoolean("contour", true);
-		_opencvCameraView = (JavaCameraView) findViewById(R.id.aav_activity_surface_view);
-		_opencvCameraView.setCvCameraViewListener(this);
+		_openCvCameraView = (JavaCameraView) findViewById(R.id.aav_activity_surface_view);
+		_openCvCameraView.setCvCameraViewListener(this);
 
-		_opencvCameraView.setMaxFrameSize(1920, 1080); // (352, 288)
+		_openCvCameraView.setMaxFrameSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 		_mainController = new ActuatorController();
 		_countOutOfFrame = 0;
 
@@ -289,8 +295,8 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 	public void onPause() {
 		super.onPause();
 
-		if (_opencvCameraView != null)
-			_opencvCameraView.disableView();
+		if (_openCvCameraView != null)
+			_openCvCameraView.disableView();
 
 		unregisterReceiver(mUsbReceiver);
 		unbindService(usbConnection);
@@ -300,8 +306,8 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 	public void onDestroy() {
 		super.onDestroy();
 
-		if (_opencvCameraView != null)
-			_opencvCameraView.disableView();
+		if (_openCvCameraView != null)
+			_openCvCameraView.disableView();
 	}
 
 	@Override
@@ -321,38 +327,36 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 	@Override
 	public void onCameraViewStarted(int width, int height) {
 		_rgbaImage = new Mat(height, width, CvType.CV_8UC4);
-		_screenCenterCoordinates.x = _rgbaImage.size().width / 2;
-		_screenCenterCoordinates.y = _rgbaImage.size().height / 2;
+		_screenCenter.x = _rgbaImage.size().width / 2;
+		_screenCenter.y = _rgbaImage.size().height / 2;
 	}
 
 	@Override
 	public void onCameraViewStopped() {
 		_mainController.reset();
 		_rgbaImage.release();
-		_centerPoint.x = -1;
-		_centerPoint.y = -1;
+		_targetCenter.x = -1;
+		_targetCenter.y = -1;
 		updateActuator();
 	}
 
 	@Override
 	public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
+		//noinspection SynchronizationOnLocalVariableOrMethodParameter
 		synchronized (inputFrame) {
 			_rgbaImage = inputFrame.rgba();
 			double current_contour;
 
-			// In contrast to the C++ interface, Android API captures images in the RGBA format.
+            // In contrast to the C++ interface, Android API captures images in the RGBA format.
 			// Also, in HSV space, only the hue determines which color it is. Saturation determines
 			// how 'white' the color is, and Value determines how 'dark' the color is.
 			Imgproc.cvtColor(_rgbaImage, _hsvMat, Imgproc.COLOR_RGB2HSV_FULL);
-
 			Core.inRange(_hsvMat, _lowerThreshold, _upperThreshold, _processedMat);
-
-			// Imgproc.dilate(_processedMat, _dilatedMat, new Mat());
 			Imgproc.erode(_processedMat, _dilatedMat, new Mat());
 			Imgproc.findContours(_dilatedMat, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
             MatOfPoint2f points = new MatOfPoint2f();
-			_contourArea = MIN_CONTOUR_AREA;
+            _contourArea = 0;
 
 			for (int i = 0, n = contours.size(); i < n; i++) {
 				current_contour = Imgproc.contourArea(contours.get(i));
@@ -364,19 +368,18 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 			}
 
 			if (!points.empty() && _contourArea > MIN_CONTOUR_AREA) {
-				Imgproc.minEnclosingCircle(points, _centerPoint, null);
+				Imgproc.minEnclosingCircle(points, _targetCenter, null);
 				if (_showContourEnable) {
                     Imgproc.circle(_rgbaImage,
-                            _centerPoint,
-                            3,
+                            _targetCenter,
+                            5,
                             new Scalar(255, 255, 10),
                             Core.FILLED);
 
                     Imgproc.circle(_rgbaImage,
-                            _centerPoint,
+                            _targetCenter,
                             (int) Math.round(Math.sqrt(_contourArea / Math.PI)),
-                            new Scalar(255, 255, 10), 2, 0, 0);// Core.FILLED);
-
+                            new Scalar(255, 255, 10), 2, 0, 0);
                 }
 			}
             updateActuator();
@@ -386,35 +389,56 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 	}
 
     private void updateActuator(){
-        String _pwmValues;
+        String _pwmJsonValues, _pwmJsonNeutralValues;
 
         try {
             if (_contourArea > MIN_CONTOUR_AREA) {
-                _mainController.updatePanTiltPWM(_screenCenterCoordinates, _centerPoint);
-                _mainController.updateMotorPWM(_contourArea);
+                _mainController.updateTargetPWM(_screenCenter, _targetCenter,
+                        FORWARD_BOUNDARY_PERCENT,
+                        REVERSE_BOUNDARY_PERCENT);
                 _countOutOfFrame = 0;
             } else
             {
                 _countOutOfFrame++;
-                if (_countOutOfFrame > 3) {
-                    _mainController.reset();
-                    _centerPoint.x = -1;
-                    _centerPoint.y = -1;
+                if (_countOutOfFrame > 2) {
+                    _targetCenter.x = -1;
+                    _targetCenter.y = -1;
                     _countOutOfFrame = 0;
+                    _mainController.reset();
                 }
             }
 
-            _pwmValues = _mainController.getPWMValuesToJson();
-            if ((_pwmValues != null) && !_pwmValues.contentEquals(_lastPwmValues)) {
-                Log.i(_TAG, "Update Actuator using:");
-                Log.i(_TAG, "ScreenCenterCoordinates = " + _screenCenterCoordinates);
-                Log.i(_TAG, "Center Point = " + _centerPoint);
-                Log.i(_TAG, "Contour Area = " + _contourArea);
-                Log.i(_TAG, "Sending PWM values: " + _pwmValues);
+            _pwmJsonValues = _mainController.getPWMValuesToJson();
+
+            if ((_pwmJsonValues != null) && !_pwmJsonValues.contentEquals(_lastPwmJsonValues)) {
+                Log.i(_TAG, "Update Actuator:");
+                Log.i(_TAG, "Screen Center = " + _screenCenter);
+                Log.i(_TAG, "Target Center = " + _targetCenter);
+                Log.i(_TAG, "Current Contour Area = " + _contourArea);
+
                 if (usbService != null) {
-                    usbService.write(_pwmValues.getBytes());
+                    if (!_mainController.isReversing()) {
+                        Log.i(_TAG, "Sending PWM values: " + _pwmJsonValues);
+                        usbService.write(_pwmJsonValues.getBytes());
+                        _isReversingHandled = false;
+                    }
+                    else {
+                        Log.i(_TAG, "Sending PWM values: " + _pwmJsonValues);
+                        usbService.write(_pwmJsonValues.getBytes());
+
+                        // When reversing, need to send neutral first
+                        if (!_isReversingHandled) {
+                            _pwmJsonNeutralValues = _mainController.getPWMNeutralValuesToJson();
+                            Log.i(_TAG, "Sending PWM values: " + _pwmJsonNeutralValues);
+                            usbService.write(_pwmJsonNeutralValues.getBytes());
+
+                            Log.i(_TAG, "Sending PWM values: " + _pwmJsonValues);
+                            usbService.write(_pwmJsonValues.getBytes());
+                            _isReversingHandled = true;
+                        }
+                    }
                 }
-                _lastPwmValues = _pwmValues;
+                _lastPwmJsonValues = _pwmJsonValues;
             }
         } catch (InterruptedException e) {
             Log.e(_TAG, e.getMessage());

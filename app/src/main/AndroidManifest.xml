@@ -15,13 +15,13 @@
         android:name="android.hardware.camera"
         android:required="false" />
     <uses-feature
-        android:name="android.hardware.camera.autofocus"
+        android:name="android.hardware.camera.autoFocus"
         android:required="false" />
     <uses-feature
         android:name="android.hardware.camera.front"
         android:required="false" />
     <uses-feature
-        android:name="android.hardware.camera.front.autofocus"
+        android:name="android.hardware.camera.front.autoFocus"
         android:required="false" />
     <uses-feature
         android:name="android.hardware.usb.host"
