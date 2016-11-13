@@ -60,12 +60,17 @@ import java.util.Set;
 public class carTracker extends AppCompatActivity implements CvCameraViewListener2 {
 
 	private static final String _TAG = "carTrackerActivity";
-	static final double MIN_CONTOUR_AREA = 1500;
-	static final int SCREEN_WIDTH = 1920; // initially 352
-	static final int SCREEN_HEIGHT = 1080; // initially 288
 
-    static final double FORWARD_BOUNDARY_PERCENT = -0.03;
-    static final double REVERSE_BOUNDARY_PERCENT = 0.20;
+
+    // 1920x1080, 1334x750, 960x540, 720x348, 352x288
+	static final int SCREEN_WIDTH = 352;
+	static final int SCREEN_HEIGHT = 288;
+
+    // Contour area of 1500 was good for a resolution of 2073600 pixels
+    static final double MIN_CONTOUR_AREA = (1500/2073600) * (SCREEN_WIDTH * SCREEN_HEIGHT);
+
+    static final double FORWARD_BOUNDARY_PERCENT = -0.15;
+    static final double REVERSE_BOUNDARY_PERCENT = 0.3;
 
 	private Mat _rgbaImage;
 
@@ -372,7 +377,7 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 				if (_showContourEnable) {
                     Imgproc.circle(_rgbaImage,
                             _targetCenter,
-                            5,
+                            2,
                             new Scalar(255, 255, 10),
                             Core.FILLED);
 
