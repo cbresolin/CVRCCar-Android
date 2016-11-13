@@ -56,6 +56,10 @@
                 <category android:name="android.intent.category.PREFERENCE" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".SeekBarActivity"
+            android:label="@string/settings">
+        </activity>
         <service
             android:name=".UsbService"
             android:enabled="true">

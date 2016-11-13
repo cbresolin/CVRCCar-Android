@@ -89,4 +89,10 @@ public class menu extends AppCompatActivity {
             toast.show();
         }
     }
+
+    public void settings(View view) {
+
+        Intent intent = new Intent(this, SeekBarActivity.class);
+        startActivity(intent);
+    }
 }
