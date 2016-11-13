@@ -67,7 +67,7 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 	static final int SCREEN_HEIGHT = 288;
 
     // Contour area of 1500 was good for a resolution of 2073600 pixels
-    static final double MIN_CONTOUR_AREA = (1500/2073600) * (SCREEN_WIDTH * SCREEN_HEIGHT);
+    static final double MIN_CONTOUR_AREA = 1500/2073600 * (SCREEN_WIDTH * SCREEN_HEIGHT);
 
     static final double FORWARD_BOUNDARY_PERCENT = -0.15;
     static final double REVERSE_BOUNDARY_PERCENT = 0.3;
@@ -228,16 +228,16 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 
 		PreferenceManager.setDefaultValues(this, R.xml.settings, false);
 		_sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-		_trackingColor = Integer.parseInt(_sharedPreferences.getString(getString(R.string.color_key), "0"));
+		_trackingColor = Integer.parseInt(_sharedPreferences.getString(getString(R.string.color_key), "1"));
 
 		if (_trackingColor == 0) {
-			_lowerThreshold = new Scalar(60, 100, 30); // Green
+			_lowerThreshold = new Scalar(60, 150, 60); // Green
 			_upperThreshold = new Scalar(130, 255, 255);
 		} else if (_trackingColor == 1) {
-			_lowerThreshold = new Scalar(160, 50, 90); // Purple
-			_upperThreshold = new Scalar(255, 255, 255);
+			_lowerThreshold = new Scalar(22, 150, 60); // Yellow
+			_upperThreshold = new Scalar(38, 255, 255);
 		} else if (_trackingColor == 2) {
-			_lowerThreshold = new Scalar(1, 50, 150); // Orange
+			_lowerThreshold = new Scalar(1, 150, 60); // Orange
 			_upperThreshold = new Scalar(60, 255, 255);
 		}
 		_showContourEnable = _sharedPreferences.getBoolean("contour", true);
@@ -265,19 +265,19 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 
 		switch (_trackingColor) {
 		case 0: // Green
-			_lowerThreshold.set(new double[] { 60, 100, 30, 0 });
+			_lowerThreshold.set(new double[] { 60, 150, 60, 0 });
 			_upperThreshold.set(new double[] { 130, 255, 255, 0 });
 			break;
-		case 1: // Purple
-			_lowerThreshold.set(new double[] { 160, 50, 90 });
-			_upperThreshold.set(new double[] { 255, 255, 255, 0 });
+		case 1: // Yellow
+			_lowerThreshold.set(new double[] { 22, 150, 60 });
+			_upperThreshold.set(new double[] { 38, 255, 255, 0 });
 			break;
 		case 2: // Orange
-			_lowerThreshold.set(new double[] { 1, 50, 150 });
+			_lowerThreshold.set(new double[] { 1, 150, 60 });
 			_upperThreshold.set(new double[] { 60, 255, 255, 0 });
 			break;
 		default:
-			_lowerThreshold.set(new double[] { 60, 100, 30, 0 });
+			_lowerThreshold.set(new double[] { 60, 150, 60, 0 });
 			_upperThreshold.set(new double[] { 130, 255, 255, 0 });
 			break;
 		}
