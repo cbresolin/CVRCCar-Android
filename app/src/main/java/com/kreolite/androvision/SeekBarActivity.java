@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import butterknife.ButterKnife;
@@ -11,10 +12,20 @@ import butterknife.InjectView;
 
 public class SeekBarActivity extends Activity {
 
-    @InjectView(R.id.minHue)
+    @InjectView(R.id.seekBarMinHue)
     SeekBar minHueControl;
-    @InjectView(R.id.maxHue)
+    @InjectView(R.id.seekBarMaxHue)
     SeekBar maxHueControl;
+
+    @InjectView(R.id.seekBarMinSat)
+    SeekBar minSatControl;
+    @InjectView(R.id.seekBarMaxSat)
+    SeekBar maxSatControl;
+
+    @InjectView(R.id.seekBarMinVal)
+    SeekBar minValControl;
+    @InjectView(R.id.seekBarMaxVal)
+    SeekBar maxValControl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,15 +35,21 @@ public class SeekBarActivity extends Activity {
         ButterKnife.inject(this);
         setMinHueControlListener();
         setMaxHueControlListener();
+        setMinSatControlListener();
+        setMaxSatControlListener();
+        setMinValControlListener();
+        setMaxValControlListener();
     }
 
     private void setMinHueControlListener() {
-        minHueControl.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-            int minHue = 0;
 
+        final TextView minHueVal = (TextView)findViewById(R.id.textViewMinHueVal);
+        minHueVal.setText(String.valueOf(minHueControl.getProgress()));
+
+        minHueControl.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                minHue = progress;
+                minHueVal.setText(String.valueOf(progress));
             }
 
             @Override
@@ -41,19 +58,20 @@ public class SeekBarActivity extends Activity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                Toast.makeText(SeekBarActivity.this, " Minimum Hue set to " + minHue, Toast.LENGTH_SHORT)
-                        .show();
             }
         });
     }
 
     private void setMaxHueControlListener() {
+
+        final TextView maxHueVal = (TextView)findViewById(R.id.textViewMaxHueVal);
+        maxHueVal.setText(String.valueOf(maxHueControl.getProgress()));
+
         maxHueControl.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-            int maxHue = 0;
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                maxHue = progress;
+                maxHueVal.setText(String.valueOf(progress));
             }
 
             @Override
@@ -62,8 +80,94 @@ public class SeekBarActivity extends Activity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                Toast.makeText(SeekBarActivity.this, " Maximum Hue set to " + maxHue, Toast.LENGTH_SHORT)
-                        .show();
+            }
+        });
+    }
+
+    private void setMinSatControlListener() {
+
+        final TextView minSatVal = (TextView)findViewById(R.id.textViewMinSatVal);
+        minSatVal.setText(String.valueOf(minSatControl.getProgress()));
+
+        minSatControl.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                minSatVal.setText(String.valueOf(progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+    }
+
+    private void setMaxSatControlListener() {
+
+        final TextView maxSatVal = (TextView)findViewById(R.id.textViewMaxSatVal);
+        maxSatVal.setText(String.valueOf(maxSatControl.getProgress()));
+
+        maxSatControl.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                maxSatVal.setText(String.valueOf(progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+    }
+
+    private void setMinValControlListener() {
+
+        final TextView minValVal = (TextView)findViewById(R.id.textViewMinValVal);
+        minValVal.setText(String.valueOf(minValControl.getProgress()));
+
+        minValControl.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                minValVal.setText(String.valueOf(progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+    }
+
+    private void setMaxValControlListener() {
+
+        final TextView maxValVal = (TextView)findViewById(R.id.textViewMaxValVal);
+        maxValVal.setText(String.valueOf(maxValControl.getProgress()));
+
+        maxValControl.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                maxValVal.setText(String.valueOf(progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
     }

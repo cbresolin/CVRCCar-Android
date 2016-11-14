@@ -1,37 +1,186 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
-    android:orientation="vertical"
-    android:visibility="visible" >
+    android:visibility="visible"
+    android:orientation="vertical" >
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Minimal Hue"
-        android:textColor="@color/colorPrimary" />
-
-    <SeekBar
-        android:id="@+id/minHue"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:progress="0"
-        android:max="179" />
+        android:text="Hue Settings"
+        android:textColor="@color/colorPrimaryDark" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="Min"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@color/colorPrimary"
+            android:layout_margin="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/textViewMinHueVal"
+            android:textColor="@color/colorAccent"
+            android:layout_margin="10dp" />
+
+        <SeekBar
+            android:id="@+id/seekBarMinHue"
+            android:layout_width="fill_parent"
+            android:layout_margin="10dp"
+            android:progress="0"
+            android:max="179"
+            android:layout_weight="1"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:text="Max"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@color/colorPrimary"
+            android:layout_margin="10dp"
+            tools:elevation="0dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/textViewMaxHueVal"
+            android:textColor="@color/colorAccent"
+            android:layout_margin="10dp" />
+
+        <SeekBar
+            android:id="@+id/seekBarMaxHue"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:progress="179"
+            android:max="179"
+            android:layout_weight="1" />
+
+    </LinearLayout>
 
     <TextView
-        android:text="Maximum Hue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/colorPrimary" />
-
-    <SeekBar
-        android:id="@+id/maxHue"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:progress="0"
-        android:max="179" />
+        android:text="Saturation Settings"
+        android:textColor="@color/colorPrimaryDark" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="Min"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@color/colorPrimary"
+            android:layout_margin="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/textViewMinSatVal"
+            android:textColor="@color/colorAccent"
+            android:layout_margin="10dp" />
+
+        <SeekBar
+            android:id="@+id/seekBarMinSat"
+            android:layout_width="fill_parent"
+            android:layout_margin="10dp"
+            android:progress="0"
+            android:max="255"
+            android:layout_weight="1"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:text="Max"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@color/colorPrimary"
+            android:layout_margin="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/textViewMaxSatVal"
+            android:textColor="@color/colorAccent"
+            android:layout_margin="10dp" />
+
+        <SeekBar
+            android:id="@+id/seekBarMaxSat"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:progress="255"
+            android:max="255"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Value Settings"
+        android:textColor="@color/colorPrimaryDark" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="Min"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@color/colorPrimary"
+            android:layout_margin="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/textViewMinValVal"
+            android:textColor="@color/colorAccent"
+            android:layout_margin="10dp" />
+
+        <SeekBar
+            android:id="@+id/seekBarMinVal"
+            android:layout_width="fill_parent"
+            android:layout_margin="10dp"
+            android:progress="0"
+            android:max="255"
+            android:layout_weight="1"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:text="Max"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@color/colorPrimary"
+            android:layout_margin="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/textViewMaxValVal"
+            android:textColor="@color/colorAccent"
+            android:layout_margin="10dp" />
+
+        <SeekBar
+            android:id="@+id/seekBarMaxVal"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:progress="255"
+            android:max="255"
+            android:layout_weight="1" />
+    </LinearLayout>
 
 </LinearLayout>
