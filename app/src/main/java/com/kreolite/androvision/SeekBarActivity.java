@@ -1,16 +1,17 @@
 package com.kreolite.androvision;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public class SeekBarActivity extends Activity {
+public class SeekBarActivity extends AppCompatActivity {
 
     @InjectView(R.id.seekBarMinHue)
     SeekBar minHueControl;
@@ -27,18 +28,32 @@ public class SeekBarActivity extends Activity {
     @InjectView(R.id.seekBarMaxVal)
     SeekBar maxValControl;
 
+    @InjectView(R.id.switchContour)
+    Switch showContourControl;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_seekbar);
-
         ButterKnife.inject(this);
+
         setMinHueControlListener();
         setMaxHueControlListener();
         setMinSatControlListener();
         setMaxSatControlListener();
         setMinValControlListener();
         setMaxValControlListener();
+        setShowContourControlListener();
+    }
+
+    private void setShowContourControlListener() {
+
+        showContourControl.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            }
+        });
     }
 
     private void setMinHueControlListener() {

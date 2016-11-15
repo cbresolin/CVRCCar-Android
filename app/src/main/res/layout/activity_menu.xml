@@ -5,32 +5,34 @@
     android:layout_height="match_parent"
     tools:context="com.kreolite.androvision.menu">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Camera"
-        android:id="@+id/btnCamera"
-        android:onClick="openCamera" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Settings"
-        android:id="@+id/btnSettings"
-        android:onClick="settings"
-        android:layout_marginTop="156dp"
-        android:layout_below="@+id/btnCamera"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ball Tracker"
+            android:onClick="carTracker"
+            android:id="@+id/btnTracker"
+            android:layout_weight="1"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Ball Tracker"
-        android:onClick="carTracker"
-        android:id="@+id/btnTracker"
-        android:layout_below="@+id/btnCamera"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="54dp" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Settings"
+            android:onClick="settings"
+            android:layout_weight="1"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Camera"
+            android:id="@+id/btnCamera"
+            android:onClick="openCamera"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
 </RelativeLayout>
