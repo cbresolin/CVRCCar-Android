@@ -16,11 +16,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ac938a19-0a74-4ecf-b6c9-5ff4e69be1a2" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/values/integers.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/kreolite/androvision/SeekBarActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/kreolite/androvision/SeekBarActivity.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/kreolite/androvision/carTracker.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/kreolite/androvision/carTracker.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_menu.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_menu.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_seekbar.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_seekbar.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/xml/settings.xml" afterPath="$PROJECT_DIR$/app/src/main/res/xml/settings.xml" />
     </list>
     <ignored path="CVRCCar-Android.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -56,10 +58,30 @@
       <file leaf-file-name="SeekBarActivity.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/kreolite/androvision/SeekBarActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3340">
-              <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
+            <state relative-caret-position="594">
+              <caret line="57" column="35" selection-start-line="57" selection-start-column="35" selection-end-line="57" selection-end-column="35" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#1338#1373#0" expanded="true" />
+                <element signature="e#1474#1506#0" expanded="true" />
+                <element signature="e#1568#1597#0" expanded="true" />
+                <element signature="e#1656#1685#0" expanded="true" />
+                <element signature="e#1687#1706#0" expanded="true" />
+                <element signature="e#1762#1791#0" expanded="true" />
+                <element signature="e#1850#1879#0" expanded="true" />
+                <element signature="e#1881#1903#0" expanded="true" />
+                <element signature="e#1959#1988#0" expanded="true" />
+                <element signature="e#2047#2076#0" expanded="true" />
+                <element signature="e#2078#2100#0" expanded="true" />
+                <element signature="e#2475#2814#0" expanded="true" />
+                <element signature="e#2712#2744#0" expanded="true" />
+                <element signature="e#2813#2814#0" expanded="true" />
+                <element signature="e#3358#3387#0" expanded="true" />
+                <element signature="e#4202#4231#0" expanded="true" />
+                <element signature="e#5046#5075#0" expanded="true" />
+                <element signature="e#5890#5919#0" expanded="true" />
+                <element signature="e#6734#6763#0" expanded="true" />
+                <element signature="e#7578#7607#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -68,22 +90,44 @@
       <file leaf-file-name="carTracker.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/kreolite/androvision/carTracker.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="346">
-              <caret line="259" column="8" selection-start-line="259" selection-start-column="8" selection-end-line="259" selection-end-column="8" />
+            <state relative-caret-position="961">
+              <caret line="268" column="0" selection-start-line="268" selection-start-column="0" selection-end-line="268" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#6574#6575#0" expanded="true" />
-                <element signature="e#6624#6625#0" expanded="true" />
-                <element signature="e#7676#7705#0" expanded="true" />
-                <element signature="e#8528#8733#0" expanded="true" />
-                <element signature="e#8732#8733#0" expanded="true" />
-                <element signature="e#9059#9088#0" expanded="true" />
+                <element signature="e#7553#7588#0" expanded="true" />
+                <element signature="e#7673#7705#0" expanded="true" />
+                <element signature="e#7751#7780#0" expanded="true" />
+                <element signature="e#7823#7852#0" expanded="true" />
+                <element signature="e#7854#7873#0" expanded="true" />
+                <element signature="e#7913#7942#0" expanded="true" />
+                <element signature="e#7985#8014#0" expanded="true" />
+                <element signature="e#8016#8038#0" expanded="true" />
+                <element signature="e#8078#8107#0" expanded="true" />
+                <element signature="e#8150#8179#0" expanded="true" />
+                <element signature="e#8181#8203#0" expanded="true" />
+                <element signature="e#8838#8870#0" expanded="true" />
+                <element signature="e#8916#8945#0" expanded="true" />
+                <element signature="e#8988#9017#0" expanded="true" />
+                <element signature="e#9019#9038#0" expanded="true" />
+                <element signature="e#9078#9107#0" expanded="true" />
+                <element signature="e#9150#9179#0" expanded="true" />
+                <element signature="e#9181#9203#0" expanded="true" />
+                <element signature="e#9243#9272#0" expanded="true" />
+                <element signature="e#9315#9344#0" expanded="true" />
+                <element signature="e#9346#9368#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
     </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="valueResourceFile" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -1707,17 +1751,18 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
         <option value="$PROJECT_DIR$/app/src/test/java/com/kreolite/androvision/ExampleUnitTest.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/kreolite/androvision/ActuatorController.java" />
         <option value="$PROJECT_DIR$/app/build.gradle" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/kreolite/androvision/menu.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/values/colors.xml" />
         <option value="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/xml/settings.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_menu.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/res/xml/settings.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_seekbar.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/kreolite/androvision/SeekBarActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/res/values/integers.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/kreolite/androvision/carTracker.java" />
       </list>
     </option>
@@ -1769,6 +1814,11 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="ProjectPane">
+        <subPane />
+      </pane>
+      <pane id="Scratches" />
+      <pane id="PackagesPane" />
       <pane id="AndroidView">
         <subPane>
           <PATH>
@@ -1790,10 +1840,6 @@
               <option name="myItemId" value="res" />
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidResFolderNode" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="xml" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidResFolderTypeNode" />
-            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -1807,6 +1853,10 @@
             <PATH_ELEMENT>
               <option name="myItemId" value="res" />
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidResFolderNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="values" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidResFolderTypeNode" />
             </PATH_ELEMENT>
           </PATH>
           <PATH>
@@ -1837,53 +1887,16 @@
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="CVRCCar-Android" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="CVRCCar-Android" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="androvision" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
-      </pane>
-      <pane id="PackagesPane" />
-      <pane id="Scratches" />
-      <pane id="ProjectPane">
-        <subPane />
       </pane>
       <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
-    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
+    <property name="settings.editor.selected.configurable" value="vcs.Git" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../range-bar" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../git.exe" />
     <property name="device.picker.selection" value="02c5a3e709381a21" />
     <property name="UI_DESIGNER_EDITOR_MODE.NlPaletteManager-NlPreviewForm.SHOW" value="false" />
     <property name="android.project.structure.last.selected" value="app" />
@@ -2167,7 +2180,7 @@
         <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
       </Native>
       <Profilers>
-        <option name="ENABLE_ADVANCED_PROFILING" value="true" />
+        <option name="ENABLE_ADVANCED_PROFILING" value="false" />
         <option name="GAPID_ENABLED" value="false" />
         <option name="GAPID_DISABLE_PCS" value="false" />
         <option name="SUPPORT_LIB_ENABLED" value="true" />
@@ -2211,18 +2224,18 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1938" height="1048" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Nl-Palette" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298122" sideWeight="0.5" order="5" side_tool="true" content_ui="tabs" />
       <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.38732395" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24973147" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20867527" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.36384976" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3282532" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -2234,7 +2247,7 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32942554" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24973147" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16487648" sideWeight="0.5" order="6" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21213749" sideWeight="0.5" order="6" side_tool="false" content_ui="combo" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="true" content_ui="tabs" />
@@ -2246,6 +2259,40 @@
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32942554" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
     </layout>
+    <layout-to-restore>
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Nl-Palette" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298122" sideWeight="0.5" order="5" side_tool="true" content_ui="tabs" />
+      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.38732395" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="9" side_tool="false" content_ui="combo" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24973147" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.36384976" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3282532" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32975295" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.42840376" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32942554" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24973147" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21213749" sideWeight="0.5" order="6" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32942554" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="true" content_ui="tabs" />
+    </layout-to-restore>
   </component>
   <component name="Vcs.Log.UiProperties">
     <option name="RECENTLY_FILTERED_USER_GROUPS">
@@ -2260,7 +2307,10 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="36" />
+      <breakpoints-dialog>
+        <breakpoints-dialog />
+      </breakpoints-dialog>
+      <option name="time" value="92" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -2271,6 +2321,292 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#1338#1373#0" expanded="true" />
+            <element signature="e#1474#1506#0" expanded="true" />
+            <element signature="e#1568#1597#0" expanded="true" />
+            <element signature="e#1656#1685#0" expanded="true" />
+            <element signature="e#1687#1706#0" expanded="true" />
+            <element signature="e#1762#1791#0" expanded="true" />
+            <element signature="e#1850#1879#0" expanded="true" />
+            <element signature="e#1881#1903#0" expanded="true" />
+            <element signature="e#1959#1988#0" expanded="true" />
+            <element signature="e#2047#2076#0" expanded="true" />
+            <element signature="e#2078#2100#0" expanded="true" />
+            <element signature="e#2475#2814#0" expanded="true" />
+            <element signature="e#2712#2744#0" expanded="true" />
+            <element signature="e#2813#2814#0" expanded="true" />
+            <element signature="e#3358#3387#0" expanded="true" />
+            <element signature="e#4202#4231#0" expanded="true" />
+            <element signature="e#5046#5075#0" expanded="true" />
+            <element signature="e#5890#5919#0" expanded="true" />
+            <element signature="e#6734#6763#0" expanded="true" />
+            <element signature="e#7578#7607#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/kreolite/androvision/carTracker.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3762">
+          <caret line="228" column="0" selection-start-line="228" selection-start-column="0" selection-end-line="228" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#7553#7588#0" expanded="true" />
+            <element signature="e#7673#7705#0" expanded="true" />
+            <element signature="e#7751#7780#0" expanded="true" />
+            <element signature="e#7823#7852#0" expanded="true" />
+            <element signature="e#7854#7873#0" expanded="true" />
+            <element signature="e#7913#7942#0" expanded="true" />
+            <element signature="e#7985#8014#0" expanded="true" />
+            <element signature="e#8016#8038#0" expanded="true" />
+            <element signature="e#8078#8107#0" expanded="true" />
+            <element signature="e#8150#8179#0" expanded="true" />
+            <element signature="e#8181#8203#0" expanded="true" />
+            <element signature="e#8838#8870#0" expanded="true" />
+            <element signature="e#8916#8945#0" expanded="true" />
+            <element signature="e#8988#9017#0" expanded="true" />
+            <element signature="e#9019#9038#0" expanded="true" />
+            <element signature="e#9078#9107#0" expanded="true" />
+            <element signature="e#9150#9179#0" expanded="true" />
+            <element signature="e#9181#9203#0" expanded="true" />
+            <element signature="e#9243#9272#0" expanded="true" />
+            <element signature="e#9315#9344#0" expanded="true" />
+            <element signature="e#9346#9368#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/kreolite/androvision/SeekBarActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="110">
+          <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1338#1373#0" expanded="true" />
+            <element signature="e#1474#1506#0" expanded="true" />
+            <element signature="e#1568#1597#0" expanded="true" />
+            <element signature="e#1656#1685#0" expanded="true" />
+            <element signature="e#1687#1706#0" expanded="true" />
+            <element signature="e#1762#1791#0" expanded="true" />
+            <element signature="e#1850#1879#0" expanded="true" />
+            <element signature="e#1881#1903#0" expanded="true" />
+            <element signature="e#1959#1988#0" expanded="true" />
+            <element signature="e#2047#2076#0" expanded="true" />
+            <element signature="e#2078#2100#0" expanded="true" />
+            <element signature="e#2475#2814#0" expanded="true" />
+            <element signature="e#2712#2744#0" expanded="true" />
+            <element signature="e#2813#2814#0" expanded="true" />
+            <element signature="e#3358#3387#0" expanded="true" />
+            <element signature="e#4202#4231#0" expanded="true" />
+            <element signature="e#5046#5075#0" expanded="true" />
+            <element signature="e#5890#5919#0" expanded="true" />
+            <element signature="e#6734#6763#0" expanded="true" />
+            <element signature="e#7578#7607#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/kreolite/androvision/carTracker.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#7553#7588#0" expanded="true" />
+            <element signature="e#7673#7705#0" expanded="true" />
+            <element signature="e#7751#7780#0" expanded="true" />
+            <element signature="e#7823#7852#0" expanded="true" />
+            <element signature="e#7854#7873#0" expanded="true" />
+            <element signature="e#7913#7942#0" expanded="true" />
+            <element signature="e#7985#8014#0" expanded="true" />
+            <element signature="e#8016#8038#0" expanded="true" />
+            <element signature="e#8078#8107#0" expanded="true" />
+            <element signature="e#8150#8179#0" expanded="true" />
+            <element signature="e#8181#8203#0" expanded="true" />
+            <element signature="e#8838#8870#0" expanded="true" />
+            <element signature="e#8916#8945#0" expanded="true" />
+            <element signature="e#8988#9017#0" expanded="true" />
+            <element signature="e#9019#9038#0" expanded="true" />
+            <element signature="e#9078#9107#0" expanded="true" />
+            <element signature="e#9150#9179#0" expanded="true" />
+            <element signature="e#9181#9203#0" expanded="true" />
+            <element signature="e#9243#9272#0" expanded="true" />
+            <element signature="e#9315#9344#0" expanded="true" />
+            <element signature="e#9346#9368#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_seekbar.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2178">
+          <caret line="99" column="28" selection-start-line="99" selection-start-column="28" selection-end-line="99" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/kreolite/androvision/SeekBarActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="110">
+          <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1338#1373#0" expanded="true" />
+            <element signature="e#1474#1506#0" expanded="true" />
+            <element signature="e#1568#1597#0" expanded="true" />
+            <element signature="e#1656#1685#0" expanded="true" />
+            <element signature="e#1687#1706#0" expanded="true" />
+            <element signature="e#1762#1791#0" expanded="true" />
+            <element signature="e#1850#1879#0" expanded="true" />
+            <element signature="e#1881#1903#0" expanded="true" />
+            <element signature="e#1959#1988#0" expanded="true" />
+            <element signature="e#2047#2076#0" expanded="true" />
+            <element signature="e#2078#2100#0" expanded="true" />
+            <element signature="e#2475#2814#0" expanded="true" />
+            <element signature="e#2712#2744#0" expanded="true" />
+            <element signature="e#2813#2814#0" expanded="true" />
+            <element signature="e#3358#3387#0" expanded="true" />
+            <element signature="e#4202#4231#0" expanded="true" />
+            <element signature="e#5046#5075#0" expanded="true" />
+            <element signature="e#5890#5919#0" expanded="true" />
+            <element signature="e#6734#6763#0" expanded="true" />
+            <element signature="e#7578#7607#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/kreolite/androvision/carTracker.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#7553#7588#0" expanded="true" />
+            <element signature="e#7673#7705#0" expanded="true" />
+            <element signature="e#7751#7780#0" expanded="true" />
+            <element signature="e#7823#7852#0" expanded="true" />
+            <element signature="e#7854#7873#0" expanded="true" />
+            <element signature="e#7913#7942#0" expanded="true" />
+            <element signature="e#7985#8014#0" expanded="true" />
+            <element signature="e#8016#8038#0" expanded="true" />
+            <element signature="e#8078#8107#0" expanded="true" />
+            <element signature="e#8150#8179#0" expanded="true" />
+            <element signature="e#8181#8203#0" expanded="true" />
+            <element signature="e#8838#8870#0" expanded="true" />
+            <element signature="e#8916#8945#0" expanded="true" />
+            <element signature="e#8988#9017#0" expanded="true" />
+            <element signature="e#9019#9038#0" expanded="true" />
+            <element signature="e#9078#9107#0" expanded="true" />
+            <element signature="e#9150#9179#0" expanded="true" />
+            <element signature="e#9181#9203#0" expanded="true" />
+            <element signature="e#9243#9272#0" expanded="true" />
+            <element signature="e#9315#9344#0" expanded="true" />
+            <element signature="e#9346#9368#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_seekbar.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2178">
+          <caret line="99" column="28" selection-start-line="99" selection-start-column="28" selection-end-line="99" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/kreolite/androvision/SeekBarActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="110">
+          <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1338#1373#0" expanded="true" />
+            <element signature="e#1474#1506#0" expanded="true" />
+            <element signature="e#1568#1597#0" expanded="true" />
+            <element signature="e#1656#1685#0" expanded="true" />
+            <element signature="e#1687#1706#0" expanded="true" />
+            <element signature="e#1762#1791#0" expanded="true" />
+            <element signature="e#1850#1879#0" expanded="true" />
+            <element signature="e#1881#1903#0" expanded="true" />
+            <element signature="e#1959#1988#0" expanded="true" />
+            <element signature="e#2047#2076#0" expanded="true" />
+            <element signature="e#2078#2100#0" expanded="true" />
+            <element signature="e#2475#2814#0" expanded="true" />
+            <element signature="e#2712#2744#0" expanded="true" />
+            <element signature="e#2813#2814#0" expanded="true" />
+            <element signature="e#3358#3387#0" expanded="true" />
+            <element signature="e#4202#4231#0" expanded="true" />
+            <element signature="e#5046#5075#0" expanded="true" />
+            <element signature="e#5890#5919#0" expanded="true" />
+            <element signature="e#6734#6763#0" expanded="true" />
+            <element signature="e#7578#7607#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/kreolite/androvision/carTracker.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#7553#7588#0" expanded="true" />
+            <element signature="e#7673#7705#0" expanded="true" />
+            <element signature="e#7751#7780#0" expanded="true" />
+            <element signature="e#7823#7852#0" expanded="true" />
+            <element signature="e#7854#7873#0" expanded="true" />
+            <element signature="e#7913#7942#0" expanded="true" />
+            <element signature="e#7985#8014#0" expanded="true" />
+            <element signature="e#8016#8038#0" expanded="true" />
+            <element signature="e#8078#8107#0" expanded="true" />
+            <element signature="e#8150#8179#0" expanded="true" />
+            <element signature="e#8181#8203#0" expanded="true" />
+            <element signature="e#8838#8870#0" expanded="true" />
+            <element signature="e#8916#8945#0" expanded="true" />
+            <element signature="e#8988#9017#0" expanded="true" />
+            <element signature="e#9019#9038#0" expanded="true" />
+            <element signature="e#9078#9107#0" expanded="true" />
+            <element signature="e#9150#9179#0" expanded="true" />
+            <element signature="e#9181#9203#0" expanded="true" />
+            <element signature="e#9243#9272#0" expanded="true" />
+            <element signature="e#9315#9344#0" expanded="true" />
+            <element signature="e#9346#9368#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/kreolite/androvision/SeekBarActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1338#1373#0" expanded="true" />
+            <element signature="e#1474#1506#0" expanded="true" />
+            <element signature="e#1568#1597#0" expanded="true" />
+            <element signature="e#1656#1685#0" expanded="true" />
+            <element signature="e#1687#1706#0" expanded="true" />
+            <element signature="e#1762#1791#0" expanded="true" />
+            <element signature="e#1850#1879#0" expanded="true" />
+            <element signature="e#1881#1903#0" expanded="true" />
+            <element signature="e#1959#1988#0" expanded="true" />
+            <element signature="e#2047#2076#0" expanded="true" />
+            <element signature="e#2078#2100#0" expanded="true" />
+            <element signature="e#2475#2814#0" expanded="true" />
+            <element signature="e#2712#2744#0" expanded="true" />
+            <element signature="e#2813#2814#0" expanded="true" />
+            <element signature="e#3358#3387#0" expanded="true" />
+            <element signature="e#4202#4231#0" expanded="true" />
+            <element signature="e#5046#5075#0" expanded="true" />
+            <element signature="e#5890#5919#0" expanded="true" />
+            <element signature="e#6734#6763#0" expanded="true" />
+            <element signature="e#7578#7607#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -2373,15 +2709,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="88">
           <caret line="4" column="45" selection-start-line="4" selection-start-column="45" selection-end-line="4" selection-end-column="45" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="132">
-          <caret line="6" column="12" selection-start-line="6" selection-start-column="12" selection-end-line="6" selection-end-column="12" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2402,7 +2729,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="447">
           <caret line="94" column="56" selection-start-line="94" selection-start-column="56" selection-end-line="94" selection-end-column="56" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2410,7 +2736,6 @@
       <provider editor-type-id="text-editor">
         <state relative-caret-position="396">
           <caret line="24" column="38" selection-start-line="24" selection-start-column="38" selection-end-line="24" selection-end-column="38" />
-          <folding />
         </state>
       </provider>
       <provider selected="true" editor-type-id="android-designer2">
@@ -2433,21 +2758,33 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/xml/settings.xml">
+    <entry file="file://$USER_HOME$/AppData/Local/Android/sdk/sources/android-23/android/app/ActivityThread.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="286">
-          <caret line="13" column="39" selection-start-line="13" selection-start-column="39" selection-end-line="13" selection-end-column="39" />
+        <state relative-caret-position="302">
+          <caret line="2324" column="0" selection-start-line="2324" selection-start-column="0" selection-end-line="2324" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Android/sdk/sources/android-23/android/widget/CompoundButton.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="273">
+          <caret line="197" column="13" selection-start-line="197" selection-start-column="13" selection-end-line="197" selection-end-column="13" />
           <folding />
         </state>
       </provider>
-      <provider editor-type-id="android-designer2">
-        <state />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gradle.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_seekbar.xml">
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/xml/settings.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="637">
-          <caret line="197" column="29" selection-start-line="197" selection-start-column="29" selection-end-line="197" selection-end-column="29" />
+        <state relative-caret-position="198">
+          <caret line="9" column="49" selection-start-line="9" selection-start-column="49" selection-end-line="9" selection-end-column="49" />
           <folding />
         </state>
       </provider>
@@ -2457,34 +2794,96 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/kreolite/androvision/SettingsActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-220">
+        <state relative-caret-position="506">
           <caret line="31" column="32" selection-start-line="31" selection-start-column="32" selection-end-line="31" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_seekbar.xml">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="3872">
+          <caret line="176" column="40" selection-start-line="176" selection-start-column="40" selection-end-line="176" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="android-designer2">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="110">
+          <caret line="5" column="57" selection-start-line="5" selection-start-column="57" selection-end-line="5" selection-end-column="57" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/kreolite/androvision/SeekBarActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3340">
-          <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
+        <state relative-caret-position="594">
+          <caret line="57" column="35" selection-start-line="57" selection-start-column="35" selection-end-line="57" selection-end-column="35" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#1338#1373#0" expanded="true" />
+            <element signature="e#1474#1506#0" expanded="true" />
+            <element signature="e#1568#1597#0" expanded="true" />
+            <element signature="e#1656#1685#0" expanded="true" />
+            <element signature="e#1687#1706#0" expanded="true" />
+            <element signature="e#1762#1791#0" expanded="true" />
+            <element signature="e#1850#1879#0" expanded="true" />
+            <element signature="e#1881#1903#0" expanded="true" />
+            <element signature="e#1959#1988#0" expanded="true" />
+            <element signature="e#2047#2076#0" expanded="true" />
+            <element signature="e#2078#2100#0" expanded="true" />
+            <element signature="e#2475#2814#0" expanded="true" />
+            <element signature="e#2712#2744#0" expanded="true" />
+            <element signature="e#2813#2814#0" expanded="true" />
+            <element signature="e#3358#3387#0" expanded="true" />
+            <element signature="e#4202#4231#0" expanded="true" />
+            <element signature="e#5046#5075#0" expanded="true" />
+            <element signature="e#5890#5919#0" expanded="true" />
+            <element signature="e#6734#6763#0" expanded="true" />
+            <element signature="e#7578#7607#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/integers.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="66">
+          <caret line="3" column="36" selection-start-line="3" selection-start-column="36" selection-end-line="3" selection-end-column="36" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/kreolite/androvision/carTracker.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="346">
-          <caret line="259" column="8" selection-start-line="259" selection-start-column="8" selection-end-line="259" selection-end-column="8" />
+        <state relative-caret-position="961">
+          <caret line="268" column="0" selection-start-line="268" selection-start-column="0" selection-end-line="268" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#6574#6575#0" expanded="true" />
-            <element signature="e#6624#6625#0" expanded="true" />
-            <element signature="e#7676#7705#0" expanded="true" />
-            <element signature="e#8528#8733#0" expanded="true" />
-            <element signature="e#8732#8733#0" expanded="true" />
-            <element signature="e#9059#9088#0" expanded="true" />
+            <element signature="e#7553#7588#0" expanded="true" />
+            <element signature="e#7673#7705#0" expanded="true" />
+            <element signature="e#7751#7780#0" expanded="true" />
+            <element signature="e#7823#7852#0" expanded="true" />
+            <element signature="e#7854#7873#0" expanded="true" />
+            <element signature="e#7913#7942#0" expanded="true" />
+            <element signature="e#7985#8014#0" expanded="true" />
+            <element signature="e#8016#8038#0" expanded="true" />
+            <element signature="e#8078#8107#0" expanded="true" />
+            <element signature="e#8150#8179#0" expanded="true" />
+            <element signature="e#8181#8203#0" expanded="true" />
+            <element signature="e#8838#8870#0" expanded="true" />
+            <element signature="e#8916#8945#0" expanded="true" />
+            <element signature="e#8988#9017#0" expanded="true" />
+            <element signature="e#9019#9038#0" expanded="true" />
+            <element signature="e#9078#9107#0" expanded="true" />
+            <element signature="e#9150#9179#0" expanded="true" />
+            <element signature="e#9181#9203#0" expanded="true" />
+            <element signature="e#9243#9272#0" expanded="true" />
+            <element signature="e#9315#9344#0" expanded="true" />
+            <element signature="e#9346#9368#0" expanded="true" />
           </folding>
         </state>
       </provider>

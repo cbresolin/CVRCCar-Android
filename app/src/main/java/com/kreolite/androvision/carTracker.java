@@ -28,7 +28,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -89,11 +88,14 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 	Scalar _upperThreshold;
 	final List<MatOfPoint> contours = new ArrayList<>();
 
-	SharedPreferences _sharedPreferences;
+    SharedPreferences _sharedPref;
 	GestureDetector _gestureDetector;
-	static int _trackingColor = 0;
 
-	private boolean _showContourEnable = true;
+	private boolean _isContour;
+    int _minHue, _maxHue;
+    int _minSat, _maxSat;
+    int _minVal, _maxVal;
+
     String _lastPwmJsonValues = "";
     boolean _isReversingHandled = false;
 
@@ -226,61 +228,43 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 
 		setContentView(R.layout.activity_car);
 
-		PreferenceManager.setDefaultValues(this, R.xml.settings, false);
-		_sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-		_trackingColor = Integer.parseInt(_sharedPreferences.getString(getString(R.string.color_key), "1"));
+        _sharedPref = getApplicationContext().getSharedPreferences(getString(R.string.settingsFileKey),
+                Context.MODE_PRIVATE);
+        _isContour = _sharedPref.getBoolean(getString(R.string.isContourKey), true);
+        _minHue = _sharedPref.getInt(getString(R.string.minHueKey), 0);
+        _maxHue = _sharedPref.getInt(getString(R.string.maxHueKey), R.integer.maxHueKey);
+        _minSat = _sharedPref.getInt(getString(R.string.minSatKey), 0);
+        _maxSat = _sharedPref.getInt(getString(R.string.maxSatKey), R.integer.maxSatValKey);
+        _minVal = _sharedPref.getInt(getString(R.string.minValKey), 0);
+        _maxVal = _sharedPref.getInt(getString(R.string.maxValKey), R.integer.maxSatValKey);
 
-		if (_trackingColor == 0) {
-			_lowerThreshold = new Scalar(60, 150, 60); // Green
-			_upperThreshold = new Scalar(130, 255, 255);
-		} else if (_trackingColor == 1) {
-			_lowerThreshold = new Scalar(22, 150, 60); // Yellow
-			_upperThreshold = new Scalar(38, 255, 255);
-		} else if (_trackingColor == 2) {
-			_lowerThreshold = new Scalar(1, 150, 60); // Orange
-			_upperThreshold = new Scalar(60, 255, 255);
-		}
-		_showContourEnable = _sharedPreferences.getBoolean("contour", true);
+		_lowerThreshold = new Scalar(_minHue, _minSat, _minVal);
+		_upperThreshold = new Scalar(_maxHue, _maxSat, _maxVal);
+
 		_openCvCameraView = (JavaCameraView) findViewById(R.id.aav_activity_surface_view);
 		_openCvCameraView.setCvCameraViewListener(this);
-
 		_openCvCameraView.setMaxFrameSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-		_mainController = new ActuatorController();
+
+        _mainController = new ActuatorController();
 		_countOutOfFrame = 0;
 
-		_gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
-			@Override
-			public void onLongPress(MotionEvent e) {
-				startActivityForResult(new Intent(getApplicationContext(), SettingsActivity.class), 0);
-			}
-		});
 		mHandler = new MyHandler(this);
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		_showContourEnable = _sharedPreferences.getBoolean("contour", true);
-		_trackingColor = Integer.parseInt(_sharedPreferences.getString(getString(R.string.color_key), "0"));
 
-		switch (_trackingColor) {
-		case 0: // Green
-			_lowerThreshold.set(new double[] { 60, 150, 60, 0 });
-			_upperThreshold.set(new double[] { 130, 255, 255, 0 });
-			break;
-		case 1: // Yellow
-			_lowerThreshold.set(new double[] { 22, 150, 60 });
-			_upperThreshold.set(new double[] { 38, 255, 255, 0 });
-			break;
-		case 2: // Orange
-			_lowerThreshold.set(new double[] { 1, 150, 60 });
-			_upperThreshold.set(new double[] { 60, 255, 255, 0 });
-			break;
-		default:
-			_lowerThreshold.set(new double[] { 60, 150, 60, 0 });
-			_upperThreshold.set(new double[] { 130, 255, 255, 0 });
-			break;
-		}
+        _isContour = _sharedPref.getBoolean(getString(R.string.isContourKey), true);
+        _minHue = _sharedPref.getInt(getString(R.string.minHueKey), 0);
+        _maxHue = _sharedPref.getInt(getString(R.string.maxHueKey), R.integer.maxHueKey);
+        _minSat = _sharedPref.getInt(getString(R.string.minSatKey), 0);
+        _maxSat = _sharedPref.getInt(getString(R.string.maxSatKey), R.integer.maxSatValKey);
+        _minVal = _sharedPref.getInt(getString(R.string.minValKey), 0);
+        _maxVal = _sharedPref.getInt(getString(R.string.maxValKey), R.integer.maxSatValKey);
+
+		_lowerThreshold.set(new double[] { _minHue, _minSat, _minVal, 0 });
+		_upperThreshold.set(new double[] { _maxHue, _maxSat, _maxVal, 0 });
 	}
 
 	@Override
@@ -320,7 +304,7 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 		getWindow().getDecorView().setSystemUiVisibility(
 				View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
 						| View.SYSTEM_UI_FLAG_FULLSCREEN);
-		return _gestureDetector.onTouchEvent(event);
+		return true;
 	}
 
 	private void hideNavigationBar() {
@@ -374,7 +358,7 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 
 			if (!points.empty() && _contourArea > MIN_CONTOUR_AREA) {
 				Imgproc.minEnclosingCircle(points, _targetCenter, null);
-				if (_showContourEnable) {
+				if (_isContour) {
                     Imgproc.circle(_rgbaImage,
                             _targetCenter,
                             2,

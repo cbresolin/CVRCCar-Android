@@ -8,9 +8,5 @@
         android:entryValues="@array/color_values"
         android:key="@string/color_key"
         android:title="@string/tracking_color" />
-    <SwitchPreference
-        android:defaultValue="true"
-        android:key="contour"
-        android:title="Show contour" />
 
 </PreferenceScreen>

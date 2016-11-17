@@ -1,5 +1,7 @@
 package com.kreolite.androvision;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.CompoundButton;
@@ -31,11 +33,25 @@ public class SeekBarActivity extends AppCompatActivity {
     @InjectView(R.id.switchContour)
     Switch showContourControl;
 
+    SharedPreferences sharedPref;
+    SharedPreferences.Editor editor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_seekbar);
         ButterKnife.inject(this);
+
+        // Read current values if any, and change layout
+        sharedPref = getApplicationContext().getSharedPreferences(getString(R.string.settingsFileKey),
+                Context.MODE_PRIVATE);
+        showContourControl.setChecked(sharedPref.getBoolean(getString(R.string.isContourKey), true));
+        minHueControl.setProgress(sharedPref.getInt(getString(R.string.minHueKey), 0));
+        maxHueControl.setProgress(sharedPref.getInt(getString(R.string.maxHueKey), R.integer.maxHueKey));
+        minSatControl.setProgress(sharedPref.getInt(getString(R.string.minSatKey), 0));
+        maxSatControl.setProgress(sharedPref.getInt(getString(R.string.maxSatKey), R.integer.maxSatValKey));
+        minValControl.setProgress(sharedPref.getInt(getString(R.string.minValKey), 0));
+        maxValControl.setProgress(sharedPref.getInt(getString(R.string.maxValKey), R.integer.maxSatValKey));
 
         setMinHueControlListener();
         setMaxHueControlListener();
@@ -52,6 +68,9 @@ public class SeekBarActivity extends AppCompatActivity {
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                editor = sharedPref.edit();
+                editor.putBoolean(getString(R.string.isContourKey), isChecked);
+                editor.commit();
             }
         });
     }
@@ -65,6 +84,9 @@ public class SeekBarActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 minHueVal.setText(String.valueOf(progress));
+                editor = sharedPref.edit();
+                editor.putInt(getString(R.string.minHueKey), progress);
+                editor.commit();
             }
 
             @Override
@@ -87,6 +109,9 @@ public class SeekBarActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 maxHueVal.setText(String.valueOf(progress));
+                editor = sharedPref.edit();
+                editor.putInt(getString(R.string.maxHueKey), progress);
+                editor.commit();
             }
 
             @Override
@@ -109,6 +134,9 @@ public class SeekBarActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 minSatVal.setText(String.valueOf(progress));
+                editor = sharedPref.edit();
+                editor.putInt(getString(R.string.minSatKey), progress);
+                editor.commit();
             }
 
             @Override
@@ -131,6 +159,9 @@ public class SeekBarActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 maxSatVal.setText(String.valueOf(progress));
+                editor = sharedPref.edit();
+                editor.putInt(getString(R.string.maxSatKey), progress);
+                editor.commit();
             }
 
             @Override
@@ -153,6 +184,9 @@ public class SeekBarActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 minValVal.setText(String.valueOf(progress));
+                editor = sharedPref.edit();
+                editor.putInt(getString(R.string.minValKey), progress);
+                editor.commit();
             }
 
             @Override
@@ -175,6 +209,9 @@ public class SeekBarActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 maxValVal.setText(String.valueOf(progress));
+                editor = sharedPref.edit();
+                editor.putInt(getString(R.string.maxValKey), progress);
+                editor.commit();
             }
 
             @Override

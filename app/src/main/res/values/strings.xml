@@ -4,4 +4,21 @@
     <string name="settings">Settings</string>
     <string name="color_key">colorKey</string>
 	<string name="tracking_color">Tracking color</string>
+
+    <string name="settingsFileKey">settings</string>
+    <string name="isContourKey">isContour</string>
+    <string name="minHueKey">minHue</string>
+    <string name="maxHueKey">maxHue</string>
+    <string name="minValKey">minVal</string>
+    <string name="maxValKey">maxVal</string>
+    <string name="minSatKey">minSat</string>
+    <string name="maxSatKey">maxSat</string>
+    <string name="contour_settings">Contour Settings</string>
+    <string name="hue_settings">Hue Settings</string>
+    <string name="max">Max</string>
+    <string name="min">Min</string>
+    <string name="saturation_settings">Saturation Settings</string>
+    <string name="show_contour">Show Contour</string>
+    <string name="value_settings">Value Settings</string>
+
 </resources>
