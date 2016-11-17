@@ -60,23 +60,18 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 
 	private static final String _TAG = "carTrackerActivity";
 
-
-    // 1920x1080, 1334x750, 960x540, 720x348, 352x288
-	static final int SCREEN_WIDTH = 352;
-	static final int SCREEN_HEIGHT = 288;
-
-    // Contour area of 1500 was good for a resolution of 2073600 pixels
-    static final double MIN_CONTOUR_AREA = 1500/2073600 * (SCREEN_WIDTH * SCREEN_HEIGHT);
-
     static final double FORWARD_BOUNDARY_PERCENT = -0.15;
     static final double REVERSE_BOUNDARY_PERCENT = 0.3;
 
 	private Mat _rgbaImage;
+	private int _screenWidth = 0;
+	private int _screenHeight = 0;
 
 	private JavaCameraView _openCvCameraView;
 	private ActuatorController _mainController;
 
-	volatile double _contourArea = MIN_CONTOUR_AREA;
+    private long _minContourArea = 0;
+    volatile double _contourArea = 0;
 	volatile Point _targetCenter = new Point(-1, -1);
 	Point _screenCenter = new Point(-1, -1);
 	int _countOutOfFrame = 0;
@@ -89,9 +84,9 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 	final List<MatOfPoint> contours = new ArrayList<>();
 
     SharedPreferences _sharedPref;
-	GestureDetector _gestureDetector;
 
 	private boolean _isContour;
+	private boolean _isReso1, _isReso2, _isReso3, _isReso4;
     int _minHue, _maxHue;
     int _minSat, _maxSat;
     int _minVal, _maxVal;
@@ -224,26 +219,49 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 		setContentView(R.layout.activity_car);
 
-        _sharedPref = getApplicationContext().getSharedPreferences(getString(R.string.settingsFileKey),
+        _sharedPref = getApplicationContext().getSharedPreferences(getString(R.string.settings_file),
                 Context.MODE_PRIVATE);
-        _isContour = _sharedPref.getBoolean(getString(R.string.isContourKey), true);
-        _minHue = _sharedPref.getInt(getString(R.string.minHueKey), 0);
-        _maxHue = _sharedPref.getInt(getString(R.string.maxHueKey), R.integer.maxHueKey);
-        _minSat = _sharedPref.getInt(getString(R.string.minSatKey), 0);
-        _maxSat = _sharedPref.getInt(getString(R.string.maxSatKey), R.integer.maxSatValKey);
-        _minVal = _sharedPref.getInt(getString(R.string.minValKey), 0);
-        _maxVal = _sharedPref.getInt(getString(R.string.maxValKey), R.integer.maxSatValKey);
+        _isContour = _sharedPref.getBoolean(getString(R.string.is_contour), true);
+		_isReso1 = _sharedPref.getBoolean(getString(R.string.is_reso1), true);
+		_isReso2 = _sharedPref.getBoolean(getString(R.string.is_reso2), false);
+		_isReso3 = _sharedPref.getBoolean(getString(R.string.is_reso3), false);
+
+		// 1920x1080, 1280x720, 800x480 else 352x288
+		if (_isReso1) {
+			_screenWidth = 1920;
+			_screenHeight = 1080;
+		} else if (_isReso2) {
+			_screenWidth = 1280;
+			_screenHeight = 720;
+		} else if (_isReso3) {
+			_screenWidth = 800;
+			_screenHeight = 480;
+		}  else {
+			_screenWidth = 352;
+			_screenHeight = 288;
+		}
+
+        _minHue = _sharedPref.getInt(getString(R.string.min_hue), 0);
+        _maxHue = _sharedPref.getInt(getString(R.string.max_hue), R.integer.maxHueKey);
+        _minSat = _sharedPref.getInt(getString(R.string.min_sat), 0);
+        _maxSat = _sharedPref.getInt(getString(R.string.max_sat), R.integer.maxSatValKey);
+        _minVal = _sharedPref.getInt(getString(R.string.min_val), 0);
+        _maxVal = _sharedPref.getInt(getString(R.string.max_val), R.integer.maxSatValKey);
 
 		_lowerThreshold = new Scalar(_minHue, _minSat, _minVal);
 		_upperThreshold = new Scalar(_maxHue, _maxSat, _maxVal);
 
 		_openCvCameraView = (JavaCameraView) findViewById(R.id.aav_activity_surface_view);
 		_openCvCameraView.setCvCameraViewListener(this);
-		_openCvCameraView.setMaxFrameSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+		_openCvCameraView.setMaxFrameSize(_screenWidth, _screenHeight);
+
+		// Contour area of 1500 was good for a resolution of 1920x1080 pixels
+        _minContourArea = 1500L * (_screenWidth * _screenHeight) / (1920L * 1080L);
 
         _mainController = new ActuatorController();
 		_countOutOfFrame = 0;
@@ -255,13 +273,13 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
-        _isContour = _sharedPref.getBoolean(getString(R.string.isContourKey), true);
-        _minHue = _sharedPref.getInt(getString(R.string.minHueKey), 0);
-        _maxHue = _sharedPref.getInt(getString(R.string.maxHueKey), R.integer.maxHueKey);
-        _minSat = _sharedPref.getInt(getString(R.string.minSatKey), 0);
-        _maxSat = _sharedPref.getInt(getString(R.string.maxSatKey), R.integer.maxSatValKey);
-        _minVal = _sharedPref.getInt(getString(R.string.minValKey), 0);
-        _maxVal = _sharedPref.getInt(getString(R.string.maxValKey), R.integer.maxSatValKey);
+        _isContour = _sharedPref.getBoolean(getString(R.string.is_contour), true);
+        _minHue = _sharedPref.getInt(getString(R.string.min_hue), 0);
+        _maxHue = _sharedPref.getInt(getString(R.string.max_hue), R.integer.maxHueKey);
+        _minSat = _sharedPref.getInt(getString(R.string.min_sat), 0);
+        _maxSat = _sharedPref.getInt(getString(R.string.max_sat), R.integer.maxSatValKey);
+        _minVal = _sharedPref.getInt(getString(R.string.min_val), 0);
+        _maxVal = _sharedPref.getInt(getString(R.string.max_val), R.integer.maxSatValKey);
 
 		_lowerThreshold.set(new double[] { _minHue, _minSat, _minVal, 0 });
 		_upperThreshold.set(new double[] { _maxHue, _maxSat, _maxVal, 0 });
@@ -356,7 +374,7 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 				}
 			}
 
-			if (!points.empty() && _contourArea > MIN_CONTOUR_AREA) {
+			if (!points.empty() && _contourArea > _minContourArea) {
 				Imgproc.minEnclosingCircle(points, _targetCenter, null);
 				if (_isContour) {
                     Imgproc.circle(_rgbaImage,
@@ -381,7 +399,7 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
         String _pwmJsonValues, _pwmJsonNeutralValues;
 
         try {
-            if (_contourArea > MIN_CONTOUR_AREA) {
+            if (_contourArea > _minContourArea) {
                 _mainController.updateTargetPWM(_screenCenter, _targetCenter,
                         FORWARD_BOUNDARY_PERCENT,
                         REVERSE_BOUNDARY_PERCENT);

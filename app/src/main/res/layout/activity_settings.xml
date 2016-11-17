@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:visibility="visible"
+    android:orientation="vertical" >
+
+
+    <RadioGroup
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <RadioButton
+            android:text="@string/reso1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/radioButtonReso1"
+            android:textColor="@color/colorPrimary"
+            android:layout_weight="1" />
+
+        <RadioButton
+            android:text="@string/reso2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/radioButtonReso2"
+            android:textColor="@color/colorPrimary"
+            android:layout_weight="1" />
+
+        <RadioButton
+            android:text="@string/reso3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/radioButtonReso3"
+            android:textColor="@color/colorPrimary"
+            android:layout_weight="1" />
+
+        <RadioButton
+            android:text="@string/reso4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/radioButtonReso4"
+            android:textColor="@color/colorPrimary"
+            android:layout_weight="1" />
+    </RadioGroup>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/hue"
+        android:textColor="@color/colorPrimaryDark"
+        android:paddingStart="240dp"
+        android:paddingLeft="240dp"
+        tools:ignore="RtlSymmetry"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/textViewMinHueVal"
+            android:textColor="@color/colorAccent"
+            android:layout_margin="5dp"
+            android:textStyle="bold" />
+
+        <SeekBar
+            android:id="@+id/seekBarMinHue"
+            android:layout_width="fill_parent"
+            android:layout_margin="5dp"
+            android:max="@integer/maxHueKey"
+            android:layout_weight="1"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/textViewMaxHueVal"
+            android:textColor="@color/colorAccent"
+            android:layout_margin="5dp"
+            android:textStyle="bold" />
+
+        <SeekBar
+            android:id="@+id/seekBarMaxHue"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:max="@integer/maxHueKey"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/saturation"
+        android:textColor="@color/colorPrimaryDark"
+        android:paddingStart="220dp"
+        android:paddingLeft="220dp"
+        android:textStyle="bold"
+        tools:ignore="RtlSymmetry" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/textViewMinSatVal"
+            android:textColor="@color/colorAccent"
+            android:layout_margin="5dp"
+            android:textStyle="bold" />
+
+        <SeekBar
+            android:id="@+id/seekBarMinSat"
+            android:layout_width="fill_parent"
+            android:layout_margin="5dp"
+            android:max="@integer/maxSatValKey"
+            android:layout_weight="1"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/textViewMaxSatVal"
+            android:textColor="@color/colorAccent"
+            android:layout_margin="5dp"
+            android:textStyle="bold" />
+
+        <SeekBar
+            android:id="@+id/seekBarMaxSat"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:max="@integer/maxSatValKey"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/value"
+        android:textColor="@color/colorPrimaryDark"
+        android:paddingStart="240dp"
+        android:paddingEnd="0dp"
+        android:paddingLeft="240dp"
+        android:paddingRight="0dp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/textViewMinValVal"
+            android:textColor="@color/colorAccent"
+            android:layout_margin="5dp"
+            android:textStyle="bold" />
+
+        <SeekBar
+            android:id="@+id/seekBarMinVal"
+            android:layout_width="fill_parent"
+            android:layout_margin="5dp"
+            android:max="@integer/maxSatValKey"
+            android:layout_weight="1"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/textViewMaxValVal"
+            android:textColor="@color/colorAccent"
+            android:layout_margin="5dp"
+            android:textStyle="bold" />
+
+        <SeekBar
+            android:id="@+id/seekBarMaxVal"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:max="@integer/maxSatValKey"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Switch
+            android:text="@string/contour"
+            android:layout_width="0dp"
+            android:textColor="@color/colorPrimary"
+            android:id="@+id/switchContour"
+            android:layout_weight="2"
+            android:layout_height="wrap_content"
+            android:textStyle="bold" />
+
+        <TextView
+            android:text="@string/min_area"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/textViewMinArea"
+            android:layout_weight="1"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold" />
+
+        <EditText
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/editText"
+            android:layout_weight="1"
+            android:maxLines="1" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="@string/forward_boundary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/textViewForwardBoundary"
+            android:layout_weight="1"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold" />
+
+        <EditText
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:inputType="numberSigned"
+            android:ems="10"
+            android:id="@+id/editTextForwardBoundary"
+            android:layout_weight="1" />
+
+        <TextView
+            android:text="@string/reverse_boundary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/textViewReverseBoundary"
+            android:layout_weight="1"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold" />
+
+        <EditText
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:inputType="numberSigned"
+            android:ems="10"
+            android:id="@+id/editTextReverseBoundary"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+</LinearLayout>
