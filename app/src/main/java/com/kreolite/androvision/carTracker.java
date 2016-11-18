@@ -60,9 +60,6 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 
 	private static final String _TAG = "carTrackerActivity";
 
-    static final double FORWARD_BOUNDARY_PERCENT = -0.15;
-    static final double REVERSE_BOUNDARY_PERCENT = 0.3;
-
 	private Mat _rgbaImage;
 	private int _screenWidth = 0;
 	private int _screenHeight = 0;
@@ -70,10 +67,14 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 	private JavaCameraView _openCvCameraView;
 	private ActuatorController _mainController;
 
-    private long _minContourArea = 0;
     volatile double _contourArea = 0;
 	volatile Point _targetCenter = new Point(-1, -1);
 	Point _screenCenter = new Point(-1, -1);
+
+    private long _minContourArea = 0;
+    private double _forwardBoundaryPercent = -0.15;
+    private double _reverseBoundaryPercent = 0.3;
+
 	int _countOutOfFrame = 0;
 
 	Mat _hsvMat;
@@ -261,7 +262,12 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 		_openCvCameraView.setMaxFrameSize(_screenWidth, _screenHeight);
 
 		// Contour area of 1500 was good for a resolution of 1920x1080 pixels
-        _minContourArea = 1500L * (_screenWidth * _screenHeight) / (1920L * 1080L);
+        _minContourArea = Integer.parseInt(_sharedPref.getString(getString(R.string.min_contour_area), "1500"));
+        // Make it proportional to resolution actually used
+        _minContourArea = _minContourArea * (_screenWidth * _screenHeight) / (1920L * 1080L);
+
+        _forwardBoundaryPercent = Double.parseDouble(_sharedPref.getString(getString(R.string.forward_boundary_percent), "-15")) / 100;
+        _reverseBoundaryPercent = Double.parseDouble(_sharedPref.getString(getString(R.string.reverse_boundary_percent), "30")) / 100;
 
         _mainController = new ActuatorController();
 		_countOutOfFrame = 0;
@@ -288,10 +294,6 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 	@Override
 	public void onResume() {
 		super.onResume();
-
-		// if (!OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_1_0, this, mLoaderCallback)) {
-		// Log.e(_TAG, "Cannot connect to OpenCV Manager");
-		// }
 		mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
 		hideNavigationBar();
 		setFilters();  // Start listening notifications from UsbService
@@ -393,6 +395,7 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 			contours.clear();
 		}
 		return _rgbaImage;
+        // return _processedMat;
 	}
 
     private void updateActuator(){
@@ -401,8 +404,7 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
         try {
             if (_contourArea > _minContourArea) {
                 _mainController.updateTargetPWM(_screenCenter, _targetCenter,
-                        FORWARD_BOUNDARY_PERCENT,
-                        REVERSE_BOUNDARY_PERCENT);
+                        _forwardBoundaryPercent, _reverseBoundaryPercent);
                 _countOutOfFrame = 0;
             } else
             {

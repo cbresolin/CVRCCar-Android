@@ -26,4 +26,7 @@
     <string name="is_reso2">isReso2</string>
     <string name="is_reso3">isReso3</string>
     <string name="is_reso4">isReso4</string>
+    <string name="min_contour_area">min_contour_area</string>
+    <string name="forward_boundary_percent">forwardBoundary</string>
+    <string name="reverse_boundary_percent">reverseBoundaryPercent</string>
 </resources>
