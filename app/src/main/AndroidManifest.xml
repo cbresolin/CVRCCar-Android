@@ -53,6 +53,10 @@
             android:label="@string/settings"
             android:screenOrientation="landscape" >
         </activity>
+        <activity
+            android:name=".ColorBlobDetectionActivity"
+            android:screenOrientation="landscape" >
+        </activity>
         <service
             android:name=".UsbService"
             android:enabled="true">

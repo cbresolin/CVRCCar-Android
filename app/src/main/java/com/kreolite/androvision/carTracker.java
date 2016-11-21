@@ -395,7 +395,6 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 			contours.clear();
 		}
 		return _rgbaImage;
-        // return _processedMat;
 	}
 
     private void updateActuator(){

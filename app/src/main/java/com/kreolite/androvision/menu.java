@@ -90,6 +90,24 @@ public class menu extends AppCompatActivity {
         }
     }
 
+    public void colorBlobDetection(View view) {
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED) {
+            Intent intent = new Intent(this, ColorBlobDetectionActivity.class);
+            startActivity(intent);
+        }
+        else {
+            Context context = getApplicationContext();
+            CharSequence text = "Camera permissions not granted!";
+            int duration = Toast.LENGTH_SHORT;
+
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+        }
+    }
+
     public void settings(View view) {
 
         Intent intent = new Intent(this, settingsActivity.class);
