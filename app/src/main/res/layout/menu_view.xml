@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.kreolite.androvision.menu">
+    tools:context="com.kreolite.androvision.MenuActivity">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -14,16 +14,16 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ball Tracker"
-            android:onClick="carTracker"
+            android:text="Object Follower"
+            android:onClick="openObjectFollower"
             android:id="@+id/btnTracker"
             android:layout_weight="1"/>
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Settings"
-            android:onClick="settings"
+            android:text="Blob Detection"
+            android:onClick="openColorBlobDetection"
             android:layout_weight="1"/>
 
     </LinearLayout>
@@ -36,17 +36,17 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="Settings"
+            android:onClick="openSettings"
+            android:layout_weight="1"/>
+
+        <!--<Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="Camera"
             android:id="@+id/btnCamera"
             android:onClick="openCamera"
-            android:layout_weight="1"/>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Blob Detection"
-            android:onClick="colorBlobDetection"
-            android:layout_weight="1"/>
+            android:layout_weight="1"/>-->
 
     </LinearLayout>
 
