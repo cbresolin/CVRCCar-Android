@@ -34,7 +34,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".menu"
+            android:name=".MenuActivity"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -43,13 +43,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".camera"
+            android:name=".CameraActivity"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".carTracker"
+            android:name=".ObjectFollowerActivity"
             android:screenOrientation="landscape"/>
         <activity
-            android:name=".settingsActivity"
+            android:name=".SettingsActivity"
             android:label="@string/settings"
             android:screenOrientation="landscape" >
         </activity>

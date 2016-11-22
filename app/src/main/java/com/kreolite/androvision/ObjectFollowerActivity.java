@@ -30,7 +30,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -56,7 +55,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class carTracker extends AppCompatActivity implements CvCameraViewListener2 {
+public class ObjectFollowerActivity extends AppCompatActivity implements CvCameraViewListener2 {
 
 	private static final String _TAG = "carTrackerActivity";
 
@@ -192,9 +191,9 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
      * This handler will be passed to UsbService. Data received from serial port is displayed through this handler
      */
 	private static class MyHandler extends Handler {
-		private final WeakReference<carTracker> mActivity;
+		private final WeakReference<ObjectFollowerActivity> mActivity;
 
-		MyHandler(carTracker activity) {
+		MyHandler(ObjectFollowerActivity activity) {
 			mActivity = new WeakReference<>(activity);
 		}
 
@@ -223,7 +222,7 @@ public class carTracker extends AppCompatActivity implements CvCameraViewListene
 
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-		setContentView(R.layout.activity_car);
+		setContentView(R.layout.object_follower_view);
 
         _sharedPref = getApplicationContext().getSharedPreferences(getString(R.string.settings_file),
                 Context.MODE_PRIVATE);

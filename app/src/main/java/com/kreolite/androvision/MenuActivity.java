@@ -12,7 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-public class menu extends AppCompatActivity {
+public class MenuActivity extends AppCompatActivity {
 
     private static final String _TAG = "menuActivity";
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 0;
@@ -50,7 +50,7 @@ public class menu extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_menu);
+        setContentView(R.layout.menu_view);
         checkPermissions();
     }
 
@@ -59,7 +59,7 @@ public class menu extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED) {
-            Intent intent = new Intent(this, camera.class);
+            Intent intent = new Intent(this, CameraActivity.class);
             startActivity(intent);
         }
         else {
@@ -72,12 +72,12 @@ public class menu extends AppCompatActivity {
         }
     }
 
-    public void carTracker(View view) {
+    public void openObjectFollower(View view) {
 
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED) {
-            Intent intent = new Intent(this, carTracker.class);
+            Intent intent = new Intent(this, ObjectFollowerActivity.class);
             startActivity(intent);
         }
         else {
@@ -90,7 +90,7 @@ public class menu extends AppCompatActivity {
         }
     }
 
-    public void colorBlobDetection(View view) {
+    public void openColorBlobDetection(View view) {
 
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.CAMERA)
@@ -108,9 +108,9 @@ public class menu extends AppCompatActivity {
         }
     }
 
-    public void settings(View view) {
+    public void openSettings(View view) {
 
-        Intent intent = new Intent(this, settingsActivity.class);
+        Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
 }

@@ -17,7 +17,7 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 
-public class camera extends AppCompatActivity implements CvCameraViewListener2 {
+public class CameraActivity extends AppCompatActivity implements CvCameraViewListener2 {
     private static final String    TAG = "androVision::Camera";
 
     private static final int       VIEW_MODE_RGBA     = 0;
@@ -54,7 +54,7 @@ public class camera extends AppCompatActivity implements CvCameraViewListener2 {
         }
     };
 
-    public camera() {
+    public CameraActivity() {
         Log.i(TAG, "Instantiated new " + this.getClass());
     }
 
@@ -65,7 +65,7 @@ public class camera extends AppCompatActivity implements CvCameraViewListener2 {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        setContentView(R.layout.activity_camera);
+        setContentView(R.layout.camera_view);
 
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.activity_camera);
         mOpenCvCameraView.setVisibility(CameraBridgeViewBase.VISIBLE);

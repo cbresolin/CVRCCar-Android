@@ -17,7 +17,7 @@ import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public class settingsActivity extends AppCompatActivity {
+public class SettingsActivity extends AppCompatActivity {
 
     @InjectView(R.id.seekBarMinHue)
     SeekBar minHueControl;
@@ -55,7 +55,7 @@ public class settingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
+        setContentView(R.layout.settings_view);
         ButterKnife.inject(this);
 
         // Read current values if any, and change layout
