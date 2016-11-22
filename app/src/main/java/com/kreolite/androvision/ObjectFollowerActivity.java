@@ -231,13 +231,13 @@ public class ObjectFollowerActivity extends AppCompatActivity implements CvCamer
 		_isReso2 = _sharedPref.getBoolean(getString(R.string.is_reso2), false);
 		_isReso3 = _sharedPref.getBoolean(getString(R.string.is_reso3), false);
 
-		// 1920x1080, 1280x720, 800x480 else 352x288
+		// 1920x1080, 1280x960, 800x480 else 352x288
 		if (_isReso1) {
 			_screenWidth = 1920;
 			_screenHeight = 1080;
 		} else if (_isReso2) {
 			_screenWidth = 1280;
-			_screenHeight = 720;
+			_screenHeight = 960;
 		} else if (_isReso3) {
 			_screenWidth = 800;
 			_screenHeight = 480;

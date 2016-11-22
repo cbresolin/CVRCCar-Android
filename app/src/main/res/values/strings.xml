@@ -17,7 +17,7 @@
     <string name="min_area">Min Area</string>
     <string name="resolution">Resolution</string>
     <string name="reso1">1920x1080</string>
-    <string name="reso2">1280x720</string>
+    <string name="reso2">1280x960</string>
     <string name="reso3">800x480</string>
     <string name="reso4">352x288</string>
     <string name="forward_boundary">Forward Boundary (%)</string>

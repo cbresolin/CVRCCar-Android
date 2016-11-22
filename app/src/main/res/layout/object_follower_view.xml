@@ -7,6 +7,6 @@
         android:id="@+id/aav_activity_surface_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        opencv:camera_id="any"
+        opencv:camera_id="back"
         opencv:show_fps="true" />
 </LinearLayout>
