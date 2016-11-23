@@ -1,7 +1,5 @@
 package com.kreolite.androvision;
 
-import java.util.List;
-
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
 import org.opencv.android.LoaderCallbackInterface;
@@ -9,8 +7,6 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
@@ -33,6 +29,7 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     private static final String  TAG              = "OCVSample::Activity";
     private static final int ZOOM = 8;
     private static Scalar COLOR_RADIUS = new Scalar(25,60,60,0);
+    volatile Point targetCenter = new Point(-1, -1);
 
     private boolean              mIsColorSelected = false;
     private Mat                  mRgba;
@@ -42,8 +39,6 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     private Mat                  mSpectrum;
     private Size                 SPECTRUM_SIZE;
     private Scalar               CONTOUR_COLOR;
-
-    volatile Point targetCenter = new Point(-1, -1);
 
     private CameraBridgeViewBase mOpenCvCameraView;
 
@@ -183,7 +178,17 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
 
             mDetector.findCircles(mRgba);
             Mat circles = mDetector.getCircles();
-            Log.e(TAG, "Circles count: " + circles.size());
+            Log.e(TAG, "Circles count: " + circles.rows());
+
+            for (int i = 0, n = circles.rows(); i < n; i++) {
+                double[] circleCoordinates = circles.get(0, i);
+                int x = (int) circleCoordinates[0], y = (int) circleCoordinates[1];
+
+                targetCenter = new Point(x, y);
+                int radius = (int) circleCoordinates[2];
+                Imgproc.circle(mRgba, targetCenter, radius, CONTOUR_COLOR, 0);
+                Imgproc.circle(mRgba, targetCenter, 2, CONTOUR_COLOR, Core.FILLED);
+            }
 
             /* mDetector.process(mRgba);
             List<MatOfPoint> contours = mDetector.getContours();
