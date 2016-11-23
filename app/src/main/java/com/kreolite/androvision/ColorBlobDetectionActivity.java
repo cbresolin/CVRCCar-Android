@@ -10,6 +10,8 @@ import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
@@ -40,6 +42,8 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     private Mat                  mSpectrum;
     private Size                 SPECTRUM_SIZE;
     private Scalar               CONTOUR_COLOR;
+
+    volatile Point targetCenter = new Point(-1, -1);
 
     private CameraBridgeViewBase mOpenCvCameraView;
 
@@ -176,10 +180,24 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         mRgba = inputFrame.rgba();
 
         if (mIsColorSelected) {
-            mDetector.process(mRgba);
+
+            mDetector.findCircles(mRgba);
+            Mat circles = mDetector.getCircles();
+            Log.e(TAG, "Circles count: " + circles.size());
+
+            /* mDetector.process(mRgba);
             List<MatOfPoint> contours = mDetector.getContours();
             Log.e(TAG, "Contours count: " + contours.size());
             Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR, 3);
+
+            MatOfPoint2f points = new MatOfPoint2f();
+            for (int i = 0, n = contours.size(); i < n; i++) {
+                // contours.get(x) is a single MatOfPoint, but to use minEnclosingCircle we need to pass a MatOfPoint2f so we need to do a
+                // conversion
+                contours.get(i).convertTo(points, CvType.CV_32FC2);
+                Imgproc.minEnclosingCircle(points, targetCenter, null);
+                Imgproc.circle(mRgba, targetCenter, 3, CONTOUR_COLOR, Core.FILLED);
+            }*/
 
             Mat colorLabel = mRgba.submat(4, 68, 4, 68);
             colorLabel.setTo(mBlobColorRgba);

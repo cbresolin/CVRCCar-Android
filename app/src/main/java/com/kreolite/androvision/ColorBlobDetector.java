@@ -9,6 +9,7 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 public class ColorBlobDetector {
@@ -21,6 +22,7 @@ public class ColorBlobDetector {
     private Scalar mColorRadius = new Scalar(25,50,50,0);
     private Mat mSpectrum = new Mat();
     private List<MatOfPoint> mContours = new ArrayList<MatOfPoint>();
+    private Mat mCircles = new Mat();
 
     // Cache
     Mat mPyrDownMat = new Mat();
@@ -28,6 +30,7 @@ public class ColorBlobDetector {
     Mat mMask = new Mat();
     Mat mDilatedMask = new Mat();
     Mat mHierarchy = new Mat();
+    Mat mGreyScaleMat = new Mat();
 
     public void setColorRadius(Scalar radius) {
         mColorRadius = radius;
@@ -107,5 +110,15 @@ public class ColorBlobDetector {
 
     public List<MatOfPoint> getContours() {
         return mContours;
+    }
+
+    public void findCircles(Mat rgbaImage) {
+        Imgproc.cvtColor(rgbaImage, mGreyScaleMat, Imgproc.COLOR_RGB2GRAY);
+        Imgproc.GaussianBlur(mGreyScaleMat, mGreyScaleMat, new Size(9,9), 2, 2);
+        Imgproc.HoughCircles(mGreyScaleMat, mCircles, Imgproc.CV_HOUGH_GRADIENT, 1, mGreyScaleMat.rows()/8, 200, 100, 0, 0);
+    }
+
+    public Mat getCircles() {
+        return mCircles;
     }
 }
