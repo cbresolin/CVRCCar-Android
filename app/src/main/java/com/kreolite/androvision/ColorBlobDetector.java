@@ -34,17 +34,20 @@ public class ColorBlobDetector {
     }
 
     public void setHsvColor(Scalar hsvColor) {
-        double minH = (hsvColor.val[0] >= mColorRadius.val[0]) ? hsvColor.val[0]-mColorRadius.val[0] : 0;
-        double maxH = (hsvColor.val[0]+mColorRadius.val[0] <= 255) ? hsvColor.val[0]+mColorRadius.val[0] : 255;
-
+        double minH = (hsvColor.val[0] >= mColorRadius.val[0]) ? hsvColor.val[0] - mColorRadius.val[0] : 0;
+        double maxH = (hsvColor.val[0] + mColorRadius.val[0] <= 179) ? hsvColor.val[0] + mColorRadius.val[0] : 179;
         mLowerBound.val[0] = minH;
         mUpperBound.val[0] = maxH;
 
-        mLowerBound.val[1] = hsvColor.val[1] - mColorRadius.val[1];
-        mUpperBound.val[1] = hsvColor.val[1] + mColorRadius.val[1];
+        double minS = (hsvColor.val[1] >= mColorRadius.val[1]) ? hsvColor.val[1] - mColorRadius.val[1] : 0;
+        double maxS = (hsvColor.val[1] + mColorRadius.val[1] <= 255) ? hsvColor.val[1] + mColorRadius.val[1] : 255;
+        mLowerBound.val[1] = minS;
+        mUpperBound.val[1] = maxS;
 
-        mLowerBound.val[2] = hsvColor.val[2] - mColorRadius.val[2];
-        mUpperBound.val[2] = hsvColor.val[2] + mColorRadius.val[2];
+        double minV = (hsvColor.val[2] >= mColorRadius.val[2]) ? hsvColor.val[2] - mColorRadius.val[2] : 0;
+        double maxV = (hsvColor.val[2] + mColorRadius.val[2] <= 255) ? hsvColor.val[2] + mColorRadius.val[2] : 255;
+        mLowerBound.val[2] = minV;
+        mUpperBound.val[2] = maxV;
 
         mLowerBound.val[3] = 0;
         mUpperBound.val[3] = 255;
@@ -68,11 +71,11 @@ public class ColorBlobDetector {
     }
 
     public void process(Mat rgbaImage) {
-        Imgproc.pyrDown(rgbaImage, mPyrDownMat);
-        Imgproc.pyrDown(mPyrDownMat, mPyrDownMat);
+        // Imgproc.pyrDown(rgbaImage, mPyrDownMat);
+        // Imgproc.pyrDown(mPyrDownMat, mPyrDownMat);
+        // Imgproc.cvtColor(mPyrDownMat, mHsvMat, Imgproc.COLOR_RGB2HSV_FULL);
 
-        Imgproc.cvtColor(mPyrDownMat, mHsvMat, Imgproc.COLOR_RGB2HSV_FULL);
-
+        Imgproc.cvtColor(rgbaImage, mHsvMat, Imgproc.COLOR_RGB2HSV_FULL);
         Core.inRange(mHsvMat, mLowerBound, mUpperBound, mMask);
         Imgproc.dilate(mMask, mDilatedMask, new Mat());
 
@@ -96,7 +99,7 @@ public class ColorBlobDetector {
         while (each.hasNext()) {
             MatOfPoint contour = each.next();
             if (Imgproc.contourArea(contour) > mMinContourArea*maxArea) {
-                Core.multiply(contour, new Scalar(4,4), contour);
+                // Core.multiply(contour, new Scalar(4,4,0,0), contour);
                 mContours.add(contour);
             }
         }

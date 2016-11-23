@@ -48,6 +48,7 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import java.lang.ref.WeakReference;
@@ -60,8 +61,7 @@ public class ObjectFollowerActivity extends AppCompatActivity implements CvCamer
 	private static final String _TAG = "carTrackerActivity";
 
 	private Mat _rgbaImage;
-	private int _screenWidth = 0;
-	private int _screenHeight = 0;
+	private Size SCREEN_SIZE;
 
 	private JavaCameraView _openCvCameraView;
 	private ActuatorController _mainController;
@@ -233,17 +233,13 @@ public class ObjectFollowerActivity extends AppCompatActivity implements CvCamer
 
 		// 1920x1080, 1280x960, 800x480 else 352x288
 		if (_isReso1) {
-			_screenWidth = 1920;
-			_screenHeight = 1080;
+            SCREEN_SIZE = new Size(1920, 1080);
 		} else if (_isReso2) {
-			_screenWidth = 1280;
-			_screenHeight = 960;
+            SCREEN_SIZE = new Size(1280, 960);
 		} else if (_isReso3) {
-			_screenWidth = 800;
-			_screenHeight = 480;
+            SCREEN_SIZE = new Size(800, 480);
 		}  else {
-			_screenWidth = 352;
-			_screenHeight = 288;
+            SCREEN_SIZE = new Size(352, 288);
 		}
 
         _minHue = _sharedPref.getInt(getString(R.string.min_hue), 0);
@@ -258,12 +254,12 @@ public class ObjectFollowerActivity extends AppCompatActivity implements CvCamer
 
 		_openCvCameraView = (JavaCameraView) findViewById(R.id.aav_activity_surface_view);
 		_openCvCameraView.setCvCameraViewListener(this);
-		_openCvCameraView.setMaxFrameSize(_screenWidth, _screenHeight);
+		_openCvCameraView.setMaxFrameSize((int) SCREEN_SIZE.width, (int) SCREEN_SIZE.height);
 
 		// Contour area of 1500 was good for a resolution of 1920x1080 pixels
         _minContourArea = Integer.parseInt(_sharedPref.getString(getString(R.string.min_contour_area), "1500"));
         // Make it proportional to resolution actually used
-        _minContourArea = _minContourArea * (_screenWidth * _screenHeight) / (1920L * 1080L);
+        _minContourArea = _minContourArea * ((long) SCREEN_SIZE.width * (long) SCREEN_SIZE.height) / (1920L * 1080L);
 
         _forwardBoundaryPercent = Double.parseDouble(_sharedPref.getString(getString(R.string.forward_boundary_percent), "-15")) / 100;
         _reverseBoundaryPercent = Double.parseDouble(_sharedPref.getString(getString(R.string.reverse_boundary_percent), "30")) / 100;

@@ -29,6 +29,8 @@ import android.view.SurfaceView;
 
 public class ColorBlobDetectionActivity extends Activity implements OnTouchListener, CvCameraViewListener2 {
     private static final String  TAG              = "OCVSample::Activity";
+    private static final int ZOOM = 8;
+    private static Scalar COLOR_RADIUS = new Scalar(25,60,60,0);
 
     private boolean              mIsColorSelected = false;
     private Mat                  mRgba;
@@ -108,6 +110,7 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     public void onCameraViewStarted(int width, int height) {
         mRgba = new Mat(height, width, CvType.CV_8UC4);
         mDetector = new ColorBlobDetector();
+        mDetector.setColorRadius(COLOR_RADIUS);
         mSpectrum = new Mat();
         mBlobColorRgba = new Scalar(255);
         mBlobColorHsv = new Scalar(255);
@@ -135,11 +138,11 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
 
         Rect touchedRect = new Rect();
 
-        touchedRect.x = (x>4) ? x-4 : 0;
-        touchedRect.y = (y>4) ? y-4 : 0;
+        touchedRect.x = (x>ZOOM) ? x-ZOOM : 0;
+        touchedRect.y = (y>ZOOM) ? y-ZOOM : 0;
 
-        touchedRect.width = (x+4 < cols) ? x + 4 - touchedRect.x : cols - touchedRect.x;
-        touchedRect.height = (y+4 < rows) ? y + 4 - touchedRect.y : rows - touchedRect.y;
+        touchedRect.width = (x+ZOOM < cols) ? x + ZOOM - touchedRect.x : cols - touchedRect.x;
+        touchedRect.height = (y+ZOOM < rows) ? y + ZOOM - touchedRect.y : rows - touchedRect.y;
 
         Mat touchedRegionRgba = mRgba.submat(touchedRect);
 
@@ -176,7 +179,7 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
             mDetector.process(mRgba);
             List<MatOfPoint> contours = mDetector.getContours();
             Log.e(TAG, "Contours count: " + contours.size());
-            Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR);
+            Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR, 3);
 
             Mat colorLabel = mRgba.submat(4, 68, 4, 68);
             colorLabel.setTo(mBlobColorRgba);
