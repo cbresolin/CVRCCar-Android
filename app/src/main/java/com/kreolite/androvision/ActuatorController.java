@@ -28,6 +28,12 @@ import java.util.Random;
 public class ActuatorController {
 	private static final String _TAG = "ActuatorController";
 
+    /* Pan values */
+    public static final int RIGHT_FULL_TURN_PAN_PWM = 2400;
+    public static final int LEFT_FULL_TURN_PAN_PWM = 900;
+    public static final int CENTER_PAN_PWM = 1680;
+    public double _pwmPan;
+
     /* Steering values */
 	public static final int RIGHT_FULL_TURN_WHEELS_PWM = 1910;
 	public static final int LEFT_FULL_TURN_WHEELS_PWM = 1360;
@@ -44,7 +50,8 @@ public class ActuatorController {
 
 	public ActuatorController() {
 		// set the pulse width to be exactly the middle
-		_pwmMotor = MOTOR_NEUTRAL_PWM;
+        _pwmPan = CENTER_PAN_PWM;
+        _pwmMotor = MOTOR_NEUTRAL_PWM;
 		_pwmFrontWheels = CENTER_FRONT_WHEELS_PWM;
 
 		// _irSensors = new IRSensors();
@@ -60,8 +67,9 @@ public class ActuatorController {
 	public synchronized String getPWMValuesToJson() {
 		try {
 			JSONObject jsonObj = new JSONObject();
-			jsonObj.put("throttle", (int)_pwmMotor);
-			jsonObj.put("steering", (int)_pwmFrontWheels);
+            jsonObj.put("pan", (int)_pwmPan);
+            jsonObj.put("steering", (int)_pwmFrontWheels);
+            jsonObj.put("throttle", (int)_pwmMotor);
 			return jsonObj.toString();
 		} catch (JSONException e) {
 			Log.e(_TAG, e.getMessage());
@@ -72,8 +80,9 @@ public class ActuatorController {
     public String getPWMNeutralValuesToJson() {
         try {
             JSONObject jsonObj = new JSONObject();
-            jsonObj.put("throttle", MOTOR_NEUTRAL_PWM);
+            jsonObj.put("pan", (int)_pwmPan);
             jsonObj.put("steering", (int)_pwmFrontWheels);
+            jsonObj.put("throttle", MOTOR_NEUTRAL_PWM);
             return jsonObj.toString();
         } catch (JSONException e) {
             Log.e(_TAG, e.getMessage());
@@ -83,28 +92,38 @@ public class ActuatorController {
 
 	public void updateTargetPWM(Point screenCenter,
                                 Point targetCenter,
+                                double panBoundaryPercent,
                                 double forwardBoundaryPercent,
                                 double reverseBoundaryPercent) throws InterruptedException {
 
         // if (!_irSensors.foundObstacle())
 
-		// Compute throttle
-        if (targetCenter.y < (screenCenter.y - forwardBoundaryPercent*screenCenter.y * 2))
-            _pwmMotor = MOTOR_FORWARD_PWM;
-        else if (targetCenter.y > (screenCenter.y + reverseBoundaryPercent * screenCenter.y * 2))
-            _pwmMotor = MOTOR_REVERSE_PWM;
-        else _pwmMotor = MOTOR_NEUTRAL_PWM;
+        // Compute pan
+        if (targetCenter.x < (screenCenter.x - panBoundaryPercent*screenCenter.x * 2))
+            _pwmPan -= 30;
+        else if (targetCenter.x > (screenCenter.x + panBoundaryPercent*screenCenter.x * 2))
+            _pwmPan += 30;
 
         // Compute steering
         if (!isReversing())
             _pwmFrontWheels = ((RIGHT_FULL_TURN_WHEELS_PWM - LEFT_FULL_TURN_WHEELS_PWM) / (screenCenter.x * 2)) * targetCenter.x + LEFT_FULL_TURN_WHEELS_PWM;
         else
             _pwmFrontWheels = ((LEFT_FULL_TURN_WHEELS_PWM - RIGHT_FULL_TURN_WHEELS_PWM) / (screenCenter.x * 2)) * targetCenter.x + RIGHT_FULL_TURN_WHEELS_PWM;
+
+        // Compute throttle
+        if (targetCenter.y < (screenCenter.y - forwardBoundaryPercent*screenCenter.y * 2))
+            // _pwmMotor = MOTOR_FORWARD_PWM;
+            _pwmMotor = MOTOR_NEUTRAL_PWM;
+        else if (targetCenter.y > (screenCenter.y + reverseBoundaryPercent * screenCenter.y * 2))
+            // _pwmMotor = MOTOR_REVERSE_PWM;
+            _pwmMotor = MOTOR_NEUTRAL_PWM;
+        else _pwmMotor = MOTOR_NEUTRAL_PWM;
 	}
 
     public void reset() {
-		_pwmMotor = MOTOR_NEUTRAL_PWM;
-		_pwmFrontWheels = CENTER_FRONT_WHEELS_PWM;
+        _pwmPan = CENTER_PAN_PWM;
+        _pwmFrontWheels = CENTER_FRONT_WHEELS_PWM;
+        _pwmMotor = MOTOR_NEUTRAL_PWM;
 	}
 
 	/*class IRSensors {

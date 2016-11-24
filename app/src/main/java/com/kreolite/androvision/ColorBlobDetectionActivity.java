@@ -69,6 +69,7 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     private MyHandler                          mHandler;
     private SharedPreferences                  sharedPref;
     private boolean                            isReso1, isReso2, isReso3, isReso4;
+    private double                             panBoundaryPercent = 0.10;
     private double                             forwardBoundaryPercent = -0.15;
     private double                             reverseBoundaryPercent = 0.3;
     int                                        countOutOfFrame = 0;
@@ -130,9 +131,9 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         mOpenCvCameraView.setCvCameraViewListener(this);
         mOpenCvCameraView.setMaxFrameSize((int) SCREEN_SIZE.width, (int) SCREEN_SIZE.height);
 
-        minRadiusPercent = sharedPref.getInt(getString(R.string.min_radius), R.integer.minRadiusPercent);
+        minRadiusPercent = sharedPref.getInt(getString(R.string.min_radius), 0);
         minRadius = minRadiusPercent * (((long) SCREEN_SIZE.height) / 100L);
-        maxRadiusPercent = sharedPref.getInt(getString(R.string.max_radius), R.integer.maxRadiusPercent);
+        maxRadiusPercent = sharedPref.getInt(getString(R.string.max_radius), 0);
         maxRadius = maxRadiusPercent * (((long) SCREEN_SIZE.height) / 100L);
 
         forwardBoundaryPercent = Double.parseDouble(sharedPref.getString(getString(R.string.forward_boundary_percent), "-15")) / 100;
@@ -412,8 +413,11 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
 
         try {
             if (mCircleNum > 0) {
-                carController.updateTargetPWM(screenCenter, targetCenter,
-                        forwardBoundaryPercent, reverseBoundaryPercent);
+                carController.updateTargetPWM(screenCenter,
+                        targetCenter,
+                        panBoundaryPercent,
+                        forwardBoundaryPercent,
+                        reverseBoundaryPercent);
                 countOutOfFrame = 0;
             } else {
                 countOutOfFrame++;
