@@ -72,24 +72,6 @@ public class MenuActivity extends AppCompatActivity {
         }
     }
 
-    public void openObjectFollower(View view) {
-
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.CAMERA)
-                == PackageManager.PERMISSION_GRANTED) {
-            Intent intent = new Intent(this, ObjectFollowerActivity.class);
-            startActivity(intent);
-        }
-        else {
-            Context context = getApplicationContext();
-            CharSequence text = "Camera permissions not granted!";
-            int duration = Toast.LENGTH_SHORT;
-
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
-        }
-    }
-
     public void openColorBlobDetection(View view) {
 
         if (ContextCompat.checkSelfPermission(this,

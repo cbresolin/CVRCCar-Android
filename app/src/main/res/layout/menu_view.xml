@@ -14,14 +14,6 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Object Follower"
-            android:onClick="openObjectFollower"
-            android:id="@+id/btnTracker"
-            android:layout_weight="1"/>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:text="Blob Detection"
             android:onClick="openColorBlobDetection"
             android:layout_weight="1"/>

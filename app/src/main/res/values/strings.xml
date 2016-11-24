@@ -2,19 +2,9 @@
     <string name="app_name">CVRCCar</string>
     <string name="settings">Settings</string>
     <string name="settings_file">settings</string>
-    <string name="is_contour">isContour</string>
-    <string name="min_hue">minHue</string>
-    <string name="max_hue">maxHue</string>
-    <string name="min_val">minVal</string>
-    <string name="max_val">maxVal</string>
-    <string name="min_sat">minSat</string>
-    <string name="max_sat">maxSat</string>
-    <string name="other">Other</string>
-    <string name="hue">Hue (min-max)</string>
-    <string name="saturation">Saturation (min-max)</string>
-    <string name="contour">Contour</string>
-    <string name="value">Value (min-max)</string>
-    <string name="min_area">Min Area</string>
+    <string name="radius">Radius (min % - max % of screen height)</string>
+    <string name="min_radius">minRadius</string>
+    <string name="max_radius">maxRadius</string>
     <string name="resolution">Resolution</string>
     <string name="reso1">1920x1080</string>
     <string name="reso2">1280x960</string>
@@ -26,7 +16,6 @@
     <string name="is_reso2">isReso2</string>
     <string name="is_reso3">isReso3</string>
     <string name="is_reso4">isReso4</string>
-    <string name="min_contour_area">min_contour_area</string>
     <string name="forward_boundary_percent">forwardBoundary</string>
     <string name="reverse_boundary_percent">reverseBoundaryPercent</string>
 </resources>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <integer name="maxHueKey">179</integer>
-    <integer name="maxSatValKey">255</integer>
+    <integer name="minRadiusPercent">0</integer>
+    <integer name="maxRadiusPercent">100</integer>
 </resources>

@@ -19,20 +19,11 @@ import butterknife.InjectView;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    @InjectView(R.id.seekBarMinHue)
-    SeekBar minHueControl;
-    @InjectView(R.id.seekBarMaxHue)
-    SeekBar maxHueControl;
-    @InjectView(R.id.seekBarMinSat)
-    SeekBar minSatControl;
-    @InjectView(R.id.seekBarMaxSat)
-    SeekBar maxSatControl;
-    @InjectView(R.id.seekBarMinVal)
-    SeekBar minValControl;
-    @InjectView(R.id.seekBarMaxVal)
-    SeekBar maxValControl;
-    @InjectView(R.id.switchContour)
-    Switch showContourControl;
+    @InjectView(R.id.seekBarMinRadiusVal)
+    SeekBar minRadiusControl;
+    @InjectView(R.id.seekBarMaxRadiusVal)
+    SeekBar maxRadiusControl;
+
     @InjectView(R.id.radioButtonReso1)
     RadioButton reso1Control;
     @InjectView(R.id.radioButtonReso2)
@@ -42,8 +33,6 @@ public class SettingsActivity extends AppCompatActivity {
     @InjectView(R.id.radioButtonReso4)
     RadioButton reso4Control;
 
-    @InjectView(R.id.editTextMinArea)
-    EditText minContourAreaControl;
     @InjectView(R.id.editTextForwardBoundary)
     EditText forwardBoundaryControl;
     @InjectView(R.id.editTextReverseBoundary)
@@ -65,53 +54,19 @@ public class SettingsActivity extends AppCompatActivity {
         reso2Control.setChecked(sharedPref.getBoolean(getString(R.string.is_reso2), false));
         reso3Control.setChecked(sharedPref.getBoolean(getString(R.string.is_reso3), false));
         reso4Control.setChecked(sharedPref.getBoolean(getString(R.string.is_reso4), false));
-        showContourControl.setChecked(sharedPref.getBoolean(getString(R.string.is_contour), true));
-        minHueControl.setProgress(sharedPref.getInt(getString(R.string.min_hue), 0));
-        maxHueControl.setProgress(sharedPref.getInt(getString(R.string.max_hue), R.integer.maxHueKey));
-        minSatControl.setProgress(sharedPref.getInt(getString(R.string.min_sat), 0));
-        maxSatControl.setProgress(sharedPref.getInt(getString(R.string.max_sat), R.integer.maxSatValKey));
-        minValControl.setProgress(sharedPref.getInt(getString(R.string.min_val), 0));
-        maxValControl.setProgress(sharedPref.getInt(getString(R.string.max_val), R.integer.maxSatValKey));
-        minContourAreaControl.setText(sharedPref.getString(getString(R.string.min_contour_area), "1500"));
+        minRadiusControl.setProgress(sharedPref.getInt(getString(R.string.min_radius), 0));
+        maxRadiusControl.setProgress(sharedPref.getInt(getString(R.string.max_radius), 0));
         forwardBoundaryControl.setText(sharedPref.getString(getString(R.string.forward_boundary_percent), "-15"));
         reverseBoundaryControl.setText(sharedPref.getString(getString(R.string.reverse_boundary_percent), "30"));
 
-        setMinHueControlListener();
-        setMaxHueControlListener();
-        setMinSatControlListener();
-        setMaxSatControlListener();
-        setMinValControlListener();
-        setMaxValControlListener();
-        setShowContourControlListener();
         setReso1ControlListener();
         setReso2ControlListener();
         setReso3ControlListener();
         setReso4ControlListener();
-        setMinContourAreaControlListener();
+        setMinRadiusControlListener();
+        setMaxRadiusControlListener();
         setForwardBoundaryControlListener();
         setReverseBoundaryControlListener();
-    }
-
-    private void setMinContourAreaControlListener() {
-
-        minContourAreaControl.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                editor = sharedPref.edit();
-                editor.putString(getString(R.string.min_contour_area), minContourAreaControl.getText().toString());
-                editor.commit();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
     }
 
     private void setForwardBoundaryControlListener() {
@@ -154,19 +109,6 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
 
-            }
-        });
-    }
-
-    private void setShowContourControlListener() {
-
-        showContourControl.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                editor = sharedPref.edit();
-                editor.putBoolean(getString(R.string.is_contour), isChecked);
-                editor.commit();
             }
         });
     }
@@ -223,17 +165,18 @@ public class SettingsActivity extends AppCompatActivity {
         });
     }
 
-    private void setMinHueControlListener() {
+    private void setMinRadiusControlListener() {
 
-        final TextView minHueVal = (TextView)findViewById(R.id.textViewMinHueVal);
-        minHueVal.setText(String.valueOf(minHueControl.getProgress()));
+        final TextView minRadiusVal = (TextView)findViewById(R.id.textViewMinRadiusVal);
+        minRadiusVal.setText(String.valueOf(minRadiusControl.getProgress()));
 
-        minHueControl.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+        minRadiusControl.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                minHueVal.setText(String.valueOf(progress));
+                minRadiusVal.setText(String.valueOf(progress));
                 editor = sharedPref.edit();
-                editor.putInt(getString(R.string.min_hue), progress);
+                editor.putInt(getString(R.string.min_radius), progress);
                 editor.commit();
             }
 
@@ -247,118 +190,18 @@ public class SettingsActivity extends AppCompatActivity {
         });
     }
 
-    private void setMaxHueControlListener() {
+    private void setMaxRadiusControlListener() {
 
-        final TextView maxHueVal = (TextView)findViewById(R.id.textViewMaxHueVal);
-        maxHueVal.setText(String.valueOf(maxHueControl.getProgress()));
+        final TextView maxRadiusVal = (TextView)findViewById(R.id.textViewMaxRadiusVal);
+        maxRadiusVal.setText(String.valueOf(maxRadiusControl.getProgress()));
 
-        maxHueControl.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                maxHueVal.setText(String.valueOf(progress));
-                editor = sharedPref.edit();
-                editor.putInt(getString(R.string.max_hue), progress);
-                editor.commit();
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-        });
-    }
-
-    private void setMinSatControlListener() {
-
-        final TextView minSatVal = (TextView)findViewById(R.id.textViewMinSatVal);
-        minSatVal.setText(String.valueOf(minSatControl.getProgress()));
-
-        minSatControl.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+        maxRadiusControl.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                minSatVal.setText(String.valueOf(progress));
+                maxRadiusVal.setText(String.valueOf(progress));
                 editor = sharedPref.edit();
-                editor.putInt(getString(R.string.min_sat), progress);
-                editor.commit();
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-        });
-    }
-
-    private void setMaxSatControlListener() {
-
-        final TextView maxSatVal = (TextView)findViewById(R.id.textViewMaxSatVal);
-        maxSatVal.setText(String.valueOf(maxSatControl.getProgress()));
-
-        maxSatControl.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                maxSatVal.setText(String.valueOf(progress));
-                editor = sharedPref.edit();
-                editor.putInt(getString(R.string.max_sat), progress);
-                editor.commit();
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-        });
-    }
-
-    private void setMinValControlListener() {
-
-        final TextView minValVal = (TextView)findViewById(R.id.textViewMinValVal);
-        minValVal.setText(String.valueOf(minValControl.getProgress()));
-
-        minValControl.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                minValVal.setText(String.valueOf(progress));
-                editor = sharedPref.edit();
-                editor.putInt(getString(R.string.min_val), progress);
-                editor.commit();
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-        });
-    }
-
-    private void setMaxValControlListener() {
-
-        final TextView maxValVal = (TextView)findViewById(R.id.textViewMaxValVal);
-        maxValVal.setText(String.valueOf(maxValControl.getProgress()));
-
-        maxValControl.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                maxValVal.setText(String.valueOf(progress));
-                editor = sharedPref.edit();
-                editor.putInt(getString(R.string.max_val), progress);
+                editor.putInt(getString(R.string.max_radius), progress);
                 editor.commit();
             }
 

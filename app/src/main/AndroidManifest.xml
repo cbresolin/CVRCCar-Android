@@ -46,9 +46,6 @@
             android:name=".CameraActivity"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".ObjectFollowerActivity"
-            android:screenOrientation="landscape"/>
-        <activity
             android:name=".SettingsActivity"
             android:label="@string/settings"
             android:screenOrientation="landscape" >
