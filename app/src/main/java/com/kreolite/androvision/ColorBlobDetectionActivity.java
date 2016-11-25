@@ -7,6 +7,8 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
@@ -37,6 +39,7 @@ import android.view.SurfaceView;
 import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
 import java.util.Set;
 
 public class ColorBlobDetectionActivity extends Activity implements OnTouchListener, CvCameraViewListener2 {
@@ -262,9 +265,10 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
 
         if (mIsColorSelected) {
 
-            mDetector.findCircles(mRgba);
+            /*mDetector.findCircles(mRgba);
             Mat circles = mDetector.getCircles();
             mCircleNum = circles.rows();
+
             Log.i(TAG, "Target Count: " + mCircleNum);
 
             for (int i = 0, n = circles.rows(); i < n; i++) {
@@ -280,9 +284,9 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
                 Log.i(TAG, "Target Center = " + targetCenter);
                 Log.i(TAG, "Target Radius = " + targetRadius);
                 Log.i(TAG, "Radius Range = [" + minRadius + "," + maxRadius + "]");
-            }
+            }*/
 
-            /* mDetector.process(mRgba);
+            mDetector.process(mRgba);
             List<MatOfPoint> contours = mDetector.getContours();
             Log.e(TAG, "Contours count: " + contours.size());
             Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR, 3);
@@ -294,7 +298,7 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
                 contours.get(i).convertTo(points, CvType.CV_32FC2);
                 Imgproc.minEnclosingCircle(points, targetCenter, null);
                 Imgproc.circle(mRgba, targetCenter, 3, CONTOUR_COLOR, Core.FILLED);
-            }*/
+            }
 
             Mat colorLabel = mRgba.submat(4, 68, 4, 68);
             colorLabel.setTo(mBlobColorRgba);
