@@ -54,7 +54,7 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     private long                               maxRadiusPercent = 0;
     private long                               minRadius = 0;
     private long                               maxRadius = 0;
-    private int                                mCircleNum = 0;
+    private int                                mTargetNum = 0;
 
     private boolean                            mIsColorSelected = false;
     private Mat                                mRgba;
@@ -192,12 +192,12 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         mBlobColorHsv = new Scalar(255);
         SPECTRUM_SIZE = new Size(200, 64);
         CONTOUR_COLOR = new Scalar(255,255,10,255);
-        screenCenter.x = mRgba.size().width / 2;
-        screenCenter.y = mRgba.size().height / 2;
+        screenCenter.x = width / 2;
+        screenCenter.y = height / 2;
     }
 
     public void onCameraViewStopped() {
-        mCircleNum = 0;
+        mTargetNum = 0;
         targetCenter.x = -1;
         targetCenter.y = -1;
         carController.reset();
@@ -267,11 +267,11 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
 
             /*mDetector.findCircles(mRgba);
             Mat circles = mDetector.getCircles();
-            mCircleNum = circles.rows();
+            mTargetNum = circles.rows();
 
-            Log.i(TAG, "Target Count: " + mCircleNum);
+            Log.i(TAG, "Target Count: " + mTargetNum);
 
-            for (int i = 0, n = circles.rows(); i < n; i++) {
+            for (int i = 0, n = mTargetNum; i < n; i++) {
                 double[] circleCoordinates = circles.get(0, i);
                 int x = (int) circleCoordinates[0], y = (int) circleCoordinates[1];
 
@@ -288,16 +288,23 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
 
             mDetector.process(mRgba);
             List<MatOfPoint> contours = mDetector.getContours();
-            Log.e(TAG, "Contours count: " + contours.size());
+            mTargetNum = contours.size();
+            Log.e(TAG, "Target count: " + mTargetNum);
             Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR, 3);
 
             MatOfPoint2f points = new MatOfPoint2f();
-            for (int i = 0, n = contours.size(); i < n; i++) {
+            for (int i = 0, n = mTargetNum; i < n; i++) {
                 // contours.get(x) is a single MatOfPoint, but to use minEnclosingCircle we need to pass a MatOfPoint2f so we need to do a
                 // conversion
+                double contourArea = Imgproc.contourArea(contours.get(i));
+                targetRadius = (int) Math.round(Math.sqrt(contourArea / Math.PI));
                 contours.get(i).convertTo(points, CvType.CV_32FC2);
                 Imgproc.minEnclosingCircle(points, targetCenter, null);
                 Imgproc.circle(mRgba, targetCenter, 3, CONTOUR_COLOR, Core.FILLED);
+                Imgproc.circle(mRgba, targetCenter, targetRadius, CONTOUR_COLOR, 2, 0, 0);
+
+                Log.i(TAG, "Target Center [" + i + "]= " + targetCenter);
+                Log.i(TAG, "Target Radius [" + i + "]= " + targetRadius);
             }
 
             Mat colorLabel = mRgba.submat(4, 68, 4, 68);
@@ -416,7 +423,7 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         String _pwmJsonValues, _pwmJsonNeutralValues;
 
         try {
-            if (mCircleNum > 0) {
+            if (mTargetNum > 0) {
                 carController.updateTargetPWM(screenCenter,
                         targetCenter,
                         panBoundaryPercent,
