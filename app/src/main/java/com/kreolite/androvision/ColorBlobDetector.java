@@ -74,7 +74,7 @@ public class ColorBlobDetector {
         mMinContourArea = area;
     }
 
-    public void process(Mat rgbaImage) {
+    public void findContours(Mat rgbaImage) {
         // Imgproc.pyrDown(rgbaImage, mPyrDownMat);
         // Imgproc.pyrDown(mPyrDownMat, mPyrDownMat);
         // Imgproc.cvtColor(mPyrDownMat, mHsvMat, Imgproc.COLOR_RGB2HSV_FULL);

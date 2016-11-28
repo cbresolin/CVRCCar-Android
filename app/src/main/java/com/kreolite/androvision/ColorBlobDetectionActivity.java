@@ -47,38 +47,30 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     private static final int                   ZOOM = 4;
     private static Scalar                      COLOR_RADIUS = new Scalar(25,60,60,0);
     private Size                               SCREEN_SIZE;
-    volatile Point                             targetCenter = new Point(-1, -1);
-    private Point                              screenCenter = new Point(-1, -1);
-    private int                                targetRadius = 0;
-    private long                               minRadiusPercent = 0;
-    private long                               maxRadiusPercent = 0;
-    private long                               minRadius = 0;
-    private long                               maxRadius = 0;
+    private Size                               SPECTRUM_SIZE;
+    private Scalar                             CONTOUR_COLOR;
+    volatile Point                             mTargetCenter = new Point(-1, -1);
+    private Point                              mScreenCenter = new Point(-1, -1);
     private int                                mTargetNum = 0;
-
+    private int                                mMinRadius = 0;
+    private int                                mMaxRadius = 0;
     private boolean                            mIsColorSelected = false;
     private Mat                                mRgba;
     private Scalar                             mBlobColorRgba;
     private Scalar                             mBlobColorHsv;
     private ColorBlobDetector                  mDetector;
     private Mat                                mSpectrum;
-    private Size                               SPECTRUM_SIZE;
-    private Scalar                             CONTOUR_COLOR;
-
     private CameraBridgeViewBase               mOpenCvCameraView;
-    private ActuatorController                 carController;
-
-    private UsbService                         usbService;
+    private ActuatorController                 mCarController;
+    private UsbService                         mUsbService;
     private MyHandler                          mHandler;
-    private SharedPreferences                  sharedPref;
-    private boolean                            isReso1, isReso2, isReso3, isReso4;
-    private double                             panBoundaryPercent = 0.10;
-    private double                             forwardBoundaryPercent = -0.15;
-    private double                             reverseBoundaryPercent = 0.3;
-    int                                        countOutOfFrame = 0;
-
-    String                                     _lastPwmJsonValues = "";
-    boolean                                    _isReversingHandled = false;
+    private SharedPreferences                  mSharedPref;
+    private double                             mPanBoundaryPercent = 0.10;
+    private double                             mForwardBoundaryPercent = -0.15;
+    private double                             mReverseBoundaryPercent = 0.3;
+    private int                                mCountOutOfFrame = 0;
+    private String                             mLastPwmJsonValues = "";
+    private boolean                            mIsReversingHandled = false;
 
     private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -112,11 +104,11 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
 
         setContentView(R.layout.color_blob_detection_surface_view);
 
-        sharedPref = getApplicationContext().getSharedPreferences(getString(R.string.settings_file),
+        mSharedPref = getApplicationContext().getSharedPreferences(getString(R.string.settings_file),
                 Context.MODE_PRIVATE);
-        isReso1 = sharedPref.getBoolean(getString(R.string.is_reso1), true);
-        isReso2 = sharedPref.getBoolean(getString(R.string.is_reso2), false);
-        isReso3 = sharedPref.getBoolean(getString(R.string.is_reso3), false);
+        boolean isReso1 = mSharedPref.getBoolean(getString(R.string.is_reso1), true);
+        boolean isReso2 = mSharedPref.getBoolean(getString(R.string.is_reso2), false);
+        boolean isReso3 = mSharedPref.getBoolean(getString(R.string.is_reso3), false);
 
         // 1920x1080, 1280x960, 800x480 else 352x288
         if (isReso1) {
@@ -134,16 +126,14 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         mOpenCvCameraView.setCvCameraViewListener(this);
         mOpenCvCameraView.setMaxFrameSize((int) SCREEN_SIZE.width, (int) SCREEN_SIZE.height);
 
-        minRadiusPercent = sharedPref.getInt(getString(R.string.min_radius), 0);
-        minRadius = minRadiusPercent * (((long) SCREEN_SIZE.height) / 100L);
-        maxRadiusPercent = sharedPref.getInt(getString(R.string.max_radius), 0);
-        maxRadius = maxRadiusPercent * (((long) SCREEN_SIZE.height) / 100L);
+        long mMinRadius = mSharedPref.getInt(getString(R.string.min_radius), 0) * (((long) SCREEN_SIZE.height) / 100L);
+        long mMaxRadius = mSharedPref.getInt(getString(R.string.max_radius), 0) * (((long) SCREEN_SIZE.height) / 100L);
 
-        forwardBoundaryPercent = Double.parseDouble(sharedPref.getString(getString(R.string.forward_boundary_percent), "-15")) / 100;
-        reverseBoundaryPercent = Double.parseDouble(sharedPref.getString(getString(R.string.reverse_boundary_percent), "30")) / 100;
+        mForwardBoundaryPercent = Double.parseDouble(mSharedPref.getString(getString(R.string.forward_boundary_percent), "-15")) / 100;
+        mReverseBoundaryPercent = Double.parseDouble(mSharedPref.getString(getString(R.string.reverse_boundary_percent), "30")) / 100;
 
-        carController = new ActuatorController();
-        countOutOfFrame = 0;
+        mCarController = new ActuatorController();
+        mCountOutOfFrame = 0;
 
         mHandler = new MyHandler(this);
     }
@@ -185,22 +175,22 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         mRgba = new Mat(height, width, CvType.CV_8UC4);
         mDetector = new ColorBlobDetector();
         mDetector.setColorRadius(COLOR_RADIUS);
-        mDetector.setMinRadius( (int) minRadius);
-        mDetector.setMaxRadius((int) maxRadius);
+        mDetector.setMinRadius( (int) mMinRadius);
+        mDetector.setMaxRadius((int) mMaxRadius);
         mSpectrum = new Mat();
         mBlobColorRgba = new Scalar(255);
         mBlobColorHsv = new Scalar(255);
         SPECTRUM_SIZE = new Size(200, 64);
         CONTOUR_COLOR = new Scalar(255,255,10,255);
-        screenCenter.x = width / 2;
-        screenCenter.y = height / 2;
+        mScreenCenter.x = width / 2;
+        mScreenCenter.y = height / 2;
     }
 
     public void onCameraViewStopped() {
         mTargetNum = 0;
-        targetCenter.x = -1;
-        targetCenter.y = -1;
-        carController.reset();
+        mTargetCenter.x = -1;
+        mTargetCenter.y = -1;
+        mCarController.reset();
         updateActuator();
         mRgba.release();
     }
@@ -260,57 +250,63 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         return false; // don't need subsequent touch events
     }
 
+    private void displayContours(Mat matRgba){
+        mDetector.findContours(matRgba);
+        List<MatOfPoint> contours = mDetector.getContours();
+        mTargetNum = contours.size();
+
+        Log.e(TAG, "Target count: " + mTargetNum);
+        Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR, 3);
+
+        MatOfPoint2f points = new MatOfPoint2f();
+        for (int i = 0, n = mTargetNum; i < n; i++) {
+            // contours.get(x) is a single MatOfPoint, but to use minEnclosingCircle we need to pass a MatOfPoint2f so we need to do a
+            // conversion
+            double contourArea = Imgproc.contourArea(contours.get(i));
+            int targetRadius = (int) Math.round(Math.sqrt(contourArea / Math.PI));
+            contours.get(i).convertTo(points, CvType.CV_32FC2);
+            Imgproc.minEnclosingCircle(points, mTargetCenter, null);
+            Imgproc.circle(mRgba, mTargetCenter, 3, CONTOUR_COLOR, Core.FILLED);
+            // Imgproc.circle(mRgba, mTargetCenter, targetRadius, CONTOUR_COLOR, 2, 0, 0);
+
+            Log.i(TAG, "Target Center [" + i + "]= " + mTargetCenter);
+            Log.i(TAG, "Target Radius [" + i + "]= " + targetRadius);
+        }
+    }
+
+    private void displayCircles(Mat matRgba){
+        mDetector.findCircles(matRgba);
+        Mat circles = mDetector.getCircles();
+        mTargetNum = circles.rows();
+
+        Log.i(TAG, "Target Count: " + mTargetNum);
+        for (int i = 0, n = mTargetNum; i < n; i++) {
+            double[] circleCoordinates = circles.get(0, i);
+            int x = (int) circleCoordinates[0], y = (int) circleCoordinates[1];
+
+            mTargetCenter = new Point(x, y);
+            int targetRadius = (int) circleCoordinates[2];
+
+            Imgproc.circle(mRgba, mTargetCenter, targetRadius, CONTOUR_COLOR, 2, 0, 0);
+            Imgproc.circle(mRgba, mTargetCenter, 3, CONTOUR_COLOR, Core.FILLED);
+
+            Log.i(TAG, "Target Center = " + mTargetCenter);
+            Log.i(TAG, "Target Radius = " + targetRadius);
+            Log.i(TAG, "Radius Range = [" + mMinRadius + "," + mMaxRadius + "]");
+        }
+    }
+
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
         mRgba = inputFrame.rgba();
 
         if (mIsColorSelected) {
+            displayContours(mRgba);
+            // displayCircles(mRgba);
 
-            /*mDetector.findCircles(mRgba);
-            Mat circles = mDetector.getCircles();
-            mTargetNum = circles.rows();
-
-            Log.i(TAG, "Target Count: " + mTargetNum);
-
-            for (int i = 0, n = mTargetNum; i < n; i++) {
-                double[] circleCoordinates = circles.get(0, i);
-                int x = (int) circleCoordinates[0], y = (int) circleCoordinates[1];
-
-                targetCenter = new Point(x, y);
-                targetRadius = (int) circleCoordinates[2];
-
-                Imgproc.circle(mRgba, targetCenter, targetRadius, CONTOUR_COLOR, 2, 0, 0);
-                Imgproc.circle(mRgba, targetCenter, 3, CONTOUR_COLOR, Core.FILLED);
-
-                Log.i(TAG, "Target Center = " + targetCenter);
-                Log.i(TAG, "Target Radius = " + targetRadius);
-                Log.i(TAG, "Radius Range = [" + minRadius + "," + maxRadius + "]");
-            }*/
-
-            mDetector.process(mRgba);
-            List<MatOfPoint> contours = mDetector.getContours();
-            mTargetNum = contours.size();
-            Log.e(TAG, "Target count: " + mTargetNum);
-            Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR, 3);
-
-            MatOfPoint2f points = new MatOfPoint2f();
-            for (int i = 0, n = mTargetNum; i < n; i++) {
-                // contours.get(x) is a single MatOfPoint, but to use minEnclosingCircle we need to pass a MatOfPoint2f so we need to do a
-                // conversion
-                double contourArea = Imgproc.contourArea(contours.get(i));
-                targetRadius = (int) Math.round(Math.sqrt(contourArea / Math.PI));
-                contours.get(i).convertTo(points, CvType.CV_32FC2);
-                Imgproc.minEnclosingCircle(points, targetCenter, null);
-                Imgproc.circle(mRgba, targetCenter, 3, CONTOUR_COLOR, Core.FILLED);
-                Imgproc.circle(mRgba, targetCenter, targetRadius, CONTOUR_COLOR, 2, 0, 0);
-
-                Log.i(TAG, "Target Center [" + i + "]= " + targetCenter);
-                Log.i(TAG, "Target Radius [" + i + "]= " + targetRadius);
-            }
-
-            Mat colorLabel = mRgba.submat(4, 68, 4, 68);
+            Mat colorLabel = mRgba.submat(mRgba.rows()-68, mRgba.rows()-4, 4, 68);
             colorLabel.setTo(mBlobColorRgba);
 
-            Mat spectrumLabel = mRgba.submat(4, 4 + mSpectrum.rows(), 70, 70 + mSpectrum.cols());
+            Mat spectrumLabel = mRgba.submat(mRgba.rows()-(mSpectrum.rows()+4), mRgba.rows()-4, 70, 70 + mSpectrum.cols());
             mSpectrum.copyTo(spectrumLabel);
         }
 
@@ -358,13 +354,12 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     private final ServiceConnection usbConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName arg0, IBinder arg1) {
-            usbService = ((UsbService.UsbBinder) arg1).getService();
-            usbService.setHandler(mHandler);
+            mUsbService = ((UsbService.UsbBinder) arg1).getService();
+            mUsbService.setHandler(mHandler);
         }
-
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
-            usbService = null;
+            mUsbService = null;
         }
     };
 
@@ -420,53 +415,53 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     }
 
     private void updateActuator(){
-        String _pwmJsonValues, _pwmJsonNeutralValues;
+        String pwmJsonValues, pwmJsonNeutralValues;
 
         try {
             if (mTargetNum > 0) {
-                carController.updateTargetPWM(screenCenter,
-                        targetCenter,
-                        panBoundaryPercent,
-                        forwardBoundaryPercent,
-                        reverseBoundaryPercent);
-                countOutOfFrame = 0;
+                mCarController.updateTargetPWM(mScreenCenter,
+                        mTargetCenter,
+                        mPanBoundaryPercent,
+                        mForwardBoundaryPercent,
+                        mReverseBoundaryPercent);
+                mCountOutOfFrame = 0;
             } else {
-                countOutOfFrame++;
-                if (countOutOfFrame > 2) {
-                    targetCenter.x = -1;
-                    targetCenter.y = -1;
-                    countOutOfFrame = 0;
-                    carController.reset();
+                mCountOutOfFrame++;
+                if (mCountOutOfFrame > 2) {
+                    mTargetCenter.x = -1;
+                    mTargetCenter.y = -1;
+                    mCountOutOfFrame = 0;
+                    mCarController.reset();
                 }
             }
 
-            _pwmJsonValues = carController.getPWMValuesToJson();
-            if ((_pwmJsonValues != null) && !_pwmJsonValues.contentEquals(_lastPwmJsonValues)) {
+            pwmJsonValues = mCarController.getPWMValuesToJson();
+            if ((pwmJsonValues != null) && !pwmJsonValues.contentEquals(mLastPwmJsonValues)) {
                 Log.i(TAG, "Update Actuator ...");
 
-                if (usbService != null) {
-                    if (!carController.isReversing()) {
-                        Log.i(TAG, "Sending PWM values: " + _pwmJsonValues);
-                        usbService.write(_pwmJsonValues.getBytes());
-                        _isReversingHandled = false;
+                if (mUsbService != null) {
+                    if (!mCarController.isReversing()) {
+                        Log.i(TAG, "Sending PWM values: " + pwmJsonValues);
+                        mUsbService.write(pwmJsonValues.getBytes());
+                        mIsReversingHandled = false;
                     }
                     else {
-                        Log.i(TAG, "Sending PWM values: " + _pwmJsonValues);
-                        usbService.write(_pwmJsonValues.getBytes());
+                        Log.i(TAG, "Sending PWM values: " + pwmJsonValues);
+                        mUsbService.write(pwmJsonValues.getBytes());
 
                         // When reversing, need to send neutral first
-                        if (!_isReversingHandled) {
-                            _pwmJsonNeutralValues = carController.getPWMNeutralValuesToJson();
-                            Log.i(TAG, "Sending PWM values: " + _pwmJsonNeutralValues);
-                            usbService.write(_pwmJsonNeutralValues.getBytes());
+                        if (!mIsReversingHandled) {
+                            pwmJsonNeutralValues = mCarController.getPWMNeutralValuesToJson();
+                            Log.i(TAG, "Sending PWM values: " + pwmJsonNeutralValues);
+                            mUsbService.write(pwmJsonNeutralValues.getBytes());
 
-                            Log.i(TAG, "Sending PWM values: " + _pwmJsonValues);
-                            usbService.write(_pwmJsonValues.getBytes());
-                            _isReversingHandled = true;
+                            Log.i(TAG, "Sending PWM values: " + pwmJsonValues);
+                            mUsbService.write(pwmJsonValues.getBytes());
+                            mIsReversingHandled = true;
                         }
                     }
                 }
-                _lastPwmJsonValues = _pwmJsonValues;
+                mLastPwmJsonValues = pwmJsonValues;
             }
         } catch (InterruptedException e) {
             Log.e(TAG, e.getMessage());
