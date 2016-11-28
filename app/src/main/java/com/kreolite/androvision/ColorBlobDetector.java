@@ -75,14 +75,10 @@ public class ColorBlobDetector {
     }
 
     public void findContours(Mat rgbaImage) {
-        // Imgproc.pyrDown(rgbaImage, mPyrDownMat);
-        // Imgproc.pyrDown(mPyrDownMat, mPyrDownMat);
-        // Imgproc.cvtColor(mPyrDownMat, mHsvMat, Imgproc.COLOR_RGB2HSV_FULL);
-
+        Imgproc.blur(rgbaImage, rgbaImage, new Size(3,3));
         Imgproc.cvtColor(rgbaImage, mHsvMat, Imgproc.COLOR_RGB2HSV_FULL);
         Core.inRange(mHsvMat, mLowerBound, mUpperBound, mMask);
         Imgproc.dilate(mMask, mDilatedMask, new Mat());
-        Imgproc.erode(mDilatedMask, mDilatedMask, new Mat());
 
         List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
         Imgproc.findContours(mDilatedMask, contours, mHierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
@@ -103,7 +99,6 @@ public class ColorBlobDetector {
         while (each.hasNext()) {
             MatOfPoint contour = each.next();
             if (Imgproc.contourArea(contour) > mMinContourArea*maxArea) {
-                // Core.multiply(contour, new Scalar(4,4,0,0), contour);
                 mContours.add(contour);
             }
         }
@@ -113,7 +108,6 @@ public class ColorBlobDetector {
     }
 
     public void findCircles(Mat rgbaImage) {
-        Imgproc.medianBlur(rgbaImage, rgbaImage, 3);
         Imgproc.cvtColor(rgbaImage, mHsvMat, Imgproc.COLOR_RGB2HSV_FULL);
         Core.inRange(mHsvMat, mLowerBound, mUpperBound, mMask);
         Imgproc.dilate(mMask, mDilatedMask, new Mat());
