@@ -61,11 +61,10 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     private ColorBlobDetector                  mDetector;
     private Mat                                mSpectrum;
     private CameraBridgeViewBase               mOpenCvCameraView;
-    private ActuatorController                 mCarController;
+    private CarController                      mCarController;
     private UsbService                         mUsbService;
     private MyHandler                          mHandler;
     private SharedPreferences                  mSharedPref;
-    private double                             mPanBoundaryPercent = 0.10;
     private double                             mForwardBoundaryPercent = -0.15;
     private double                             mReverseBoundaryPercent = 0.3;
     private int                                mCountOutOfFrame = 0;
@@ -132,7 +131,7 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         mForwardBoundaryPercent = Double.parseDouble(mSharedPref.getString(getString(R.string.forward_boundary_percent), "-15")) / 100;
         mReverseBoundaryPercent = Double.parseDouble(mSharedPref.getString(getString(R.string.reverse_boundary_percent), "30")) / 100;
 
-        mCarController = new ActuatorController();
+        mCarController = new CarController();
         mCountOutOfFrame = 0;
 
         mHandler = new MyHandler(this);
@@ -191,7 +190,7 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         mTargetCenter.x = -1;
         mTargetCenter.y = -1;
         mCarController.reset();
-        updateActuator();
+        updateCarPwms();
         mRgba.release();
     }
 
@@ -310,7 +309,7 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
             mSpectrum.copyTo(spectrumLabel);
         }
 
-        updateActuator();
+        updateCarPwms();
         return mRgba;
     }
 
@@ -414,14 +413,13 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         }
     }
 
-    private void updateActuator(){
+    private void updateCarPwms(){
         String pwmJsonValues, pwmJsonNeutralValues;
 
         try {
             if (mTargetNum > 0) {
                 mCarController.updateTargetPWM(mScreenCenter,
                         mTargetCenter,
-                        mPanBoundaryPercent,
                         mForwardBoundaryPercent,
                         mReverseBoundaryPercent);
                 mCountOutOfFrame = 0;
