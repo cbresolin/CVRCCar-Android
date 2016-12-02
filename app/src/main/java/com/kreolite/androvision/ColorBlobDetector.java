@@ -75,12 +75,14 @@ public class ColorBlobDetector {
     }
 
     public void findContours(Mat rgbaImage) {
-        Imgproc.blur(rgbaImage, rgbaImage, new Size(3,3));
-        Imgproc.cvtColor(rgbaImage, mHsvMat, Imgproc.COLOR_RGB2HSV_FULL);
+        Imgproc.pyrDown(rgbaImage, mPyrDownMat);
+        Imgproc.GaussianBlur(mPyrDownMat, mPyrDownMat, new Size(5,5), 2, 2);
+        Imgproc.cvtColor(mPyrDownMat, mHsvMat, Imgproc.COLOR_RGB2HSV_FULL);
         Core.inRange(mHsvMat, mLowerBound, mUpperBound, mMask);
         Imgproc.dilate(mMask, mDilatedMask, new Mat());
+        Imgproc.pyrUp(mDilatedMask, mDilatedMask);
 
-        List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+        List<MatOfPoint> contours = new ArrayList<>();
         Imgproc.findContours(mDilatedMask, contours, mHierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
         // Find max contour area
@@ -111,7 +113,7 @@ public class ColorBlobDetector {
         Imgproc.cvtColor(rgbaImage, mHsvMat, Imgproc.COLOR_RGB2HSV_FULL);
         Core.inRange(mHsvMat, mLowerBound, mUpperBound, mMask);
         Imgproc.dilate(mMask, mDilatedMask, new Mat());
-        Imgproc.GaussianBlur(mDilatedMask, mDilatedMask, new Size(9,9), 2, 2);
+        Imgproc.GaussianBlur(mDilatedMask, mDilatedMask, new Size(3,3), 2, 2);
         Imgproc.HoughCircles(mDilatedMask, mCircles, Imgproc.CV_HOUGH_GRADIENT, 1, mDilatedMask.rows()/8, 100, 25, mMinRadius, mMaxRadius);
     }
     public Mat getCircles() {

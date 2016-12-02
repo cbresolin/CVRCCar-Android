@@ -253,23 +253,20 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         mDetector.findContours(matRgba);
         List<MatOfPoint> contours = mDetector.getContours();
         mTargetNum = contours.size();
-
         Log.e(TAG, "Target count: " + mTargetNum);
-        Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR, 3);
 
         MatOfPoint2f points = new MatOfPoint2f();
+        float[] targetRadius = new float[mTargetNum];
         for (int i = 0, n = mTargetNum; i < n; i++) {
-            // contours.get(x) is a single MatOfPoint, but to use minEnclosingCircle we need to pass a MatOfPoint2f so we need to do a
-            // conversion
-            double contourArea = Imgproc.contourArea(contours.get(i));
-            int targetRadius = (int) Math.round(Math.sqrt(contourArea / Math.PI));
+            // contours.get(x) is a single MatOfPoint, but to use minEnclosingCircle
+            // we need to pass a MatOfPoint2f so we need to do a conversion
             contours.get(i).convertTo(points, CvType.CV_32FC2);
-            Imgproc.minEnclosingCircle(points, mTargetCenter, null);
-            Imgproc.circle(mRgba, mTargetCenter, 3, CONTOUR_COLOR, Core.FILLED);
-            // Imgproc.circle(mRgba, mTargetCenter, targetRadius, CONTOUR_COLOR, 2, 0, 0);
+            Imgproc.minEnclosingCircle(points, mTargetCenter, targetRadius);
+            Imgproc.circle(matRgba, mTargetCenter, 3, CONTOUR_COLOR, Core.FILLED);
+            Imgproc.circle(matRgba, mTargetCenter, (int) targetRadius[i], CONTOUR_COLOR, 2, 0, 0);
 
             Log.i(TAG, "Target Center [" + i + "]= " + mTargetCenter);
-            Log.i(TAG, "Target Radius [" + i + "]= " + targetRadius);
+            Log.i(TAG, "Target Radius [" + i + "]= " + (int) targetRadius[i]);
         }
     }
 
@@ -277,8 +274,8 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         mDetector.findCircles(matRgba);
         Mat circles = mDetector.getCircles();
         mTargetNum = circles.rows();
-
         Log.i(TAG, "Target Count: " + mTargetNum);
+
         for (int i = 0, n = mTargetNum; i < n; i++) {
             double[] circleCoordinates = circles.get(0, i);
             int x = (int) circleCoordinates[0], y = (int) circleCoordinates[1];
