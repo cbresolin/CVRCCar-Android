@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <integer name="minRadiusPercent">0</integer>
-    <integer name="maxRadiusPercent">100</integer>
-</resources>

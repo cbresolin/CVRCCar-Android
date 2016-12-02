@@ -19,11 +19,6 @@ import butterknife.InjectView;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    @InjectView(R.id.seekBarMinRadiusVal)
-    SeekBar minRadiusControl;
-    @InjectView(R.id.seekBarMaxRadiusVal)
-    SeekBar maxRadiusControl;
-
     @InjectView(R.id.radioButtonReso1)
     RadioButton reso1Control;
     @InjectView(R.id.radioButtonReso2)
@@ -54,8 +49,6 @@ public class SettingsActivity extends AppCompatActivity {
         reso2Control.setChecked(sharedPref.getBoolean(getString(R.string.is_reso2), false));
         reso3Control.setChecked(sharedPref.getBoolean(getString(R.string.is_reso3), false));
         reso4Control.setChecked(sharedPref.getBoolean(getString(R.string.is_reso4), false));
-        minRadiusControl.setProgress(sharedPref.getInt(getString(R.string.min_radius), 0));
-        maxRadiusControl.setProgress(sharedPref.getInt(getString(R.string.max_radius), 0));
         forwardBoundaryControl.setText(sharedPref.getString(getString(R.string.forward_boundary_percent), "-15"));
         reverseBoundaryControl.setText(sharedPref.getString(getString(R.string.reverse_boundary_percent), "30"));
 
@@ -63,8 +56,6 @@ public class SettingsActivity extends AppCompatActivity {
         setReso2ControlListener();
         setReso3ControlListener();
         setReso4ControlListener();
-        setMinRadiusControlListener();
-        setMaxRadiusControlListener();
         setForwardBoundaryControlListener();
         setReverseBoundaryControlListener();
     }
@@ -161,56 +152,6 @@ public class SettingsActivity extends AppCompatActivity {
                 editor = sharedPref.edit();
                 editor.putBoolean(getString(R.string.is_reso4), isChecked);
                 editor.commit();
-            }
-        });
-    }
-
-    private void setMinRadiusControlListener() {
-
-        final TextView minRadiusVal = (TextView)findViewById(R.id.textViewMinRadiusVal);
-        minRadiusVal.setText(String.valueOf(minRadiusControl.getProgress()));
-
-        minRadiusControl.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                minRadiusVal.setText(String.valueOf(progress));
-                editor = sharedPref.edit();
-                editor.putInt(getString(R.string.min_radius), progress);
-                editor.commit();
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-        });
-    }
-
-    private void setMaxRadiusControlListener() {
-
-        final TextView maxRadiusVal = (TextView)findViewById(R.id.textViewMaxRadiusVal);
-        maxRadiusVal.setText(String.valueOf(maxRadiusControl.getProgress()));
-
-        maxRadiusControl.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                maxRadiusVal.setText(String.valueOf(progress));
-                editor = sharedPref.edit();
-                editor.putInt(getString(R.string.max_radius), progress);
-                editor.commit();
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
     }

@@ -44,16 +44,14 @@ import java.util.Set;
 
 public class ColorBlobDetectionActivity extends Activity implements OnTouchListener, CvCameraViewListener2 {
     private static final String                TAG = "ColorBlobDetectActivity";
-    private static final int                   ZOOM = 4;
-    private static Scalar                      COLOR_RADIUS = new Scalar(25,60,60,0);
+    private static final int                   ZOOM = 5;
+    private static Scalar                      COLOR_RADIUS = new Scalar(5,50,50,0);
     private Size                               SCREEN_SIZE;
     private Size                               SPECTRUM_SIZE;
     private Scalar                             CONTOUR_COLOR;
     volatile Point                             mTargetCenter = new Point(-1, -1);
     private Point                              mScreenCenter = new Point(-1, -1);
     private int                                mTargetNum = 0;
-    private int                                mMinRadius = 0;
-    private int                                mMaxRadius = 0;
     private boolean                            mIsColorSelected = false;
     private Mat                                mRgba;
     private Scalar                             mBlobColorRgba;
@@ -125,9 +123,6 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         mOpenCvCameraView.setCvCameraViewListener(this);
         mOpenCvCameraView.setMaxFrameSize((int) SCREEN_SIZE.width, (int) SCREEN_SIZE.height);
 
-        long mMinRadius = mSharedPref.getInt(getString(R.string.min_radius), 0) * (((long) SCREEN_SIZE.height) / 100L);
-        long mMaxRadius = mSharedPref.getInt(getString(R.string.max_radius), 0) * (((long) SCREEN_SIZE.height) / 100L);
-
         mForwardBoundaryPercent = Double.parseDouble(mSharedPref.getString(getString(R.string.forward_boundary_percent), "-15")) / 100;
         mReverseBoundaryPercent = Double.parseDouble(mSharedPref.getString(getString(R.string.reverse_boundary_percent), "30")) / 100;
 
@@ -174,8 +169,6 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         mRgba = new Mat(height, width, CvType.CV_8UC4);
         mDetector = new ColorBlobDetector();
         mDetector.setColorRadius(COLOR_RADIUS);
-        mDetector.setMinRadius( (int) mMinRadius);
-        mDetector.setMaxRadius((int) mMaxRadius);
         mSpectrum = new Mat();
         mBlobColorRgba = new Scalar(255);
         mBlobColorHsv = new Scalar(255);
@@ -266,29 +259,7 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
             Imgproc.circle(matRgba, mTargetCenter, (int) targetRadius[i], CONTOUR_COLOR, 2, 0, 0);
 
             Log.i(TAG, "Target Center [" + i + "]= " + mTargetCenter);
-            Log.i(TAG, "Target Radius [" + i + "]= " + (int) targetRadius[i]);
-        }
-    }
-
-    private void displayCircles(Mat matRgba){
-        mDetector.findCircles(matRgba);
-        Mat circles = mDetector.getCircles();
-        mTargetNum = circles.rows();
-        Log.i(TAG, "Target Count: " + mTargetNum);
-
-        for (int i = 0, n = mTargetNum; i < n; i++) {
-            double[] circleCoordinates = circles.get(0, i);
-            int x = (int) circleCoordinates[0], y = (int) circleCoordinates[1];
-
-            mTargetCenter = new Point(x, y);
-            int targetRadius = (int) circleCoordinates[2];
-
-            Imgproc.circle(mRgba, mTargetCenter, targetRadius, CONTOUR_COLOR, 2, 0, 0);
-            Imgproc.circle(mRgba, mTargetCenter, 3, CONTOUR_COLOR, Core.FILLED);
-
-            Log.i(TAG, "Target Center = " + mTargetCenter);
-            Log.i(TAG, "Target Radius = " + targetRadius);
-            Log.i(TAG, "Radius Range = [" + mMinRadius + "," + mMaxRadius + "]");
+            Log.i(TAG, "Target Radius [" + i + "]= " + targetRadius[i]);
         }
     }
 
@@ -297,7 +268,6 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
 
         if (mIsColorSelected) {
             displayContours(mRgba);
-            // displayCircles(mRgba);
 
             Mat colorLabel = mRgba.submat(mRgba.rows()-68, mRgba.rows()-4, 4, 68);
             colorLabel.setTo(mBlobColorRgba);

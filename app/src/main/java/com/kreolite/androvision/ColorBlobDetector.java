@@ -17,14 +17,11 @@ public class ColorBlobDetector {
     private Scalar             mLowerBound = new Scalar(0);
     private Scalar             mUpperBound = new Scalar(0);
     // Minimum contour area in percent for contours filtering
-    private static double      mMinContourArea = 0.1;
+    private static double      mMinContourAreaRatio = 0.2;
     // Color radius for range checking in HSV color space
-    private Scalar             mColorRadius = new Scalar(25,50,50,0);
+    private Scalar             mColorRadius = new Scalar(12,50,50,0);
     private Mat                mSpectrum = new Mat();
-    private List<MatOfPoint>   mContours = new ArrayList<MatOfPoint>();
-    private Mat                mCircles = new Mat();
-    private int                mMinRadius = 0;
-    private int                mMaxRadius = 0;
+    private List<MatOfPoint>   mContours = new ArrayList<>();
 
     // Cache
     Mat mPyrDownMat = new Mat();
@@ -71,7 +68,7 @@ public class ColorBlobDetector {
     }
 
     public void setMinContourArea(double area) {
-        mMinContourArea = area;
+        mMinContourAreaRatio = area;
     }
 
     public void findContours(Mat rgbaImage) {
@@ -100,7 +97,7 @@ public class ColorBlobDetector {
         each = contours.iterator();
         while (each.hasNext()) {
             MatOfPoint contour = each.next();
-            if (Imgproc.contourArea(contour) > mMinContourArea*maxArea) {
+            if (Imgproc.contourArea(contour) > mMinContourAreaRatio * maxArea) {
                 mContours.add(contour);
             }
         }
@@ -108,19 +105,4 @@ public class ColorBlobDetector {
     public List<MatOfPoint> getContours() {
         return mContours;
     }
-
-    public void findCircles(Mat rgbaImage) {
-        Imgproc.cvtColor(rgbaImage, mHsvMat, Imgproc.COLOR_RGB2HSV_FULL);
-        Core.inRange(mHsvMat, mLowerBound, mUpperBound, mMask);
-        Imgproc.dilate(mMask, mDilatedMask, new Mat());
-        Imgproc.GaussianBlur(mDilatedMask, mDilatedMask, new Size(3,3), 2, 2);
-        Imgproc.HoughCircles(mDilatedMask, mCircles, Imgproc.CV_HOUGH_GRADIENT, 1, mDilatedMask.rows()/8, 100, 25, mMinRadius, mMaxRadius);
-    }
-    public Mat getCircles() {
-        return mCircles;
-    }
-
-    public void setMinRadius(int minRadius) { mMinRadius = minRadius; }
-
-    public void setMaxRadius(int maxRadius) { mMaxRadius = maxRadius; }
 }
