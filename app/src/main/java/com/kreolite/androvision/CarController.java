@@ -122,7 +122,7 @@ public class CarController {
 	}
 
     public void reset() {
-        //mPwmPan = CENTER_PAN_PWM;
+        mPwmPan = CENTER_PAN_PWM;
         mPwmFrontWheels = CENTER_FRONT_WHEELS_PWM;
         mPwmMotor = MOTOR_NEUTRAL_PWM;
 	}
