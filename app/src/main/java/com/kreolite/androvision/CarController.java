@@ -49,7 +49,7 @@ public class CarController {
     private double mPwmMotor;
 
     private Point mIncrement = new Point(0, 0);
-    private Point mLastCenterPoint = new Point(0, 0);
+    private Point mLastTargetCenterPoint = new Point(0, 0);
 
 
 	// IRSensors _irSensors;
@@ -109,11 +109,11 @@ public class CarController {
 
         // Compute throttle
         if (targetCenter.y < (screenCenter.y - forwardBoundaryPercent*screenCenter.y * 2))
-            mPwmMotor = MOTOR_FORWARD_PWM;
-            // mPwmMotor = MOTOR_NEUTRAL_PWM;
+            // mPwmMotor = MOTOR_FORWARD_PWM;
+            mPwmMotor = MOTOR_NEUTRAL_PWM;
         else if (targetCenter.y > (screenCenter.y + reverseBoundaryPercent * screenCenter.y * 2))
-            mPwmMotor = MOTOR_REVERSE_PWM;
-            // mPwmMotor = MOTOR_NEUTRAL_PWM;
+            // mPwmMotor = MOTOR_REVERSE_PWM;
+            mPwmMotor = MOTOR_NEUTRAL_PWM;
         else mPwmMotor = MOTOR_NEUTRAL_PWM;
 
         // Compute steering
@@ -137,7 +137,7 @@ public class CarController {
         return (input < min) ? min : (input > max) ? max : input;
     }
 
-    private void updatePanPwm(Point screenCenterPoint, Point currentCenterPoint) {
+    private void updatePanPwm(Point screenCenterPoint, Point targetCenterPoint) {
         // --- Set up objects to calculate the error and derivative error
         Point error = new Point(0, 0); // The position error
         Point setpoint = new Point(0, 0);
@@ -146,22 +146,20 @@ public class CarController {
         final double kD_X = 0.8; // Derivative gain (Kd)
         final int MID_SCREEN_BOUNDARY = (int) (screenCenterPoint.x * 2 * 20) / 352; // 20 when screen size = 352, 288
 
-        setpoint.x = (screenCenterPoint.x - currentCenterPoint.x) * 1.35;
-        if ((setpoint.x < -MID_SCREEN_BOUNDARY || setpoint.x > MID_SCREEN_BOUNDARY) && currentCenterPoint.x > 0) {
-            if (mLastCenterPoint.x != currentCenterPoint.x) {
-                mIncrement.x = setpoint.x * 0.18;
-                mLastPwmPan = mPwmPan;
-            }
-            error.x = (mPwmPan - mIncrement.x);
+        setpoint.x = screenCenterPoint.x - targetCenterPoint.x;
+        setpoint.y = Math.abs(screenCenterPoint.y - targetCenterPoint.y);
 
-            derivativeTerm.x = (mPwmPan - mLastPwmPan);
+        if ((setpoint.x < -MID_SCREEN_BOUNDARY || setpoint.x > MID_SCREEN_BOUNDARY) && targetCenterPoint.x > 0) {
+            if (mLastTargetCenterPoint.x != targetCenterPoint.x) {
+                double pwmByDegree = (double)(MAX_RIGHT_PAN_PWM - MAX_LEFT_PAN_PWM) / 180;
+                mIncrement.x = Math.toDegrees(Math.atan(setpoint.x/setpoint.y)) * pwmByDegree;
+                mLastPwmPan = mPwmPan;
+                mPwmPan = mPwmPan - mIncrement.x;
+            }
 
             mLastPwmPan = mPwmPan;
-
-            mPwmPan = error.x - constrain(kD_X * derivativeTerm.x, -9, 9);
             mPwmPan = constrain(mPwmPan, MAX_LEFT_PAN_PWM, MAX_RIGHT_PAN_PWM);
-
-            mLastCenterPoint.x = currentCenterPoint.x;
+            mLastTargetCenterPoint.x = targetCenterPoint.x;
         }
     }
 
