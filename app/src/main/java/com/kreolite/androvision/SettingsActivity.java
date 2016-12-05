@@ -49,7 +49,7 @@ public class SettingsActivity extends AppCompatActivity {
         reso2Control.setChecked(sharedPref.getBoolean(getString(R.string.is_reso2), false));
         reso3Control.setChecked(sharedPref.getBoolean(getString(R.string.is_reso3), false));
         reso4Control.setChecked(sharedPref.getBoolean(getString(R.string.is_reso4), false));
-        forwardBoundaryControl.setText(sharedPref.getString(getString(R.string.forward_boundary_percent), "-15"));
+        forwardBoundaryControl.setText(sharedPref.getString(getString(R.string.forward_boundary_percent), "-20"));
         reverseBoundaryControl.setText(sharedPref.getString(getString(R.string.reverse_boundary_percent), "30"));
 
         setReso1ControlListener();

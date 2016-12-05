@@ -27,19 +27,20 @@ public class CarController {
 	private static final String _TAG = "CarController";
 
     /* Pan values */
-    private static final int RIGHT_FULL_TURN_PAN_PWM = 2400;
-    private static final int LEFT_FULL_TURN_PAN_PWM = 900;
+    private static final int MAX_RIGHT_PAN_PWM = 2400;
+    private static final int MAX_LEFT_PAN_PWM = 900;
     private static final int CENTER_PAN_PWM = 1680;
-    private static final int RANGE_PAN_PWM = RIGHT_FULL_TURN_PAN_PWM - CENTER_PAN_PWM;
+    private static final int REDUCED_PAN_FACTOR = 400;
+    private static final double PAN_RANGE = (MAX_RIGHT_PAN_PWM - REDUCED_PAN_FACTOR) - (MAX_LEFT_PAN_PWM + REDUCED_PAN_FACTOR);
     private double mPwmPan;
     private double mLastPwmPan;
 
     /* Steering values */
-    private static final int RIGHT_FULL_TURN_WHEELS_PWM = 1910;
-    private static final int LEFT_FULL_TURN_WHEELS_PWM = 1360;
-    private static final int CENTER_FRONT_WHEELS_PWM = 1640;
-    private static final int RANGE_WHEELS_PWM = RIGHT_FULL_TURN_WHEELS_PWM - CENTER_FRONT_WHEELS_PWM;
-    private double mPwmFrontWheels;
+    private static final int MAX_RIGHT_STEERING_PWM = 1920;
+    private static final int MAX_LEFT_STEERING_PWM = 1350;
+    private static final int CENTER_STEERING_PWM = 1640;
+    private static final double STEERING_RANGE = MAX_RIGHT_STEERING_PWM - MAX_LEFT_STEERING_PWM;
+    private double mPwmSteering;
 
 	/* Throttle values */
     private static final int MOTOR_FORWARD_PWM = 1560;
@@ -57,7 +58,7 @@ public class CarController {
 		// set the pulse width to be exactly the middle
         mLastPwmPan = mPwmPan = CENTER_PAN_PWM;
         mPwmMotor = MOTOR_NEUTRAL_PWM;
-		mPwmFrontWheels = CENTER_FRONT_WHEELS_PWM;
+		mPwmSteering = CENTER_STEERING_PWM;
 
 		// _irSensors = new IRSensors();
 	}
@@ -73,7 +74,7 @@ public class CarController {
 		try {
 			JSONObject jsonObj = new JSONObject();
             jsonObj.put("pan", (int) mPwmPan);
-            jsonObj.put("steering", (int) mPwmFrontWheels);
+            jsonObj.put("steering", (int) mPwmSteering);
             jsonObj.put("throttle", (int) mPwmMotor);
 			return jsonObj.toString();
 		} catch (JSONException e) {
@@ -86,7 +87,7 @@ public class CarController {
         try {
             JSONObject jsonObj = new JSONObject();
             jsonObj.put("pan", (int) mPwmPan);
-            jsonObj.put("steering", (int) mPwmFrontWheels);
+            jsonObj.put("steering", (int) mPwmSteering);
             jsonObj.put("throttle", MOTOR_NEUTRAL_PWM);
             return jsonObj.toString();
         } catch (JSONException e) {
@@ -100,36 +101,37 @@ public class CarController {
                                 double forwardBoundaryPercent,
                                 double reverseBoundaryPercent) throws InterruptedException {
 
+        double panSteeringConvert;
         // if (!_irSensors.foundObstacle())
 
         // Compute pan
         updatePanPwm(screenCenter, targetCenter);
 
-        // Compute steering
-        if (!isReversing())
-            mPwmFrontWheels = ((RIGHT_FULL_TURN_WHEELS_PWM - LEFT_FULL_TURN_WHEELS_PWM) / (screenCenter.x * 2)) * targetCenter.x + LEFT_FULL_TURN_WHEELS_PWM;
-        else
-            mPwmFrontWheels = ((LEFT_FULL_TURN_WHEELS_PWM - RIGHT_FULL_TURN_WHEELS_PWM) / (screenCenter.x * 2)) * targetCenter.x + RIGHT_FULL_TURN_WHEELS_PWM;
-
         // Compute throttle
         if (targetCenter.y < (screenCenter.y - forwardBoundaryPercent*screenCenter.y * 2))
-            // mPwmMotor = MOTOR_FORWARD_PWM;
-            mPwmMotor = MOTOR_NEUTRAL_PWM;
+            mPwmMotor = MOTOR_FORWARD_PWM;
+            // mPwmMotor = MOTOR_NEUTRAL_PWM;
         else if (targetCenter.y > (screenCenter.y + reverseBoundaryPercent * screenCenter.y * 2))
-            // mPwmMotor = MOTOR_REVERSE_PWM;
-            mPwmMotor = MOTOR_NEUTRAL_PWM;
+            mPwmMotor = MOTOR_REVERSE_PWM;
+            // mPwmMotor = MOTOR_NEUTRAL_PWM;
         else mPwmMotor = MOTOR_NEUTRAL_PWM;
+
+        // Compute steering
+        if (!isReversing()) {
+            panSteeringConvert = ((STEERING_RANGE / PAN_RANGE) * mPwmPan + (MAX_RIGHT_STEERING_PWM - (MAX_RIGHT_PAN_PWM - REDUCED_PAN_FACTOR) * (STEERING_RANGE / PAN_RANGE)));
+            mPwmSteering = constrain(panSteeringConvert, MAX_LEFT_STEERING_PWM, MAX_RIGHT_STEERING_PWM);
+        }
+        else {
+            panSteeringConvert = ((-STEERING_RANGE / PAN_RANGE) * mPwmPan + (MAX_RIGHT_STEERING_PWM - (MAX_LEFT_PAN_PWM + REDUCED_PAN_FACTOR) * (-STEERING_RANGE / PAN_RANGE)));
+            mPwmSteering = constrain(panSteeringConvert, MAX_LEFT_STEERING_PWM, MAX_RIGHT_STEERING_PWM);
+        }
 	}
 
     public void reset() {
         mPwmPan = CENTER_PAN_PWM;
-        mPwmFrontWheels = CENTER_FRONT_WHEELS_PWM;
+        mPwmSteering = CENTER_STEERING_PWM;
         mPwmMotor = MOTOR_NEUTRAL_PWM;
 	}
-
-    private void updateWheelsPWM() {
-        mPwmFrontWheels = constrain(1.3 * ((CENTER_PAN_PWM - mPwmPan) / RANGE_PAN_PWM) * RANGE_WHEELS_PWM + CENTER_FRONT_WHEELS_PWM, RIGHT_FULL_TURN_WHEELS_PWM, LEFT_FULL_TURN_WHEELS_PWM);
-    }
 
     private double constrain(double input, double min, double max) {
         return (input < min) ? min : (input > max) ? max : input;
@@ -142,7 +144,7 @@ public class CarController {
         Point derivativeTerm = new Point(0, 0);
 
         final double kD_X = 0.8; // Derivative gain (Kd)
-        final int MID_SCREEN_BOUNDARY = (int) (screenCenterPoint.x * 2 * 15) / 352; // 15 when screen size = 352, 288
+        final int MID_SCREEN_BOUNDARY = (int) (screenCenterPoint.x * 2 * 20) / 352; // 20 when screen size = 352, 288
 
         setpoint.x = (screenCenterPoint.x - currentCenterPoint.x) * 1.35;
         if ((setpoint.x < -MID_SCREEN_BOUNDARY || setpoint.x > MID_SCREEN_BOUNDARY) && currentCenterPoint.x > 0) {
@@ -157,7 +159,7 @@ public class CarController {
             mLastPwmPan = mPwmPan;
 
             mPwmPan = error.x - constrain(kD_X * derivativeTerm.x, -9, 9);
-            mPwmPan = constrain(mPwmPan, LEFT_FULL_TURN_PAN_PWM, RIGHT_FULL_TURN_PAN_PWM);
+            mPwmPan = constrain(mPwmPan, MAX_LEFT_PAN_PWM, MAX_RIGHT_PAN_PWM);
 
             mLastCenterPoint.x = currentCenterPoint.x;
         }
@@ -170,17 +172,17 @@ public class CarController {
 			boolean foundObstacle = false;
 
 			if (_frontRightIR > 0.9) {
-				mPwmFrontWheels = LEFT_FULL_TURN_WHEELS_PWM;
+				mPwmSteering = MAX_LEFT_STEERING_PWM;
 				// Log.e(_TAG, Double.toString(_frontRightIR));
 				foundObstacle = true;
 			} else if (_frontLeftIR > 0.9) {
-				mPwmFrontWheels = LEFT_FULL_TURN_WHEELS_PWM;
+				mPwmSteering = MAX_LEFT_STEERING_PWM;
 				foundObstacle = true;
 			} else if (_sideLeftIR > 1.1) {
-				mPwmFrontWheels = RIGHT_FULL_TURN_WHEELS_PWM - 100;
+				mPwmSteering = MAX_RIGHT_STEERING_PWM - 100;
 				foundObstacle = true;
 			} else if (_sideRightIR > 1.1) {
-				mPwmFrontWheels = LEFT_FULL_TURN_WHEELS_PWM - 100;
+				mPwmSteering = MAX_LEFT_STEERING_PWM - 100;
 				foundObstacle = true;
 			}
 			return foundObstacle;
