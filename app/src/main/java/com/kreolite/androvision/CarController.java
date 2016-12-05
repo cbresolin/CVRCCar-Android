@@ -146,13 +146,9 @@ public class CarController {
         final double kD_X = 0.8; // Derivative gain (Kd)
         final int MID_SCREEN_BOUNDARY = (int) (screenCenterPoint.x * 2 * 20) / 352; // 20 when screen size = 352, 288
 
-        setpoint.x = screenCenterPoint.x - targetCenterPoint.x;
-        setpoint.y = Math.abs(screenCenterPoint.y - targetCenterPoint.y);
-
+        setpoint.x = (screenCenterPoint.x - targetCenterPoint.x) * 1.35;
         if ((setpoint.x < -MID_SCREEN_BOUNDARY || setpoint.x > MID_SCREEN_BOUNDARY) && targetCenterPoint.x > 0) {
             if (mLastTargetCenterPoint.x != targetCenterPoint.x) {
-                double pwmByDegree = (double)(MAX_RIGHT_PAN_PWM - MAX_LEFT_PAN_PWM) / 180;
-                mIncrement.x = Math.toDegrees(Math.atan(setpoint.x/setpoint.y)) * pwmByDegree;
                 mLastPwmPan = mPwmPan;
                 mPwmPan = mPwmPan - mIncrement.x;
             }
