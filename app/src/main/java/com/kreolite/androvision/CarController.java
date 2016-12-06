@@ -28,7 +28,7 @@ public class CarController {
 
     /* Pan values */
     private static final int MAX_RIGHT_PAN_PWM = 2400;
-    private static final int MAX_LEFT_PAN_PWM = 900;
+    private static final int MAX_LEFT_PAN_PWM = 1000;
     private static final int CENTER_PAN_PWM = 1680;
     private static final int REDUCED_PAN_FACTOR = 400;
     private static final double PAN_RANGE = (MAX_RIGHT_PAN_PWM - REDUCED_PAN_FACTOR) - (MAX_LEFT_PAN_PWM + REDUCED_PAN_FACTOR);
@@ -47,10 +47,6 @@ public class CarController {
     private static final int MOTOR_REVERSE_PWM = 1370;
     private static final int MOTOR_NEUTRAL_PWM = 1490;
     private double mPwmMotor;
-
-    private Point mIncrement = new Point(0, 0);
-    private Point mLastTargetCenterPoint = new Point(0, 0);
-
 
 	// IRSensors _irSensors;
 
@@ -128,7 +124,7 @@ public class CarController {
 	}
 
     public void reset() {
-        mPwmPan = CENTER_PAN_PWM;
+        mPwmPan = mLastPwmPan;
         mPwmSteering = CENTER_STEERING_PWM;
         mPwmMotor = MOTOR_NEUTRAL_PWM;
 	}
@@ -138,24 +134,18 @@ public class CarController {
     }
 
     private void updatePanPwm(Point screenCenterPoint, Point targetCenterPoint) {
-        // --- Set up objects to calculate the error and derivative error
-        Point error = new Point(0, 0); // The position error
+        // --- Set up objects to calculate the error
         Point setpoint = new Point(0, 0);
-        Point derivativeTerm = new Point(0, 0);
+        Point mIncrement = new Point(0, 0);
 
-        final double kD_X = 0.8; // Derivative gain (Kd)
-        final int MID_SCREEN_BOUNDARY = (int) (screenCenterPoint.x * 2 * 20) / 352; // 20 when screen size = 352, 288
+        final int MID_SCREEN_BOUNDARY = (int) (screenCenterPoint.x * 2 * 30) / 352; // 30 when screen size = 352, 288
 
-        setpoint.x = (screenCenterPoint.x - targetCenterPoint.x) * 1.35;
-        if ((setpoint.x < -MID_SCREEN_BOUNDARY || setpoint.x > MID_SCREEN_BOUNDARY) && targetCenterPoint.x > 0) {
-            if (mLastTargetCenterPoint.x != targetCenterPoint.x) {
-                mLastPwmPan = mPwmPan;
-                mPwmPan = mPwmPan - mIncrement.x;
-            }
-
+        setpoint.x = screenCenterPoint.x - targetCenterPoint.x;
+        if (setpoint.x < -MID_SCREEN_BOUNDARY || setpoint.x > MID_SCREEN_BOUNDARY) {
             mLastPwmPan = mPwmPan;
+            mIncrement.x = setpoint.x * 0.20;
+            mPwmPan -= mIncrement.x;
             mPwmPan = constrain(mPwmPan, MAX_LEFT_PAN_PWM, MAX_RIGHT_PAN_PWM);
-            mLastTargetCenterPoint.x = targetCenterPoint.x;
         }
     }
 
