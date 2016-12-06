@@ -34,10 +34,12 @@ public class CarController {
     private static final double PAN_RANGE = (MAX_RIGHT_PAN_PWM - REDUCED_PAN_FACTOR) - (MAX_LEFT_PAN_PWM + REDUCED_PAN_FACTOR);
     private double mPwmPan;
     private double mLastPwmPan;
+    private boolean mIsSearchingRight=false;
+    private boolean mIsSearchingLeft=false;
 
     /* Steering values */
     private static final int MAX_RIGHT_STEERING_PWM = 1920;
-    private static final int MAX_LEFT_STEERING_PWM = 1350;
+    private static final int MAX_LEFT_STEERING_PWM = 1340;
     private static final int CENTER_STEERING_PWM = 1640;
     private static final double STEERING_RANGE = MAX_RIGHT_STEERING_PWM - MAX_LEFT_STEERING_PWM;
     private double mPwmSteering;
@@ -105,11 +107,9 @@ public class CarController {
 
         // Compute throttle
         if (targetCenter.y < (screenCenter.y - forwardBoundaryPercent*screenCenter.y * 2))
-            // mPwmMotor = MOTOR_FORWARD_PWM;
-            mPwmMotor = MOTOR_NEUTRAL_PWM;
+            mPwmMotor = MOTOR_FORWARD_PWM;
         else if (targetCenter.y > (screenCenter.y + reverseBoundaryPercent * screenCenter.y * 2))
-            // mPwmMotor = MOTOR_REVERSE_PWM;
-            mPwmMotor = MOTOR_NEUTRAL_PWM;
+            mPwmMotor = MOTOR_REVERSE_PWM;
         else mPwmMotor = MOTOR_NEUTRAL_PWM;
 
         // Compute steering
@@ -124,13 +124,13 @@ public class CarController {
 	}
 
     public void reset() {
-        mPwmPan = mLastPwmPan;
+        mPwmPan = CENTER_PAN_PWM;
         mPwmSteering = CENTER_STEERING_PWM;
         mPwmMotor = MOTOR_NEUTRAL_PWM;
 	}
 
     private double constrain(double input, double min, double max) {
-        return (input < min) ? min : (input > max) ? max : input;
+        return (input <= min) ? min : (input >= max) ? max : input;
     }
 
     private void updatePanPwm(Point screenCenterPoint, Point targetCenterPoint) {
@@ -147,6 +147,32 @@ public class CarController {
             mPwmPan -= mIncrement.x;
             mPwmPan = constrain(mPwmPan, MAX_LEFT_PAN_PWM, MAX_RIGHT_PAN_PWM);
         }
+    }
+
+    public void searchTarget() {
+        mPwmMotor = MOTOR_NEUTRAL_PWM;
+        mPwmSteering = CENTER_STEERING_PWM;
+
+        if (mPwmPan >= MAX_RIGHT_PAN_PWM) {
+            mPwmPan -= 30;
+            mIsSearchingLeft = true;
+            mIsSearchingRight = false;
+        }
+        else if (mPwmPan <= MAX_LEFT_PAN_PWM) {
+            mPwmPan += 30;
+            mIsSearchingLeft = false;
+            mIsSearchingRight = true;
+        }
+        else {
+            if (!mIsSearchingLeft && !mIsSearchingRight)
+            {
+                mPwmPan -= 30;
+                mIsSearchingLeft = true;
+            }
+            else if (mIsSearchingLeft) mPwmPan -= 30;
+            else mPwmPan += 30;
+        }
+        mPwmPan = constrain(mPwmPan, MAX_LEFT_PAN_PWM, MAX_RIGHT_PAN_PWM);
     }
 
 	/*class IRSensors {

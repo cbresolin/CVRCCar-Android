@@ -274,9 +274,9 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
 
             Mat spectrumLabel = mRgba.submat(mRgba.rows()-(mSpectrum.rows()+4), mRgba.rows()-4, 70, 70 + mSpectrum.cols());
             mSpectrum.copyTo(spectrumLabel);
-        }
 
-        updateCarPwms();
+            updateCarPwms();
+        }
         return mRgba;
     }
 
@@ -396,7 +396,7 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
                     mTargetCenter.x = -1;
                     mTargetCenter.y = -1;
                     mCountOutOfFrame = 0;
-                    mCarController.reset();
+                    mCarController.searchTarget();
                 }
             }
 
