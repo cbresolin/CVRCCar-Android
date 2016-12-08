@@ -35,6 +35,11 @@ public class ColorBlobDetector {
     }
 
     public void setHsvColor(Scalar hsvColor) {
+        // Ensure HSV colors are within range
+        hsvColor.val[0] = (hsvColor.val[0] <= 0) ? 0 : (hsvColor.val[0] >= 179) ? 179 : hsvColor.val[0];
+        hsvColor.val[1] = (hsvColor.val[1] <= 0) ? 0 : (hsvColor.val[1] >= 255) ? 255 : hsvColor.val[1];
+        hsvColor.val[2] = (hsvColor.val[2] <= 0) ? 0 : (hsvColor.val[2] >= 255) ? 255 : hsvColor.val[2];
+
         double minH = (hsvColor.val[0] >= mColorRadius.val[0]) ? hsvColor.val[0] - mColorRadius.val[0] : 0;
         double maxH = (hsvColor.val[0] + mColorRadius.val[0] <= 179) ? hsvColor.val[0] + mColorRadius.val[0] : 179;
         mLowerBound.val[0] = minH;
@@ -92,7 +97,7 @@ public class ColorBlobDetector {
                 maxArea = area;
         }
 
-        // Filter contours by area and resize to fit the original image size
+        // Filter contours by area
         mContours.clear();
         each = contours.iterator();
         while (each.hasNext()) {

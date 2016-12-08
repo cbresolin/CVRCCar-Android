@@ -65,7 +65,6 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     private SharedPreferences                  mSharedPref;
     private double                             mForwardBoundaryPercent = -0.15;
     private double                             mReverseBoundaryPercent = 0.3;
-    private int                                mCountOutOfFrame = 0;
     private String                             mLastPwmJsonValues = "";
     private boolean                            mIsReversingHandled = false;
 
@@ -127,7 +126,6 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         mReverseBoundaryPercent = Double.parseDouble(mSharedPref.getString(getString(R.string.reverse_boundary_percent), "30")) / 100;
 
         mCarController = new CarController();
-        mCountOutOfFrame = 0;
 
         mHandler = new MyHandler(this);
     }
@@ -243,6 +241,8 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     }
 
     private void displayContours(Mat matRgba){
+        Point centers = new Point(-1, -1);
+
         mDetector.findContours(matRgba);
         List<MatOfPoint> contours = mDetector.getContours();
         mTargetNum = contours.size();
@@ -254,12 +254,15 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
             // contours.get(x) is a single MatOfPoint, but to use minEnclosingCircle
             // we need to pass a MatOfPoint2f so we need to do a conversion
             contours.get(i).convertTo(points, CvType.CV_32FC2);
-            Imgproc.minEnclosingCircle(points, mTargetCenter, targetRadius);
-            Imgproc.circle(matRgba, mTargetCenter, 3, CONTOUR_COLOR, Core.FILLED);
-            Imgproc.circle(matRgba, mTargetCenter, (int) targetRadius[i], CONTOUR_COLOR, 2, 0, 0);
+            Imgproc.minEnclosingCircle(points, centers, targetRadius);
 
-            Log.i(TAG, "Target Center [" + i + "]= " + mTargetCenter);
-            Log.i(TAG, "Target Radius [" + i + "]= " + targetRadius[i]);
+            if (targetRadius[i] > 0) {
+                mTargetCenter = centers;
+                Imgproc.circle(matRgba, mTargetCenter, 3, CONTOUR_COLOR, Core.FILLED);
+                Imgproc.circle(matRgba, mTargetCenter, (int) targetRadius[i], CONTOUR_COLOR, 2, 0, 0);
+                Log.i(TAG, "Target Center [" + i + "]= " + mTargetCenter);
+                Log.i(TAG, "Target Radius [" + i + "]= " + targetRadius[i]);
+            }
         }
     }
 
@@ -389,15 +392,10 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
                         mTargetCenter,
                         mForwardBoundaryPercent,
                         mReverseBoundaryPercent);
-                mCountOutOfFrame = 0;
             } else {
-                mCountOutOfFrame++;
-                if (mCountOutOfFrame > 2) {
-                    mTargetCenter.x = -1;
-                    mTargetCenter.y = -1;
-                    mCountOutOfFrame = 0;
-                    mCarController.searchTarget();
-                }
+                mTargetCenter.x = -1;
+                mTargetCenter.y = -1;
+                mCarController.searchTarget();
             }
 
             pwmJsonValues = mCarController.getPWMValuesToJson();

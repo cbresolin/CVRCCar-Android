@@ -33,7 +33,6 @@ public class CarController {
     private static final int REDUCED_PAN_FACTOR = 400;
     private static final double PAN_RANGE = (MAX_RIGHT_PAN_PWM - REDUCED_PAN_FACTOR) - (MAX_LEFT_PAN_PWM + REDUCED_PAN_FACTOR);
     private double mPwmPan;
-    private double mLastPwmPan;
     private boolean mIsSearchingRight=false;
     private boolean mIsSearchingLeft=false;
 
@@ -45,7 +44,7 @@ public class CarController {
     private double mPwmSteering;
 
 	/* Throttle values */
-    private static final int MOTOR_FORWARD_PWM = 1560;
+    private static final int MOTOR_FORWARD_PWM = 1580;
     private static final int MOTOR_REVERSE_PWM = 1370;
     private static final int MOTOR_NEUTRAL_PWM = 1490;
     private double mPwmMotor;
@@ -54,7 +53,7 @@ public class CarController {
 
 	public CarController() {
 		// set the pulse width to be exactly the middle
-        mLastPwmPan = mPwmPan = CENTER_PAN_PWM;
+        mPwmPan = CENTER_PAN_PWM;
         mPwmMotor = MOTOR_NEUTRAL_PWM;
 		mPwmSteering = CENTER_STEERING_PWM;
 
@@ -142,7 +141,6 @@ public class CarController {
 
         setpoint.x = screenCenterPoint.x - targetCenterPoint.x;
         if (setpoint.x < -MID_SCREEN_BOUNDARY || setpoint.x > MID_SCREEN_BOUNDARY) {
-            mLastPwmPan = mPwmPan;
             mIncrement.x = setpoint.x * 0.20;
             mPwmPan -= mIncrement.x;
             mPwmPan = constrain(mPwmPan, MAX_LEFT_PAN_PWM, MAX_RIGHT_PAN_PWM);
