@@ -32,6 +32,8 @@ public class SettingsActivity extends AppCompatActivity {
     EditText forwardBoundaryControl;
     @InjectView(R.id.editTextReverseBoundary)
     EditText reverseBoundaryControl;
+    @InjectView(R.id.editTextMinRadius)
+    EditText minRadiusControl;
 
     SharedPreferences sharedPref;
     SharedPreferences.Editor editor;
@@ -49,8 +51,9 @@ public class SettingsActivity extends AppCompatActivity {
         reso2Control.setChecked(sharedPref.getBoolean(getString(R.string.is_reso2), false));
         reso3Control.setChecked(sharedPref.getBoolean(getString(R.string.is_reso3), false));
         reso4Control.setChecked(sharedPref.getBoolean(getString(R.string.is_reso4), false));
-        forwardBoundaryControl.setText(sharedPref.getString(getString(R.string.forward_boundary_percent), "-20"));
-        reverseBoundaryControl.setText(sharedPref.getString(getString(R.string.reverse_boundary_percent), "30"));
+        forwardBoundaryControl.setText(sharedPref.getString(getString(R.string.forward_boundary_percent), "-15"));
+        reverseBoundaryControl.setText(sharedPref.getString(getString(R.string.reverse_boundary_percent), "25"));
+        minRadiusControl.setText(sharedPref.getString(getString(R.string.minimum_radius_value), "15"));
 
         setReso1ControlListener();
         setReso2ControlListener();
@@ -58,6 +61,7 @@ public class SettingsActivity extends AppCompatActivity {
         setReso4ControlListener();
         setForwardBoundaryControlListener();
         setReverseBoundaryControlListener();
+        setMinRadiusControlListener();
     }
 
     private void setForwardBoundaryControlListener() {
@@ -94,6 +98,28 @@ public class SettingsActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 editor = sharedPref.edit();
                 editor.putString(getString(R.string.reverse_boundary_percent), reverseBoundaryControl.getText().toString());
+                editor.commit();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+
+    private void setMinRadiusControlListener() {
+
+        minRadiusControl.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                editor = sharedPref.edit();
+                editor.putString(getString(R.string.minimum_radius_value), minRadiusControl.getText().toString());
                 editor.commit();
             }
 

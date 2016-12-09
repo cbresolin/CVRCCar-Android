@@ -49,7 +49,6 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     private Size                               SCREEN_SIZE;
     private Size                               SPECTRUM_SIZE;
     private Scalar                             CONTOUR_COLOR;
-    private static final int                   MIN_RADIUS = 15;
     volatile Point                             mTargetCenter = new Point(-1, -1);
     private Point                              mScreenCenter = new Point(-1, -1);
     private int                                mTargetNum = 0;
@@ -66,6 +65,7 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     private SharedPreferences                  mSharedPref;
     private double                             mForwardBoundaryPercent = -0.15;
     private double                             mReverseBoundaryPercent = 0.3;
+    private int                                mMinRadius = 15;
     private String                             mLastPwmJsonValues = "";
     private boolean                            mIsReversingHandled = false;
     private int                                mCountOutOfFrame = 0;
@@ -124,8 +124,9 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         mOpenCvCameraView.setCvCameraViewListener(this);
         mOpenCvCameraView.setMaxFrameSize((int) SCREEN_SIZE.width, (int) SCREEN_SIZE.height);
 
-        mForwardBoundaryPercent = Double.parseDouble(mSharedPref.getString(getString(R.string.forward_boundary_percent), "-20")) / 100;
-        mReverseBoundaryPercent = Double.parseDouble(mSharedPref.getString(getString(R.string.reverse_boundary_percent), "30")) / 100;
+        mForwardBoundaryPercent = Double.parseDouble(mSharedPref.getString(getString(R.string.forward_boundary_percent), "-15")) / 100;
+        mReverseBoundaryPercent = Double.parseDouble(mSharedPref.getString(getString(R.string.reverse_boundary_percent), "25")) / 100;
+        mMinRadius = Integer.parseInt(mSharedPref.getString(getString(R.string.minimum_radius_value), "15"));
 
         mCarController = new CarController();
         mCountOutOfFrame = 0;
@@ -259,7 +260,7 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
             contours.get(i).convertTo(points, CvType.CV_32FC2);
             Imgproc.minEnclosingCircle(points, centers, targetRadius);
 
-            if (targetRadius[i] > MIN_RADIUS) {
+            if (targetRadius[i] > mMinRadius) {
                 mTargetCenter = centers;
                 Imgproc.circle(matRgba, mTargetCenter, 3, CONTOUR_COLOR, Core.FILLED);
                 Imgproc.circle(matRgba, mTargetCenter, (int) targetRadius[i], CONTOUR_COLOR, 2, 0, 0);

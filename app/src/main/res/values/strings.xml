@@ -12,6 +12,8 @@
     <string name="is_reso2">isReso2</string>
     <string name="is_reso3">isReso3</string>
     <string name="is_reso4">isReso4</string>
-    <string name="forward_boundary_percent">forwardBoundary</string>
+    <string name="forward_boundary_percent">forwardBoundaryPercent</string>
     <string name="reverse_boundary_percent">reverseBoundaryPercent</string>
+    <string name="minimum_radius">Minimum Radius</string>
+    <string name="minimum_radius_value">minRadiusValue</string>
 </resources>
