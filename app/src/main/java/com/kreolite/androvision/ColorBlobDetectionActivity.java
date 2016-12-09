@@ -49,6 +49,7 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     private Size                               SCREEN_SIZE;
     private Size                               SPECTRUM_SIZE;
     private Scalar                             CONTOUR_COLOR;
+    private static final int                   MIN_RADIUS = 15;
     volatile Point                             mTargetCenter = new Point(-1, -1);
     private Point                              mScreenCenter = new Point(-1, -1);
     private int                                mTargetNum = 0;
@@ -67,6 +68,7 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     private double                             mReverseBoundaryPercent = 0.3;
     private String                             mLastPwmJsonValues = "";
     private boolean                            mIsReversingHandled = false;
+    private int                                mCountOutOfFrame = 0;
 
     private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -126,6 +128,7 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         mReverseBoundaryPercent = Double.parseDouble(mSharedPref.getString(getString(R.string.reverse_boundary_percent), "30")) / 100;
 
         mCarController = new CarController();
+        mCountOutOfFrame = 0;
 
         mHandler = new MyHandler(this);
     }
@@ -256,7 +259,7 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
             contours.get(i).convertTo(points, CvType.CV_32FC2);
             Imgproc.minEnclosingCircle(points, centers, targetRadius);
 
-            if (targetRadius[i] > 0) {
+            if (targetRadius[i] > MIN_RADIUS) {
                 mTargetCenter = centers;
                 Imgproc.circle(matRgba, mTargetCenter, 3, CONTOUR_COLOR, Core.FILLED);
                 Imgproc.circle(matRgba, mTargetCenter, (int) targetRadius[i], CONTOUR_COLOR, 2, 0, 0);
@@ -392,10 +395,15 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
                         mTargetCenter,
                         mForwardBoundaryPercent,
                         mReverseBoundaryPercent);
+                mCountOutOfFrame = 0;
             } else {
-                mTargetCenter.x = -1;
-                mTargetCenter.y = -1;
-                mCarController.searchTarget();
+                mCountOutOfFrame++;
+                if (mCountOutOfFrame > 2) {
+                    mTargetCenter.x = -1;
+                    mTargetCenter.y = -1;
+                    mCountOutOfFrame = 0;
+                    mCarController.searchTarget();
+                }
             }
 
             pwmJsonValues = mCarController.getPWMValuesToJson();

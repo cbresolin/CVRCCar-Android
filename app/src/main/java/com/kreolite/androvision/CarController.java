@@ -31,6 +31,7 @@ public class CarController {
     private static final int MAX_LEFT_PAN_PWM = 1000;
     private static final int CENTER_PAN_PWM = 1680;
     private static final int REDUCED_PAN_FACTOR = 400;
+    private static final int PAN_INCREMENT = 20;
     private static final double PAN_RANGE = (MAX_RIGHT_PAN_PWM - REDUCED_PAN_FACTOR) - (MAX_LEFT_PAN_PWM + REDUCED_PAN_FACTOR);
     private double mPwmPan;
     private boolean mIsSearchingRight=false;
@@ -44,7 +45,7 @@ public class CarController {
     private double mPwmSteering;
 
 	/* Throttle values */
-    private static final int MOTOR_FORWARD_PWM = 1580;
+    private static final int MOTOR_FORWARD_PWM = 1560;
     private static final int MOTOR_REVERSE_PWM = 1370;
     private static final int MOTOR_NEUTRAL_PWM = 1490;
     private double mPwmMotor;
@@ -149,26 +150,25 @@ public class CarController {
 
     public void searchTarget() {
         mPwmMotor = MOTOR_NEUTRAL_PWM;
-        mPwmSteering = CENTER_STEERING_PWM;
 
         if (mPwmPan >= MAX_RIGHT_PAN_PWM) {
-            mPwmPan -= 30;
+            mPwmPan -= PAN_INCREMENT;
             mIsSearchingLeft = true;
             mIsSearchingRight = false;
         }
         else if (mPwmPan <= MAX_LEFT_PAN_PWM) {
-            mPwmPan += 30;
+            mPwmPan += PAN_INCREMENT;
             mIsSearchingLeft = false;
             mIsSearchingRight = true;
         }
         else {
             if (!mIsSearchingLeft && !mIsSearchingRight)
             {
-                mPwmPan -= 30;
+                mPwmPan -= PAN_INCREMENT;
                 mIsSearchingLeft = true;
             }
-            else if (mIsSearchingLeft) mPwmPan -= 30;
-            else mPwmPan += 30;
+            else if (mIsSearchingLeft) mPwmPan -= PAN_INCREMENT;
+            else mPwmPan += PAN_INCREMENT;
         }
         mPwmPan = constrain(mPwmPan, MAX_LEFT_PAN_PWM, MAX_RIGHT_PAN_PWM);
     }
