@@ -27,9 +27,9 @@ public class CarController {
 	private static final String _TAG = "CarController";
 
     /* Pan values */
-    private static final int MAX_RIGHT_PAN_PWM = 2400;
-    private static final int MAX_LEFT_PAN_PWM = 1000;
-    private static final int CENTER_PAN_PWM = 1680;
+    private static final int MAX_RIGHT_PAN_PWM = 2250;
+    private static final int MAX_LEFT_PAN_PWM = 565;
+    private static final int CENTER_PAN_PWM = 1385;
     private static final int REDUCED_PAN_FACTOR = 400;
     private static final int PAN_INCREMENT = 20;
     private static final double PAN_RANGE = (MAX_RIGHT_PAN_PWM - REDUCED_PAN_FACTOR) - (MAX_LEFT_PAN_PWM + REDUCED_PAN_FACTOR);
@@ -74,7 +74,7 @@ public class CarController {
             jsonObj.put("pan", (int) mPwmPan);
             jsonObj.put("steering", (int) mPwmSteering);
             jsonObj.put("throttle", (int) mPwmMotor);
-			return jsonObj.toString();
+            return (jsonObj.toString() + ";");
 		} catch (JSONException e) {
 			Log.e(_TAG, e.getMessage());
 		}
@@ -87,7 +87,7 @@ public class CarController {
             jsonObj.put("pan", (int) mPwmPan);
             jsonObj.put("steering", (int) mPwmSteering);
             jsonObj.put("throttle", MOTOR_NEUTRAL_PWM);
-            return jsonObj.toString();
+            return (jsonObj.toString() + ";");
         } catch (JSONException e) {
             Log.e(_TAG, e.getMessage());
         }
