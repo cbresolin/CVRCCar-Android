@@ -178,6 +178,7 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         CONTOUR_COLOR = new Scalar(255,255,10,255);
         mScreenCenter.x = width / 2;
         mScreenCenter.y = height / 2;
+        mIsColorSelected = false;
     }
 
     public void onCameraViewStopped() {
