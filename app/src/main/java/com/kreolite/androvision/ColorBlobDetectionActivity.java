@@ -45,7 +45,7 @@ import java.util.Set;
 public class ColorBlobDetectionActivity extends Activity implements OnTouchListener, CvCameraViewListener2 {
     private static final String                TAG = "ColorBlobDetectActivity";
     private static final int                   ZOOM = 5;
-    private static Scalar                      COLOR_RADIUS = new Scalar(5,50,50,0);
+    private static Scalar                      COLOR_RADIUS = new Scalar(5,50,200,0);
     private Size                               SCREEN_SIZE;
     private Size                               SPECTRUM_SIZE;
     private Scalar                             CONTOUR_COLOR;
