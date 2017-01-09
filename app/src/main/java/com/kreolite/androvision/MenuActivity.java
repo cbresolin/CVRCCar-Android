@@ -38,9 +38,9 @@ public class MenuActivity extends AppCompatActivity {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    Log.i(_TAG, "Permissions granted!");
+                    Log.i(_TAG, "Camera permissions granted!");
                 } else {
-                    Log.i(_TAG, "Permissions denied!");
+                    Log.i(_TAG, "Camera permissions denied!");
                 }
                 return;
             }
@@ -64,9 +64,8 @@ public class MenuActivity extends AppCompatActivity {
         }
         else {
             Context context = getApplicationContext();
-            CharSequence text = "Camera permissions not granted!";
+            CharSequence text = "Camera permissions denied!";
             int duration = Toast.LENGTH_SHORT;
-
             Toast toast = Toast.makeText(context, text, duration);
             toast.show();
         }
@@ -82,9 +81,8 @@ public class MenuActivity extends AppCompatActivity {
         }
         else {
             Context context = getApplicationContext();
-            CharSequence text = "Camera permissions not granted!";
+            CharSequence text = "Camera permissions denied!";
             int duration = Toast.LENGTH_SHORT;
-
             Toast toast = Toast.makeText(context, text, duration);
             toast.show();
         }

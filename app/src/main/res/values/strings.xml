@@ -16,4 +16,5 @@
     <string name="reverse_boundary_percent">reverseBoundaryPercent</string>
     <string name="minimum_radius">Minimum Radius</string>
     <string name="minimum_radius_value">minRadiusValue</string>
+    <string name="bt_device_name">btDeviceName</string>
 </resources>
