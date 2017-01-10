@@ -17,4 +17,5 @@
     <string name="minimum_radius">Minimum Radius</string>
     <string name="minimum_radius_value">minRadiusValue</string>
     <string name="bt_device_name">btDeviceName</string>
+    <string name="bt_device_address">btDeviceAddress</string>
 </resources>

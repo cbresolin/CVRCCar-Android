@@ -18,6 +18,9 @@ import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.imgproc.Imgproc;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -38,14 +41,17 @@ import android.view.View.OnTouchListener;
 import android.view.SurfaceView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 public class ColorBlobDetectionActivity extends Activity implements OnTouchListener, CvCameraViewListener2 {
     private static final String                TAG = "ColorBlobDetectActivity";
     private static final int                   ZOOM = 5;
     private static Scalar                      COLOR_RADIUS = new Scalar(5,50,200,0);
+    private static final int                   REQUEST_ENABLE_BT = 0;
     private Size                               SCREEN_SIZE;
     private Size                               SPECTRUM_SIZE;
     private Scalar                             CONTOUR_COLOR;
@@ -63,12 +69,15 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     private UsbService                         mUsbService;
     private MyHandler                          mHandler;
     private SharedPreferences                  mSharedPref;
+    private SharedPreferences.Editor           mEditor;
     private double                             mForwardBoundaryPercent = -0.15;
     private double                             mReverseBoundaryPercent = 0.3;
     private int                                mMinRadius = 15;
     private String                             mLastPwmJsonValues = "";
     private boolean                            mIsReversingHandled = false;
     private int                                mCountOutOfFrame = 0;
+    private BluetoothAdapter                   mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    private BtManager                          mBtManager;
 
     private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -95,6 +104,7 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         Log.i(TAG, "called onCreate");
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -119,19 +129,83 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
             SCREEN_SIZE = new Size(352, 288);
         }
 
-        mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.color_blob_detection_activity_surface_view);
-        mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
-        mOpenCvCameraView.setCvCameraViewListener(this);
-        mOpenCvCameraView.setMaxFrameSize((int) SCREEN_SIZE.width, (int) SCREEN_SIZE.height);
-
         mForwardBoundaryPercent = Double.parseDouble(mSharedPref.getString(getString(R.string.forward_boundary_percent), "-15")) / 100;
         mReverseBoundaryPercent = Double.parseDouble(mSharedPref.getString(getString(R.string.reverse_boundary_percent), "25")) / 100;
         mMinRadius = Integer.parseInt(mSharedPref.getString(getString(R.string.minimum_radius_value), "15"));
+
+        mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.color_blob_detection_activity_surface_view);
+        mOpenCvCameraView.setCvCameraViewListener(this);
+        mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
+        mOpenCvCameraView.setMaxFrameSize((int) SCREEN_SIZE.width, (int) SCREEN_SIZE.height);
 
         mCarController = new CarController();
         mCountOutOfFrame = 0;
 
         mHandler = new MyHandler(this);
+
+        //------------------------------------------------------------------------------------------
+
+        if (BluetoothAdapter.getDefaultAdapter() != null)
+        {
+            if (!BluetoothAdapter.getDefaultAdapter().isEnabled()) {
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            }
+            else {
+                manageBtConnection();
+            }
+        }
+        else {
+            CharSequence text = "Device does not support BT!";
+            int duration = Toast.LENGTH_SHORT;
+            Toast toast = Toast.makeText(getApplicationContext(), text, duration);
+            toast.show();
+        }
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == REQUEST_ENABLE_BT) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                manageBtConnection();
+            }
+            else {
+                CharSequence text = "No connection to BT devices!";
+                int duration = Toast.LENGTH_SHORT;
+                Toast toast = Toast.makeText(getApplicationContext(), text, duration);
+                toast.show();
+                Log.w(TAG, "No connection to BT devices!");
+            }
+        }
+    }
+
+    private void manageBtConnection() {
+
+        mBtManager = new BtManager();
+        mBtManager.setContext(getApplicationContext());
+
+        if (!mBtManager.isDevicePaired()) {
+            String btDeviceName = mSharedPref.getString(getString(R.string.bt_device_name), "");
+            mBtManager.setBtDeviceName(btDeviceName);
+            mBtManager.scan();
+        }
+
+        if (mBtManager.isDevicePaired()) {
+            // Store MAC address for further use
+            mEditor = mSharedPref.edit();
+            mEditor.putString(getString(R.string.bt_device_address), mBtManager.getBtDeviceAddress());
+            mEditor.commit();
+
+            if (!mBtManager.isDeviceConnected()) {
+                mBtManager.connect();
+            }
+        }
+
+
+        // mBtManager.disconnect();
     }
 
     @Override
@@ -140,6 +214,10 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         super.onPause();
         if (mOpenCvCameraView != null)
             mOpenCvCameraView.disableView();
+
+        if (mBtManager != null && mBtManager.isDeviceConnected()) {
+            mBtManager.disconnect();
+        }
 
         unregisterReceiver(mUsbReceiver);
         unbindService(usbConnection);
@@ -159,12 +237,20 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         hideNavigationBar();
         setFilters();  // Start listening notifications from UsbService
         startService(UsbService.class, usbConnection, null); // Start UsbService(if it was not started before) and Bind it
+
+        if (mBtManager != null && !mBtManager.isDeviceConnected()) {
+            mBtManager.connect();
+        }
     }
 
     public void onDestroy() {
         super.onDestroy();
         if (mOpenCvCameraView != null)
             mOpenCvCameraView.disableView();
+
+        if (mBtManager != null && mBtManager.isDeviceConnected()) {
+            mBtManager.disconnect();
+        }
     }
 
     public void onCameraViewStarted(int width, int height) {

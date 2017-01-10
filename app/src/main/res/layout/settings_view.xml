@@ -31,37 +31,6 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Scan"
-            android:id="@+id/buttonScan"
-            android:onClick="onClickScan"
-            android:layout_weight="1"/>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Connect"
-            android:id="@+id/buttonConnect"
-            android:onClick="onClickConnect"
-            android:layout_weight="1"/>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Disconnect"
-            android:id="@+id/buttonDisconnect"
-            android:onClick="onClickDisconnect"
-            android:layout_weight="1"/>
-
-    </LinearLayout>
-
     <RadioGroup
         android:orientation="horizontal"
         android:layout_width="match_parent"

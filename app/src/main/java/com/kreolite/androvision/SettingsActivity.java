@@ -1,54 +1,22 @@
 package com.kreolite.androvision;
 
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioButton;
-import android.widget.Toast;
-
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Set;
-import java.util.UUID;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    private static final String _TAG = "settingsActivity";
-    // private final String DEVICE_ADDRESS="98:D3:31:FC:1E:28";
-    //Serial Port Service ID
-    private final UUID PORT_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
-    private BluetoothDevice btDevice;
-    private BluetoothSocket btSocket;
-    private OutputStream btOutputStream;
-    private InputStream btInputStream;
-    private static final int MY_BT_ENABLE_REQUEST = 0;
-    private boolean devicePaired = false;
-    private boolean deviceConnected=false;
-
     @InjectView(R.id.editTextBtDevice)
     EditText btDeviceControl;
-
-    @InjectView(R.id.buttonScan)
-    Button scanButton;
-    @InjectView(R.id.buttonConnect)
-    Button connectButton;
-    @InjectView(R.id.buttonDisconnect)
-    Button disconnectButton;
 
     @InjectView(R.id.radioButtonReso1)
     RadioButton reso1Control;
@@ -75,12 +43,6 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.settings_view);
         ButterKnife.inject(this);
 
-        // Set button states
-        setButtonEnabled(false);
-
-        // Initialise BT
-        btInit();
-
         // Read current values if any, and change layout
         sharedPref = getApplicationContext().getSharedPreferences(getString(R.string.settings_file),
                 Context.MODE_PRIVATE);
@@ -101,104 +63,6 @@ public class SettingsActivity extends AppCompatActivity {
         setForwardBoundaryControlListener();
         setReverseBoundaryControlListener();
         setMinRadiusControlListener();
-    }
-
-    private void setButtonEnabled(boolean isEnabled)
-    {
-        scanButton.setEnabled(!isEnabled);
-        connectButton.setEnabled(isEnabled);
-        disconnectButton.setEnabled(isEnabled);
-    }
-
-    private void btInit()
-    {
-        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-        if (bluetoothAdapter == null) {
-            Context context = getApplicationContext();
-            CharSequence text = "Device does not support BT!";
-            int duration = Toast.LENGTH_SHORT;
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
-
-            Log.i(_TAG, "Device does not support BT!");
-        }
-
-        if(!bluetoothAdapter.isEnabled())
-        {
-            Intent enableAdapter = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableAdapter, MY_BT_ENABLE_REQUEST);
-        }
-    }
-
-    public void onClickScan(View view) {
-
-        String btDeviceToScan = sharedPref.getString(getString(R.string.bt_device_name), "");
-        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-        Set<BluetoothDevice> bondedDevices = bluetoothAdapter.getBondedDevices();
-
-        if (bondedDevices.isEmpty()) {
-            Context context = getApplicationContext();
-            CharSequence text = "BT is disabled or no paired devices!";
-            int duration = Toast.LENGTH_SHORT;
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
-        }
-        else
-        {
-            for (BluetoothDevice iterator : bondedDevices)
-            {
-                if (iterator.getName().equals(btDeviceToScan))
-                {
-                    btDevice = iterator;
-                    devicePaired = true;
-
-                    Context context = getApplicationContext();
-                    CharSequence text = iterator.getName() + " device is paired!";
-                    int duration = Toast.LENGTH_SHORT;
-                    Toast toast = Toast.makeText(context, text, duration);
-                    toast.show();
-
-                    Log.i(_TAG, iterator.getName() + " device is paired!");
-                    break;
-                }
-            }
-
-            if (!devicePaired)
-            {
-                Context context = getApplicationContext();
-                CharSequence text = btDeviceToScan + " device is not paired!";
-                int duration = Toast.LENGTH_SHORT;
-                Toast toast = Toast.makeText(context, text, duration);
-                toast.show();
-
-                Log.i(_TAG, btDeviceToScan + " device is not paired!");
-            }
-        }
-    }
-
-    private void onClickConnect(View view) {
-
-    }
-
-    private void onClickDisconnect(View view) {
-
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // Check which request we're responding to
-        if (requestCode == MY_BT_ENABLE_REQUEST) {
-            // Make sure the request was successful
-            if (resultCode == RESULT_OK) {
-                Log.i(_TAG, "BT is enabled!");
-            }
-            else
-            {
-                Log.i(_TAG, "BT is disabled!");
-            }
-        }
     }
 
     private void setBtDeviceControlListener() {
