@@ -145,9 +145,9 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
 
         //------------------------------------------------------------------------------------------
 
-        if (BluetoothAdapter.getDefaultAdapter() != null)
+        if (mBluetoothAdapter != null)
         {
-            if (!BluetoothAdapter.getDefaultAdapter().isEnabled()) {
+            if (!mBluetoothAdapter.isEnabled()) {
                 Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
             }
@@ -187,22 +187,18 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         mBtManager = new BtManager();
         mBtManager.setContext(getApplicationContext());
 
-        if (!mBtManager.isDevicePaired()) {
-            String btDeviceName = mSharedPref.getString(getString(R.string.bt_device_name), "");
-            mBtManager.setBtDeviceName(btDeviceName);
-            mBtManager.scan();
-        }
+        String btDeviceName = mSharedPref.getString(getString(R.string.bt_device_name), "");
+        mBtManager.setBtDeviceName(btDeviceName);
+        mBtManager.scan();
 
         if (mBtManager.isDevicePaired()) {
             // Store MAC address for further use
             mEditor = mSharedPref.edit();
             mEditor.putString(getString(R.string.bt_device_address), mBtManager.getBtDeviceAddress());
             mEditor.commit();
-
-            if (!mBtManager.isDeviceConnected()) {
-                mBtManager.connect();
-            }
         }
+
+        mBtManager.connect();
 
 
         // mBtManager.disconnect();
@@ -212,12 +208,8 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     public void onPause()
     {
         super.onPause();
-        if (mOpenCvCameraView != null)
-            mOpenCvCameraView.disableView();
-
-        if (mBtManager != null && mBtManager.isDeviceConnected()) {
-            mBtManager.disconnect();
-        }
+        if (mOpenCvCameraView != null) mOpenCvCameraView.disableView();
+        if (mBtManager != null) mBtManager.disconnect();
 
         unregisterReceiver(mUsbReceiver);
         unbindService(usbConnection);
@@ -238,19 +230,13 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         setFilters();  // Start listening notifications from UsbService
         startService(UsbService.class, usbConnection, null); // Start UsbService(if it was not started before) and Bind it
 
-        if (mBtManager != null && !mBtManager.isDeviceConnected()) {
-            mBtManager.connect();
-        }
+        if (mBtManager != null) mBtManager.connect();
     }
 
     public void onDestroy() {
         super.onDestroy();
-        if (mOpenCvCameraView != null)
-            mOpenCvCameraView.disableView();
-
-        if (mBtManager != null && mBtManager.isDeviceConnected()) {
-            mBtManager.disconnect();
-        }
+        if (mOpenCvCameraView != null) mOpenCvCameraView.disableView();
+        if (mBtManager != null) mBtManager.disconnect();
     }
 
     public void onCameraViewStarted(int width, int height) {

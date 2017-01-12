@@ -15,9 +15,8 @@ import java.util.UUID;
 
 public class BtManager {
 
-    private static final String _TAG = "BtManager";
-    //Serial Port Service ID
-    private final UUID PORT_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
+    private static final String TAG = "BtManager";
+    private final UUID SERIAL_PORT_SERVICE_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
 
     private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private String mBtDeviceName;
@@ -43,11 +42,11 @@ public class BtManager {
         Set<BluetoothDevice> bondedDevices = mBluetoothAdapter.getBondedDevices();
 
         if (bondedDevices.isEmpty()) {
-            CharSequence text = "BT is disabled or no paired devices!";
+            CharSequence text = "No paired devices!";
             int duration = Toast.LENGTH_SHORT;
             Toast toast = Toast.makeText(mSettingsContext, text, duration);
             toast.show();
-            Log.w(_TAG, "BT is disabled or no paired devices!");
+            Log.w(TAG, "No paired devices!");
         }
         else
         {
@@ -59,7 +58,7 @@ public class BtManager {
                     mBtDevice = iterator;
                     mDevicePaired = true;
                     mBtDeviceAddress = iterator.getAddress();
-                    Log.i(_TAG, iterator.getName() + " device is paired!");
+                    Log.i(TAG, iterator.getName() + " device is paired!");
                     break;
                 }
             }
@@ -70,7 +69,7 @@ public class BtManager {
                 int duration = Toast.LENGTH_SHORT;
                 Toast toast = Toast.makeText(mSettingsContext, text, duration);
                 toast.show();
-                Log.w(_TAG, mBtDeviceName + " device is not paired!");
+                Log.w(TAG, mBtDeviceName + " device is not paired!");
             }
         }
     }
@@ -85,49 +84,50 @@ public class BtManager {
 
     public void connect()
     {
-        mDeviceConnected = true;
-
-        try {
-            mBtSocket = mBtDevice.createRfcommSocketToServiceRecord(PORT_UUID);
-            mBluetoothAdapter.cancelDiscovery();
-            mBtSocket.connect();
-        } catch (IOException connectException) {
-            // Unable to connect; close the socket and return.
-            try {
-                connectException.printStackTrace();
-                mDeviceConnected = false;
-                mBtSocket.close();
-            } catch (IOException closeException) {
-                Log.e(_TAG, "Could not close the client socket", closeException);
-            }
-            return;
-        }
-
-        if(mDeviceConnected)
-        {
-            CharSequence text = mBtDeviceName + " device is connected!";
-            int duration = Toast.LENGTH_SHORT;
-            Toast toast = Toast.makeText(mSettingsContext, text, duration);
-            toast.show();
-            Log.i(_TAG, mBtDeviceName + " device is connected!");
+        if (mDevicePaired && !mDeviceConnected) {
+            mDeviceConnected = true;
 
             try {
-                mBtOutputStream = mBtSocket.getOutputStream();
-            } catch (IOException e) {
-                e.printStackTrace();
+                mBtSocket = mBtDevice.createRfcommSocketToServiceRecord(SERIAL_PORT_SERVICE_UUID);
+                mBluetoothAdapter.cancelDiscovery();
+                mBtSocket.connect();
+            } catch (IOException connectException) {
+                // Unable to connect; close the socket and return.
+                try {
+                    connectException.printStackTrace();
+                    mDeviceConnected = false;
+                    mBtSocket.close();
+                } catch (IOException closeException) {
+                    Log.e(TAG, "Could not close the client socket", closeException);
+                }
             }
-            try {
-                mBtInputStream = mBtSocket.getInputStream();
-            } catch (IOException e) {
-                e.printStackTrace();
+
+            if(mDeviceConnected)
+            {
+                CharSequence text = mBtDeviceName + " device is connected!";
+                int duration = Toast.LENGTH_SHORT;
+                Toast toast = Toast.makeText(mSettingsContext, text, duration);
+                toast.show();
+                Log.i(TAG, mBtDeviceName + " device is connected!");
+
+                try {
+                    mBtOutputStream = mBtSocket.getOutputStream();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    mBtInputStream = mBtSocket.getInputStream();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        }
-        else {
-            CharSequence text = mBtDeviceName + " device is not connected!";
-            int duration = Toast.LENGTH_SHORT;
-            Toast toast = Toast.makeText(mSettingsContext, text, duration);
-            toast.show();
-            Log.w(_TAG, mBtDeviceName + " device is not connected!");
+            else {
+                CharSequence text = mBtDeviceName + " device is not connected!";
+                int duration = Toast.LENGTH_SHORT;
+                Toast toast = Toast.makeText(mSettingsContext, text, duration);
+                toast.show();
+                Log.w(TAG, mBtDeviceName + " device is not connected!");
+            }
         }
     }
 
@@ -135,35 +135,97 @@ public class BtManager {
         return mDeviceConnected;
     }
 
+    private class ConnectThread extends Thread {
+        private final BluetoothSocket mmSocket;
+
+        public ConnectThread() {
+            // Use a temporary object that is later assigned to mmSocket
+            // because mmSocket is final.
+            BluetoothSocket tmp = null;
+
+            try {
+                // Get a BluetoothSocket to connect with the given BluetoothDevice.
+                // MY_UUID is the app's UUID string, also used in the server code.
+                tmp = mBtDevice.createRfcommSocketToServiceRecord(SERIAL_PORT_SERVICE_UUID);
+            } catch (IOException e) {
+                Log.e(TAG, "Socket's create() method failed", e);
+            }
+            mmSocket = tmp;
+        }
+
+        public void run() {
+            // Cancel discovery because it otherwise slows down the connection.
+            mBluetoothAdapter.cancelDiscovery();
+
+            try {
+                // Connect to the remote device through the socket. This call blocks
+                // until it succeeds or throws an exception.
+                mmSocket.connect();
+            } catch (IOException connectException) {
+                // Unable to connect; close the socket and return.
+                try {
+                    mmSocket.close();
+                } catch (IOException closeException) {
+                    Log.e(TAG, "Could not close the client socket", closeException);
+                }
+                return;
+            }
+
+            // The connection attempt succeeded. Perform work associated with
+            // the connection in a separate thread.
+
+            // manageMyConnectedSocket(mmSocket);
+        }
+
+        // Closes the client socket and causes the thread to finish.
+        public void cancel() {
+            try {
+                mmSocket.close();
+            } catch (IOException e) {
+                Log.e(TAG, "Could not close the client socket", e);
+            }
+        }
+    }
+
     public void disconnect() {
-        mDeviceConnected=false;
 
-        try {
-            mBtOutputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            mDeviceConnected = true;
-        }
-        try {
-            mBtInputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            mDeviceConnected = true;
-        }
-        try {
-            mBtSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            mDeviceConnected = true;
-        }
+        if (mDevicePaired && mDeviceConnected) {
+            mDeviceConnected=false;
 
-        if(!mDeviceConnected)
-        {
-            CharSequence text = mBtDeviceName + " device is disconnected!";
-            int duration = Toast.LENGTH_SHORT;
-            Toast toast = Toast.makeText(mSettingsContext, text, duration);
-            toast.show();
-            Log.i(_TAG, mBtDeviceName + " device is disconnected!");
+            try {
+                mBtOutputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                mDeviceConnected = true;
+            }
+            try {
+                mBtInputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                mDeviceConnected = true;
+            }
+            try {
+                mBtSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                mDeviceConnected = true;
+            }
+
+            if(!mDeviceConnected)
+            {
+                CharSequence text = mBtDeviceName + " device is disconnected!";
+                int duration = Toast.LENGTH_SHORT;
+                Toast toast = Toast.makeText(mSettingsContext, text, duration);
+                toast.show();
+                Log.i(TAG, mBtDeviceName + " device is disconnected!");
+            }
+            else {
+                CharSequence text = mBtDeviceName + " device is still connected!";
+                int duration = Toast.LENGTH_SHORT;
+                Toast toast = Toast.makeText(mSettingsContext, text, duration);
+                toast.show();
+                Log.w(TAG, mBtDeviceName + " device is still connected!");
+            }
         }
     }
 
