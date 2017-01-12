@@ -1,4 +1,4 @@
-package com.kreolite.androvision;
+package com.kreolite.cvrccar.ColorBlobDetection;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
@@ -19,8 +19,6 @@ import org.opencv.imgproc.Imgproc;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -41,17 +39,21 @@ import android.view.View.OnTouchListener;
 import android.view.SurfaceView;
 import android.widget.Toast;
 
-import java.io.IOException;
+import com.kreolite.cvrccar.BluetoothService.BluetoothService;
+import com.kreolite.cvrccar.BluetoothService.BtManager;
+import com.kreolite.cvrccar.R;
+import com.kreolite.cvrccar.UsbService;
+
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 public class ColorBlobDetectionActivity extends Activity implements OnTouchListener, CvCameraViewListener2 {
     private static final String                TAG = "ColorBlobDetectActivity";
     private static final int                   ZOOM = 5;
     private static Scalar                      COLOR_RADIUS = new Scalar(5,50,200,0);
     private static final int                   REQUEST_ENABLE_BT = 0;
+
     private Size                               SCREEN_SIZE;
     private Size                               SPECTRUM_SIZE;
     private Scalar                             CONTOUR_COLOR;
@@ -76,8 +78,12 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     private String                             mLastPwmJsonValues = "";
     private boolean                            mIsReversingHandled = false;
     private int                                mCountOutOfFrame = 0;
-    private BluetoothAdapter                   mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-    private BtManager                          mBtManager;
+    private BluetoothAdapter                   mBluetoothAdapter = null;
+    private BluetoothService                   mChatService = null;
+    private String                             mConnectedDeviceName = null;
+    private StringBuffer                       mOutStringBuffer;
+    private BtManager                          mBtManager = null;
+
 
     private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -143,7 +149,16 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
 
         mHandler = new MyHandler(this);
 
-        //------------------------------------------------------------------------------------------
+        // Get local Bluetooth adapter
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        // If the adapter is null, then Bluetooth is not supported
+        if (mBluetoothAdapter == null) {
+            CharSequence text = "Device does not support BT!";
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(getApplicationContext(), text, duration);
+            toast.show();
+        }
 
         if (mBluetoothAdapter != null)
         {
@@ -154,12 +169,6 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
             else {
                 manageBtConnection();
             }
-        }
-        else {
-            CharSequence text = "Device does not support BT!";
-            int duration = Toast.LENGTH_SHORT;
-            Toast toast = Toast.makeText(getApplicationContext(), text, duration);
-            toast.show();
         }
 
     }
@@ -199,9 +208,6 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         }
 
         mBtManager.connect();
-
-
-        // mBtManager.disconnect();
     }
 
     @Override

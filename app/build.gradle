@@ -5,7 +5,7 @@ android {
     buildToolsVersion '25.0.0'
     sourceSets.main.jni.srcDirs = []
     defaultConfig {
-        applicationId "com.kreolite.androvision"
+        applicationId "com.kreolite.cvrccar"
         minSdkVersion 16
         targetSdkVersion 23
         versionCode 1

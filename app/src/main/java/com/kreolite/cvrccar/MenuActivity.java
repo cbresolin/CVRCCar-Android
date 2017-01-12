@@ -1,4 +1,4 @@
-package com.kreolite.androvision;
+package com.kreolite.cvrccar;
 
 import android.Manifest;
 import android.content.Context;
@@ -11,6 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
+import com.kreolite.cvrccar.ColorBlobDetection.ColorBlobDetectionActivity;
 
 public class MenuActivity extends AppCompatActivity {
 

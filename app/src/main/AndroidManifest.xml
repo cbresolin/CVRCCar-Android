@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.kreolite.androvision">
+    package="com.kreolite.cvrccar">
 
     <supports-screens
         android:anyDensity="true"
@@ -36,7 +36,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MenuActivity"
+            android:name="com.kreolite.cvrccar.MenuActivity"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,19 +44,19 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".CameraActivity"
+            android:name="com.kreolite.cvrccar.CameraActivity"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".SettingsActivity"
+            android:name="com.kreolite.cvrccar.SettingsActivity"
             android:label="@string/settings"
             android:screenOrientation="landscape" >
         </activity>
         <activity
-            android:name=".ColorBlobDetectionActivity"
+            android:name="com.kreolite.cvrccar.ColorBlobDetection.ColorBlobDetectionActivity"
             android:screenOrientation="landscape" >
         </activity>
         <service
-            android:name=".UsbService"
+            android:name="com.kreolite.cvrccar.UsbService"
             android:enabled="true">
         </service>
     </application>

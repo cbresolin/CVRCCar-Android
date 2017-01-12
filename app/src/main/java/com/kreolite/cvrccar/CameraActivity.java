@@ -1,4 +1,4 @@
-package com.kreolite.androvision;
+package com.kreolite.cvrccar;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;

@@ -1,4 +1,4 @@
-package com.kreolite.androvision;
+package com.kreolite.cvrccar;
 
 import android.app.PendingIntent;
 import android.app.Service;

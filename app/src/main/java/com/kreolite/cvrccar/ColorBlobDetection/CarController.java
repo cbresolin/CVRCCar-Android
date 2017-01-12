@@ -15,7 +15,7 @@
  * along with AAV.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.kreolite.androvision;
+package com.kreolite.cvrccar.ColorBlobDetection;
 
 import android.util.Log;
 

@@ -1,4 +1,4 @@
-package com.kreolite.androvision;
+package com.kreolite.cvrccar;
 
 import android.content.Context;
 import android.content.SharedPreferences;
