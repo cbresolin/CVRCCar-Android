@@ -52,7 +52,6 @@ public class BluetoothService {
     private ConnectedThread mConnectedThread;
     private int mState;
     private String mBtDeviceName = null;
-    private String mBtDeviceAddress;
     private BluetoothDevice mBtDevice;
     private boolean mDevicePaired = false;
 
@@ -91,8 +90,6 @@ public class BluetoothService {
     public void setBtDeviceName(String BtDeviceName) {
         mBtDeviceName = BtDeviceName;
     }
-
-    public String getBtDeviceAddress() { return mBtDeviceAddress; }
 
     public BluetoothDevice getBtDevice() {
         return mBtDevice;
@@ -144,8 +141,7 @@ public class BluetoothService {
                 {
                     mBtDevice = iterator;
                     mDevicePaired = true;
-                    mBtDeviceAddress = iterator.getAddress();
-                    Log.i(TAG, iterator.getName() + " device is paired!");
+                    Log.i(TAG, iterator.getName() + "(" +  iterator.getAddress() + ") device is paired!");
                     break;
                 }
             }
@@ -195,10 +191,8 @@ public class BluetoothService {
      * Start the ConnectedThread to begin managing a Bluetooth connection
      *
      * @param socket The BluetoothSocket on which the connection was made
-     * @param device The BluetoothDevice that has been connected
      */
-    public synchronized void connected(BluetoothSocket socket, BluetoothDevice
-            device) {
+    public synchronized void connected(BluetoothSocket socket) {
         Log.d(TAG, "connected, Socket");
 
         // Cancel the thread that completed the connection
@@ -216,13 +210,6 @@ public class BluetoothService {
         // Start the thread to manage the connection and perform transmissions
         mConnectedThread = new ConnectedThread(socket);
         mConnectedThread.start();
-
-        // Send the name of the connected device back to the UI Activity
-        Message msg = mHandler.obtainMessage(Constants.MESSAGE_DEVICE_NAME);
-        Bundle bundle = new Bundle();
-        bundle.putString(Constants.DEVICE_NAME, device.getName());
-        msg.setData(bundle);
-        mHandler.sendMessage(msg);
 
         setState(STATE_CONNECTED);
     }
@@ -345,7 +332,7 @@ public class BluetoothService {
             }
 
             // Start the connected thread
-            connected(mmSocket, mmDevice);
+            connected(mmSocket);
         }
 
         public void cancel() {
@@ -420,6 +407,8 @@ public class BluetoothService {
                         .sendToTarget();
             } catch (IOException e) {
                 Log.e(TAG, "Exception during write", e);
+                connectionLost();
+                return;
             }
         }
 

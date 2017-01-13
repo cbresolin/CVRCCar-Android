@@ -58,6 +58,7 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     private Size                               SCREEN_SIZE;
     private Size                               SPECTRUM_SIZE;
     private Scalar                             CONTOUR_COLOR;
+    private Scalar                             BOUNDARIES_COLOR;
     volatile Point                             mTargetCenter = new Point(-1, -1);
     private Point                              mScreenCenter = new Point(-1, -1);
     private int                                mTargetNum = 0;
@@ -72,7 +73,6 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     private UsbService                         mUsbService;
     private MyHandler                          mHandler;
     private SharedPreferences                  mSharedPref;
-    private SharedPreferences.Editor           mEditor;
     private double                             mForwardBoundaryPercent = -0.15;
     private double                             mReverseBoundaryPercent = 0.3;
     private int                                mMinRadius = 15;
@@ -82,8 +82,7 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     private BluetoothAdapter                   mBluetoothAdapter = null;
     private BluetoothService                   mBluetoothService = null;
     private String                             mBluetoothDeviceName = null;
-    private StringBuffer                       mOutStringBuffer;
-    private BluetoothDevice                    mBtDevice;
+    private BluetoothDevice                    mBtDevice = null;
 
     private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -205,11 +204,6 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
             }
 
             if (mBluetoothService.getState() == BluetoothService.STATE_PAIRED) {
-                // Store MAC address for further use
-                mEditor = mSharedPref.edit();
-                mEditor.putString(getString(R.string.bt_device_address), mBluetoothService.getBtDeviceAddress());
-                mEditor.commit();
-
                 // Get paired device for connection
                 mBtDevice = mBluetoothService.getBtDevice();
                 mBluetoothService.connect(mBtDevice);
@@ -258,9 +252,6 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         // Initialize the BluetoothService to perform bluetooth connections
         mBluetoothService = new BluetoothService(this, mHandler);
         mBluetoothService.setBtDeviceName(mBluetoothDeviceName);
-
-        // Initialize the buffer for outgoing messages
-        mOutStringBuffer = new StringBuffer("");
     }
 
     public void onCameraViewStarted(int width, int height) {
@@ -272,6 +263,7 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         mBlobColorHsv = new Scalar(255);
         SPECTRUM_SIZE = new Size(200, 64);
         CONTOUR_COLOR = new Scalar(255,255,10,255);
+        BOUNDARIES_COLOR = new Scalar(255,0,0,255);
         mScreenCenter.x = width / 2;
         mScreenCenter.y = height / 2;
         mIsColorSelected = false;
@@ -367,11 +359,19 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         }
     }
 
+    private void displayBoundaries(Mat matRgba){
+
+        Point topLeft = new Point(0, mScreenCenter.y - mForwardBoundaryPercent*mScreenCenter.y*2);
+        Point bottomRight = new Point(mScreenCenter.x*2, mScreenCenter.y + mReverseBoundaryPercent*mScreenCenter.y*2);
+        Imgproc.rectangle(matRgba, topLeft, bottomRight, BOUNDARIES_COLOR, 2);
+    }
+
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
         mRgba = inputFrame.rgba();
 
         if (mIsColorSelected) {
             displayContours(mRgba);
+            displayBoundaries(mRgba);
 
             Mat colorLabel = mRgba.submat(mRgba.rows()-68, mRgba.rows()-4, 4, 68);
             colorLabel.setTo(mBlobColorRgba);
@@ -544,24 +544,24 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
             if ((pwmJsonValues != null) && !pwmJsonValues.contentEquals(mLastPwmJsonValues)) {
                 Log.i(TAG, "Update Actuator ...");
 
-                if (mUsbService != null) {
+                if (mBluetoothService != null && mBluetoothService.getState() == BluetoothService.STATE_CONNECTED) {
                     if (!mCarController.isReversing()) {
                         Log.i(TAG, "Sending PWM values: " + pwmJsonValues);
-                        mUsbService.write(pwmJsonValues.getBytes());
+                        mBluetoothService.write(pwmJsonValues.getBytes());
                         mIsReversingHandled = false;
                     }
                     else {
                         Log.i(TAG, "Sending PWM values: " + pwmJsonValues);
-                        mUsbService.write(pwmJsonValues.getBytes());
+                        mBluetoothService.write(pwmJsonValues.getBytes());
 
                         // When reversing, need to send neutral first
                         if (!mIsReversingHandled) {
                             pwmJsonNeutralValues = mCarController.getPWMNeutralValuesToJson();
                             Log.i(TAG, "Sending PWM values: " + pwmJsonNeutralValues);
-                            mUsbService.write(pwmJsonNeutralValues.getBytes());
+                            mBluetoothService.write(pwmJsonNeutralValues.getBytes());
 
                             Log.i(TAG, "Sending PWM values: " + pwmJsonValues);
-                            mUsbService.write(pwmJsonValues.getBytes());
+                            mBluetoothService.write(pwmJsonValues.getBytes());
                             mIsReversingHandled = true;
                         }
                     }
