@@ -24,10 +24,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -49,12 +51,17 @@ public class BluetoothService {
     private ConnectThread mConnectThread;
     private ConnectedThread mConnectedThread;
     private int mState;
+    private String mBtDeviceName = null;
+    private String mBtDeviceAddress;
+    private BluetoothDevice mBtDevice;
+    private boolean mDevicePaired = false;
 
     // Constants that indicate the current connection state
     public static final int STATE_NONE = 0;       // we're doing nothing
     public static final int STATE_SCANNING = 1;   // now scanning paired devices
-    public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
-    public static final int STATE_CONNECTED = 3;  // now connected to a remote device
+    public static final int STATE_PAIRED = 2;     // our device is paired
+    public static final int STATE_CONNECTING = 3; // now initiating an outgoing connection
+    public static final int STATE_CONNECTED = 4;  // now connected to a remote device
 
     /**
      * Constructor. Prepares a new BT session.
@@ -77,8 +84,18 @@ public class BluetoothService {
         Log.d(TAG, "setState() " + mState + " -> " + state);
         mState = state;
 
-        // Give the new state to the Handler so the UI Activity can update
+        // Give the new state to the Handler so the UI Activity can show
         mHandler.obtainMessage(Constants.MESSAGE_STATE_CHANGE, state, -1).sendToTarget();
+    }
+
+    public void setBtDeviceName(String BtDeviceName) {
+        mBtDeviceName = BtDeviceName;
+    }
+
+    public String getBtDeviceAddress() { return mBtDeviceAddress; }
+
+    public BluetoothDevice getBtDevice() {
+        return mBtDevice;
     }
 
     /**
@@ -89,8 +106,7 @@ public class BluetoothService {
     }
 
     /**
-     * Start the chat service. Specifically start AcceptThread to begin a
-     * session in listening (server) mode. Called by the Activity onResume()
+     * Start BT service. Called by the Activity onResume()
      */
     public synchronized void start() {
         Log.d(TAG, "start");
@@ -107,16 +123,52 @@ public class BluetoothService {
             mConnectedThread = null;
         }
 
-        setState(STATE_NONE);
+        Set<BluetoothDevice> bondedDevices = mAdapter.getBondedDevices();
+
+        if (bondedDevices.isEmpty()) {
+            // Send a failure message back to the Activity
+            Message msg = mHandler.obtainMessage(Constants.MESSAGE_TOAST);
+            Bundle bundle = new Bundle();
+            bundle.putString(Constants.TOAST, "No paired devices!");
+            msg.setData(bundle);
+            mHandler.sendMessage(msg);
+            setState(STATE_NONE);
+        }
+        else if (mState == STATE_NONE)
+        {
+            setState(STATE_SCANNING);
+            mDevicePaired = false;
+            for (BluetoothDevice iterator : bondedDevices)
+            {
+                if (iterator.getName().equals(mBtDeviceName))
+                {
+                    mBtDevice = iterator;
+                    mDevicePaired = true;
+                    mBtDeviceAddress = iterator.getAddress();
+                    Log.i(TAG, iterator.getName() + " device is paired!");
+                    break;
+                }
+            }
+
+            if (!mDevicePaired)
+            {
+                Message msg = mHandler.obtainMessage(Constants.MESSAGE_TOAST);
+                Bundle bundle = new Bundle();
+                bundle.putString(Constants.TOAST, "Device is not paired!");
+                msg.setData(bundle);
+                mHandler.sendMessage(msg);
+                setState(STATE_NONE);
+            }
+            else setState(STATE_PAIRED);
+        }
     }
 
     /**
      * Start the ConnectThread to initiate a connection to a remote device.
      *
      * @param device The BluetoothDevice to connect
-     * @param secure Socket Security type - Secure (true) , Insecure (false)
      */
-    public synchronized void connect(BluetoothDevice device, boolean secure) {
+    public synchronized void connect(BluetoothDevice device) {
         Log.d(TAG, "connect to: " + device);
 
         // Cancel any thread attempting to make a connection
@@ -218,12 +270,12 @@ public class BluetoothService {
         // Send a failure message back to the Activity
         Message msg = mHandler.obtainMessage(Constants.MESSAGE_TOAST);
         Bundle bundle = new Bundle();
-        bundle.putString(Constants.TOAST, "Unable to connect device");
+        bundle.putString(Constants.TOAST, "Unable to connect device!");
         msg.setData(bundle);
         mHandler.sendMessage(msg);
 
         // Start the service over
-        BluetoothService.this.start();
+        start();
     }
 
     /**
@@ -233,12 +285,12 @@ public class BluetoothService {
         // Send a failure message back to the Activity
         Message msg = mHandler.obtainMessage(Constants.MESSAGE_TOAST);
         Bundle bundle = new Bundle();
-        bundle.putString(Constants.TOAST, "Device connection was lost");
+        bundle.putString(Constants.TOAST, "Device connection was lost!");
         msg.setData(bundle);
         mHandler.sendMessage(msg);
 
         // Start the service over
-        BluetoothService.this.start();
+        start();
     }
 
     /**

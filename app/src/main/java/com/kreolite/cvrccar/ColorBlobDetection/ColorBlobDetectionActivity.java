@@ -18,8 +18,8 @@ import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.imgproc.Imgproc;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -41,7 +41,6 @@ import android.view.SurfaceView;
 import android.widget.Toast;
 
 import com.kreolite.cvrccar.BluetoothService.BluetoothService;
-import com.kreolite.cvrccar.BluetoothService.BtManager;
 import com.kreolite.cvrccar.BluetoothService.Constants;
 import com.kreolite.cvrccar.R;
 import com.kreolite.cvrccar.UsbService;
@@ -84,6 +83,7 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     private BluetoothService                   mBluetoothService = null;
     private String                             mBluetoothDeviceName = null;
     private StringBuffer                       mOutStringBuffer;
+    private BluetoothDevice                    mBtDevice;
 
     private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -147,8 +147,6 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         mCarController = new CarController();
         mCountOutOfFrame = 0;
 
-        mHandler = new MyHandler(this);
-
         // Get local Bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         // If the adapter is null, then Bluetooth is not supported
@@ -162,6 +160,8 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         else
             // Get BT device name to connect to from settings
             mBluetoothDeviceName = mSharedPref.getString(getString(R.string.bt_device_name), "");
+
+        mHandler = new MyHandler(this);
     }
 
     @Override
@@ -174,7 +174,7 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
             // Otherwise, setup the chat session
         } else if (mBluetoothService == null) {
-            setupBtConnection();
+            setupBtService();
         }
     }
 
@@ -190,17 +190,29 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
             mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
         }
         hideNavigationBar();
-        setFilters();  // Start listening notifications from UsbService
-        startService(UsbService.class, usbConnection, null); // Start UsbService(if it was not started before) and Bind it
+        // setFilters();  // Start listening notifications from UsbService
+        // startService(UsbService.class, usbConnection, null); // Start UsbService(if it was not started before) and Bind it
 
         // Performing this check in onResume() covers the case in which BT was
         // not enabled during onStart(), so we were paused to enable it...
         // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
         if (mBluetoothService != null) {
+
             // Only if the state is STATE_NONE, do we know that we haven't started already
             if (mBluetoothService.getState() == BluetoothService.STATE_NONE) {
-                // Start the Bluetooth chat services
+                // Start the Bluetooth services
                 mBluetoothService.start();
+            }
+
+            if (mBluetoothService.getState() == BluetoothService.STATE_PAIRED) {
+                // Store MAC address for further use
+                mEditor = mSharedPref.edit();
+                mEditor.putString(getString(R.string.bt_device_address), mBluetoothService.getBtDeviceAddress());
+                mEditor.commit();
+
+                // Get paired device for connection
+                mBtDevice = mBluetoothService.getBtDevice();
+                mBluetoothService.connect(mBtDevice);
             }
         }
     }
@@ -211,8 +223,8 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         super.onPause();
         if (mOpenCvCameraView != null) mOpenCvCameraView.disableView();
 
-        unregisterReceiver(mUsbReceiver);
-        unbindService(usbConnection);
+        // unregisterReceiver(mUsbReceiver);
+        // unbindService(usbConnection);
     }
 
     @Override
@@ -228,7 +240,7 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         if (requestCode == REQUEST_ENABLE_BT) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
-                setupBtConnection();
+                setupBtService();
             }
             else {
                 // User did not enable Bluetooth or an error occurred
@@ -242,24 +254,13 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         }
     }
 
-    private void setupBtConnection() {
-
+    private void setupBtService() {
         // Initialize the BluetoothService to perform bluetooth connections
         mBluetoothService = new BluetoothService(this, mHandler);
+        mBluetoothService.setBtDeviceName(mBluetoothDeviceName);
 
         // Initialize the buffer for outgoing messages
         mOutStringBuffer = new StringBuffer("");
-
-        /*// mBtManager.scan(mBluetoothDeviceName);
-
-        if (mBtManager.isDevicePaired()) {
-            // Store MAC address for further use
-            mEditor = mSharedPref.edit();
-            mEditor.putString(getString(R.string.bt_device_address), mBtManager.getBtDeviceAddress());
-            mEditor.commit();
-        }
-
-        mBtManager.connect();*/
     }
 
     public void onCameraViewStarted(int width, int height) {
@@ -482,15 +483,19 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
                 case Constants.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
                         case BluetoothService.STATE_CONNECTED:
-                            Toast.makeText(mActivity.get(), msg.getData().getString(Constants.TOAST),
+                            Toast.makeText(mActivity.get(), "Device connected!",
                                     Toast.LENGTH_SHORT).show();
                             break;
                         case BluetoothService.STATE_CONNECTING:
-                            Toast.makeText(mActivity.get(), msg.getData().getString(Constants.TOAST),
+                            Toast.makeText(mActivity.get(), "Connecting device ...",
                                     Toast.LENGTH_SHORT).show();
                             break;
                         case BluetoothService.STATE_SCANNING:
-                            Toast.makeText(mActivity.get(), msg.getData().getString(Constants.TOAST),
+                            Toast.makeText(mActivity.get(), "Scanning device ...",
+                                    Toast.LENGTH_SHORT).show();
+                            break;
+                        case BluetoothService.STATE_PAIRED:
+                            Toast.makeText(mActivity.get(), "Device paired!",
                                     Toast.LENGTH_SHORT).show();
                             break;
                         case BluetoothService.STATE_NONE:
