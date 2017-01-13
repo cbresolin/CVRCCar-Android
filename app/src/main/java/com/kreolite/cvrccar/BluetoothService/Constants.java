@@ -24,11 +24,12 @@ import com.kreolite.cvrccar.BluetoothService.BluetoothService;
 public interface Constants {
 
     // Message types sent from the BluetoothService Handler
-    public static final int MESSAGE_STATE_CHANGE = 1;
-    public static final int MESSAGE_READ = 2;
-    public static final int MESSAGE_WRITE = 3;
-    public static final int MESSAGE_DEVICE_NAME = 4;
-    public static final int MESSAGE_TOAST = 5;
+    // 0,1,2 are taken for USB
+    public static final int MESSAGE_STATE_CHANGE = 3;
+    public static final int MESSAGE_READ = 4;
+    public static final int MESSAGE_WRITE = 5;
+    public static final int MESSAGE_DEVICE_NAME = 6;
+    public static final int MESSAGE_TOAST = 7;
 
     // Key names received from the BluetoothService Handler
     public static final String DEVICE_NAME = "device_name";

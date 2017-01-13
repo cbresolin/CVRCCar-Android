@@ -18,6 +18,7 @@ import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.imgproc.Imgproc;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -41,6 +42,7 @@ import android.widget.Toast;
 
 import com.kreolite.cvrccar.BluetoothService.BluetoothService;
 import com.kreolite.cvrccar.BluetoothService.BtManager;
+import com.kreolite.cvrccar.BluetoothService.Constants;
 import com.kreolite.cvrccar.R;
 import com.kreolite.cvrccar.UsbService;
 
@@ -79,11 +81,9 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     private boolean                            mIsReversingHandled = false;
     private int                                mCountOutOfFrame = 0;
     private BluetoothAdapter                   mBluetoothAdapter = null;
-    private BluetoothService                   mChatService = null;
-    private String                             mConnectedDeviceName = null;
+    private BluetoothService                   mBluetoothService = null;
+    private String                             mBluetoothDeviceName = null;
     private StringBuffer                       mOutStringBuffer;
-    private BtManager                          mBtManager = null;
-
 
     private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -151,74 +151,31 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
 
         // Get local Bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
         // If the adapter is null, then Bluetooth is not supported
         if (mBluetoothAdapter == null) {
             CharSequence text = "Device does not support BT!";
             int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(getApplicationContext(), text, duration);
             toast.show();
+            finish();
         }
-
-        if (mBluetoothAdapter != null)
-        {
-            if (!mBluetoothAdapter.isEnabled()) {
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-            }
-            else {
-                manageBtConnection();
-            }
-        }
-
+        else
+            // Get BT device name to connect to from settings
+            mBluetoothDeviceName = mSharedPref.getString(getString(R.string.bt_device_name), "");
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // Check which request we're responding to
-        if (requestCode == REQUEST_ENABLE_BT) {
-            // Make sure the request was successful
-            if (resultCode == RESULT_OK) {
-                manageBtConnection();
-            }
-            else {
-                CharSequence text = "No connection to BT devices!";
-                int duration = Toast.LENGTH_SHORT;
-                Toast toast = Toast.makeText(getApplicationContext(), text, duration);
-                toast.show();
-                Log.w(TAG, "No connection to BT devices!");
-            }
+    public void onStart() {
+        super.onStart();
+        // If BT is not on, request that it be enabled.
+        // setupChat() will then be called during onActivityResult
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+            // Otherwise, setup the chat session
+        } else if (mBluetoothService == null) {
+            setupBtConnection();
         }
-    }
-
-    private void manageBtConnection() {
-
-        mBtManager = new BtManager();
-        mBtManager.setContext(getApplicationContext());
-
-        String btDeviceName = mSharedPref.getString(getString(R.string.bt_device_name), "");
-        mBtManager.setBtDeviceName(btDeviceName);
-        mBtManager.scan();
-
-        if (mBtManager.isDevicePaired()) {
-            // Store MAC address for further use
-            mEditor = mSharedPref.edit();
-            mEditor.putString(getString(R.string.bt_device_address), mBtManager.getBtDeviceAddress());
-            mEditor.commit();
-        }
-
-        mBtManager.connect();
-    }
-
-    @Override
-    public void onPause()
-    {
-        super.onPause();
-        if (mOpenCvCameraView != null) mOpenCvCameraView.disableView();
-        if (mBtManager != null) mBtManager.disconnect();
-
-        unregisterReceiver(mUsbReceiver);
-        unbindService(usbConnection);
     }
 
     @Override
@@ -236,13 +193,73 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         setFilters();  // Start listening notifications from UsbService
         startService(UsbService.class, usbConnection, null); // Start UsbService(if it was not started before) and Bind it
 
-        if (mBtManager != null) mBtManager.connect();
+        // Performing this check in onResume() covers the case in which BT was
+        // not enabled during onStart(), so we were paused to enable it...
+        // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
+        if (mBluetoothService != null) {
+            // Only if the state is STATE_NONE, do we know that we haven't started already
+            if (mBluetoothService.getState() == BluetoothService.STATE_NONE) {
+                // Start the Bluetooth chat services
+                mBluetoothService.start();
+            }
+        }
     }
 
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        if (mOpenCvCameraView != null) mOpenCvCameraView.disableView();
+
+        unregisterReceiver(mUsbReceiver);
+        unbindService(usbConnection);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         if (mOpenCvCameraView != null) mOpenCvCameraView.disableView();
-        if (mBtManager != null) mBtManager.disconnect();
+        if (mBluetoothService != null) mBluetoothService.stop();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == REQUEST_ENABLE_BT) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                setupBtConnection();
+            }
+            else {
+                // User did not enable Bluetooth or an error occurred
+                Log.d(TAG, "BT not enabled");
+                CharSequence text = "BT not enabled!";
+                int duration = Toast.LENGTH_SHORT;
+                Toast toast = Toast.makeText(getApplicationContext(), text, duration);
+                toast.show();
+                finish();
+            }
+        }
+    }
+
+    private void setupBtConnection() {
+
+        // Initialize the BluetoothService to perform bluetooth connections
+        mBluetoothService = new BluetoothService(this, mHandler);
+
+        // Initialize the buffer for outgoing messages
+        mOutStringBuffer = new StringBuffer("");
+
+        /*// mBtManager.scan(mBluetoothDeviceName);
+
+        if (mBtManager.isDevicePaired()) {
+            // Store MAC address for further use
+            mEditor = mSharedPref.edit();
+            mEditor.putString(getString(R.string.bt_device_address), mBtManager.getBtDeviceAddress());
+            mEditor.commit();
+        }
+
+        mBtManager.connect();*/
     }
 
     public void onCameraViewStarted(int width, int height) {
@@ -454,13 +471,45 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
                 case UsbService.MESSAGE_FROM_SERIAL_PORT:
                     String data = (String) msg.obj;
                     Log.d(TAG, "Received data from serial: " + data);
-                    // Toast.makeText(mActivity.get(), "DATA_RCV: " + data, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mActivity.get(), "DATA_RCV: " + data, Toast.LENGTH_SHORT).show();
                     break;
                 case UsbService.CTS_CHANGE:
                     Toast.makeText(mActivity.get(), "CTS_CHANGE",Toast.LENGTH_LONG).show();
                     break;
                 case UsbService.DSR_CHANGE:
                     Toast.makeText(mActivity.get(), "DSR_CHANGE",Toast.LENGTH_LONG).show();
+                    break;
+                case Constants.MESSAGE_STATE_CHANGE:
+                    switch (msg.arg1) {
+                        case BluetoothService.STATE_CONNECTED:
+                            Toast.makeText(mActivity.get(), msg.getData().getString(Constants.TOAST),
+                                    Toast.LENGTH_SHORT).show();
+                            break;
+                        case BluetoothService.STATE_CONNECTING:
+                            Toast.makeText(mActivity.get(), msg.getData().getString(Constants.TOAST),
+                                    Toast.LENGTH_SHORT).show();
+                            break;
+                        case BluetoothService.STATE_SCANNING:
+                            Toast.makeText(mActivity.get(), msg.getData().getString(Constants.TOAST),
+                                    Toast.LENGTH_SHORT).show();
+                            break;
+                        case BluetoothService.STATE_NONE:
+                            break;
+                    }
+                    break;
+                case Constants.MESSAGE_WRITE:
+                    byte[] writeBuf = (byte[]) msg.obj;
+                    // construct a string from the buffer
+                    String writeMessage = new String(writeBuf);
+                    break;
+                case Constants.MESSAGE_READ:
+                    byte[] readBuf = (byte[]) msg.obj;
+                    // construct a string from the valid bytes in the buffer
+                    String readMessage = new String(readBuf, 0, msg.arg1);
+                    break;
+                case Constants.MESSAGE_TOAST:
+                    Toast.makeText(mActivity.get(), msg.getData().getString(Constants.TOAST),
+                                Toast.LENGTH_SHORT).show();
                     break;
             }
         }

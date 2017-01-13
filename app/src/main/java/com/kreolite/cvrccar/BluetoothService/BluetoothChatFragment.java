@@ -87,80 +87,6 @@ public class BluetoothChatFragment extends Fragment {
         }
     }
 
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        // If BT is not on, request that it be enabled.
-        // setupChat() will then be called during onActivityResult
-        if (!mBluetoothAdapter.isEnabled()) {
-            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
-            // Otherwise, setup the chat session
-        } else if (mChatService == null) {
-            setupChat();
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mChatService != null) {
-            mChatService.stop();
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        // Performing this check in onResume() covers the case in which BT was
-        // not enabled during onStart(), so we were paused to enable it...
-        // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
-        if (mChatService != null) {
-            // Only if the state is STATE_NONE, do we know that we haven't started already
-            if (mChatService.getState() == BluetoothService.STATE_NONE) {
-                // Start the Bluetooth chat services
-                mChatService.start();
-            }
-        }
-    }
-
-
-    /**
-     * Set up the UI and background operations for chat.
-     */
-    private void setupChat() {
-        Log.d(TAG, "setupChat()");
-
-        // Initialize the array adapter for the conversation thread
-        // mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message);
-
-        // mConversationView.setAdapter(mConversationArrayAdapter);
-
-        // Initialize the compose field with a listener for the return key
-        // mOutEditText.setOnEditorActionListener(mWriteListener);
-
-        // Initialize the send button with a listener that for click events
-        /*mSendButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // Send a message using content of the edit text widget
-                View view = getView();
-                if (null != view) {
-                    TextView textView = (TextView) view.findViewById(R.id.edit_text_out);
-                    String message = textView.getText().toString();
-                    sendMessage(message);
-                }
-            }
-        });*/
-
-        // Initialize the BluetoothChatService to perform bluetooth connections
-        // mChatService = new BluetoothService(getActivity(), mHandler);
-
-        // Initialize the buffer for outgoing messages
-        mOutStringBuffer = new StringBuffer("");
-    }
-
     /**
      * Sends a message.
      *
@@ -268,23 +194,6 @@ public class BluetoothChatFragment extends Fragment {
             }
         }
     };
-
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case REQUEST_ENABLE_BT:
-                // When the request to enable Bluetooth returns
-                if (resultCode == Activity.RESULT_OK) {
-                    // Bluetooth is now enabled, so set up a chat session
-                    setupChat();
-                } else {
-                    // User did not enable Bluetooth or an error occurred
-                    Log.d(TAG, "BT not enabled");
-                    Toast.makeText(getActivity(), R.string.bt_not_enabled_leaving,
-                            Toast.LENGTH_SHORT).show();
-                    getActivity().finish();
-                }
-        }
-    }
 
     *//**
      * Establish connection with other device

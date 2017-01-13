@@ -52,8 +52,9 @@ public class BluetoothService {
 
     // Constants that indicate the current connection state
     public static final int STATE_NONE = 0;       // we're doing nothing
-    public static final int STATE_CONNECTING = 1; // now initiating an outgoing connection
-    public static final int STATE_CONNECTED = 2;  // now connected to a remote device
+    public static final int STATE_SCANNING = 1;   // now scanning paired devices
+    public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
+    public static final int STATE_CONNECTED = 3;  // now connected to a remote device
 
     /**
      * Constructor. Prepares a new BT session.
