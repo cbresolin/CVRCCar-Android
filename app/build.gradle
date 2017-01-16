@@ -25,7 +25,6 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:23.2.0'
     compile 'com.android.support:design:23.2.0'
-    compile 'com.github.felHR85:UsbSerial:4.5'
     compile 'com.github.ctodobom:OpenCV-3.1.0-Android:-SNAPSHOT'
     compile 'com.jakewharton:butterknife:6.1.0'
     compile 'com.nineoldandroids:library:2.4.0'

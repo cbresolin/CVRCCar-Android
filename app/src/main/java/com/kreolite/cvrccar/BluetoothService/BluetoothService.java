@@ -79,12 +79,13 @@ public class BluetoothService {
      *
      * @param state An integer defining the current connection state
      */
-    private synchronized void setState(int state) {
+    private synchronized void setState(int state, boolean isStateSent) {
         Log.d(TAG, "setState() " + mState + " -> " + state);
         mState = state;
 
-        // Give the new state to the Handler so the UI Activity can show
-        mHandler.obtainMessage(Constants.MESSAGE_STATE_CHANGE, state, -1).sendToTarget();
+        if (isStateSent)
+            // Give the new state to the Handler so the UI Activity can show
+            mHandler.obtainMessage(Constants.MESSAGE_STATE_CHANGE, state, -1).sendToTarget();
     }
 
     public void setBtDeviceName(String BtDeviceName) {
@@ -129,11 +130,11 @@ public class BluetoothService {
             bundle.putString(Constants.TOAST, "No paired devices!");
             msg.setData(bundle);
             mHandler.sendMessage(msg);
-            setState(STATE_NONE);
+            setState(STATE_NONE, true);
         }
         else if (mState == STATE_NONE)
         {
-            setState(STATE_SCANNING);
+            setState(STATE_SCANNING, true);
             mDevicePaired = false;
             for (BluetoothDevice iterator : bondedDevices)
             {
@@ -153,9 +154,9 @@ public class BluetoothService {
                 bundle.putString(Constants.TOAST, "Device is not paired!");
                 msg.setData(bundle);
                 mHandler.sendMessage(msg);
-                setState(STATE_NONE);
+                setState(STATE_NONE, true);
             }
-            else setState(STATE_PAIRED);
+            else setState(STATE_PAIRED, true);
         }
     }
 
@@ -184,7 +185,7 @@ public class BluetoothService {
         // Start the thread to connect with the given device
         mConnectThread = new ConnectThread(device);
         mConnectThread.start();
-        setState(STATE_CONNECTING);
+        setState(STATE_CONNECTING, true);
     }
 
     /**
@@ -211,7 +212,7 @@ public class BluetoothService {
         mConnectedThread = new ConnectedThread(socket);
         mConnectedThread.start();
 
-        setState(STATE_CONNECTED);
+        setState(STATE_CONNECTED, true);
     }
 
     /**
@@ -229,7 +230,7 @@ public class BluetoothService {
             mConnectedThread.cancel();
             mConnectedThread = null;
         }
-        setState(STATE_NONE);
+        setState(STATE_NONE, true);
     }
 
     /**
@@ -260,6 +261,7 @@ public class BluetoothService {
         bundle.putString(Constants.TOAST, "Unable to connect device!");
         msg.setData(bundle);
         mHandler.sendMessage(msg);
+        setState(STATE_PAIRED, false);
 
         // Start the service over
         start();
@@ -275,6 +277,7 @@ public class BluetoothService {
         bundle.putString(Constants.TOAST, "Device connection was lost!");
         msg.setData(bundle);
         mHandler.sendMessage(msg);
+        setState(STATE_PAIRED, false);
 
         // Start the service over
         start();

@@ -55,10 +55,6 @@
             android:name="com.kreolite.cvrccar.ColorBlobDetection.ColorBlobDetectionActivity"
             android:screenOrientation="landscape" >
         </activity>
-        <service
-            android:name="com.kreolite.cvrccar.UsbService"
-            android:enabled="true">
-        </service>
     </application>
 
 </manifest>

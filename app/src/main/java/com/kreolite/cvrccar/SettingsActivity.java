@@ -47,11 +47,11 @@ public class SettingsActivity extends AppCompatActivity {
         sharedPref = getApplicationContext().getSharedPreferences(getString(R.string.settings_file),
                 Context.MODE_PRIVATE);
         btDeviceControl.setText(sharedPref.getString(getString(R.string.bt_device_name), "HC-05"));
-        reso1Control.setChecked(sharedPref.getBoolean(getString(R.string.is_reso1), true));
-        reso2Control.setChecked(sharedPref.getBoolean(getString(R.string.is_reso2), false));
+        reso1Control.setChecked(sharedPref.getBoolean(getString(R.string.is_reso1), false));
+        reso2Control.setChecked(sharedPref.getBoolean(getString(R.string.is_reso2), true));
         reso3Control.setChecked(sharedPref.getBoolean(getString(R.string.is_reso3), false));
         reso4Control.setChecked(sharedPref.getBoolean(getString(R.string.is_reso4), false));
-        forwardBoundaryControl.setText(sharedPref.getString(getString(R.string.forward_boundary_percent), "-15"));
+        forwardBoundaryControl.setText(sharedPref.getString(getString(R.string.forward_boundary_percent), "-10"));
         reverseBoundaryControl.setText(sharedPref.getString(getString(R.string.reverse_boundary_percent), "25"));
         minRadiusControl.setText(sharedPref.getString(getString(R.string.minimum_radius_value), "15"));
 

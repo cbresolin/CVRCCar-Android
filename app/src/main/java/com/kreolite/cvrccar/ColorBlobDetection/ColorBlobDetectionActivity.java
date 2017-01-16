@@ -20,16 +20,11 @@ import org.opencv.imgproc.Imgproc;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -43,11 +38,9 @@ import android.widget.Toast;
 import com.kreolite.cvrccar.BluetoothService.BluetoothService;
 import com.kreolite.cvrccar.BluetoothService.Constants;
 import com.kreolite.cvrccar.R;
-import com.kreolite.cvrccar.UsbService;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
-import java.util.Set;
 
 public class ColorBlobDetectionActivity extends Activity implements OnTouchListener, CvCameraViewListener2 {
     private static final String                TAG = "ColorBlobDetectActivity";
@@ -70,7 +63,6 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     private Mat                                mSpectrum;
     private CameraBridgeViewBase               mOpenCvCameraView;
     private CarController                      mCarController;
-    private UsbService                         mUsbService;
     private MyHandler                          mHandler;
     private SharedPreferences                  mSharedPref;
     private double                             mForwardBoundaryPercent = -0.15;
@@ -119,8 +111,8 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
 
         mSharedPref = getApplicationContext().getSharedPreferences(getString(R.string.settings_file),
                 Context.MODE_PRIVATE);
-        boolean isReso1 = mSharedPref.getBoolean(getString(R.string.is_reso1), true);
-        boolean isReso2 = mSharedPref.getBoolean(getString(R.string.is_reso2), false);
+        boolean isReso1 = mSharedPref.getBoolean(getString(R.string.is_reso1), false);
+        boolean isReso2 = mSharedPref.getBoolean(getString(R.string.is_reso2), true);
         boolean isReso3 = mSharedPref.getBoolean(getString(R.string.is_reso3), false);
 
         // 1920x1080, 1280x960, 800x480 else 352x288
@@ -134,7 +126,7 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
             SCREEN_SIZE = new Size(352, 288);
         }
 
-        mForwardBoundaryPercent = Double.parseDouble(mSharedPref.getString(getString(R.string.forward_boundary_percent), "-15")) / 100;
+        mForwardBoundaryPercent = Double.parseDouble(mSharedPref.getString(getString(R.string.forward_boundary_percent), "-10")) / 100;
         mReverseBoundaryPercent = Double.parseDouble(mSharedPref.getString(getString(R.string.reverse_boundary_percent), "25")) / 100;
         mMinRadius = Integer.parseInt(mSharedPref.getString(getString(R.string.minimum_radius_value), "15"));
 
@@ -158,7 +150,7 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         }
         else
             // Get BT device name to connect to from settings
-            mBluetoothDeviceName = mSharedPref.getString(getString(R.string.bt_device_name), "");
+            mBluetoothDeviceName = mSharedPref.getString(getString(R.string.bt_device_name), "HC-05");
 
         mHandler = new MyHandler(this);
     }
@@ -189,8 +181,6 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
             mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
         }
         hideNavigationBar();
-        // setFilters();  // Start listening notifications from UsbService
-        // startService(UsbService.class, usbConnection, null); // Start UsbService(if it was not started before) and Bind it
 
         // Performing this check in onResume() covers the case in which BT was
         // not enabled during onStart(), so we were paused to enable it...
@@ -216,9 +206,6 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     {
         super.onPause();
         if (mOpenCvCameraView != null) mOpenCvCameraView.disableView();
-
-        // unregisterReceiver(mUsbReceiver);
-        // unbindService(usbConnection);
     }
 
     @Override
@@ -398,67 +385,6 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         return new Scalar(pointMatRgba.get(0, 0));
     }
 
-    private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()) {
-                case UsbService.ACTION_USB_PERMISSION_GRANTED: // USB PERMISSION GRANTED
-                    Toast.makeText(context, "USB Ready", Toast.LENGTH_SHORT).show();
-                    break;
-                case UsbService.ACTION_USB_PERMISSION_NOT_GRANTED: // USB PERMISSION NOT GRANTED
-                    Toast.makeText(context, "USB Permission not granted", Toast.LENGTH_SHORT).show();
-                    break;
-                case UsbService.ACTION_NO_USB: // NO USB CONNECTED
-                    Toast.makeText(context, "No USB connected", Toast.LENGTH_SHORT).show();
-                    break;
-                case UsbService.ACTION_USB_DISCONNECTED: // USB DISCONNECTED
-                    Toast.makeText(context, "USB disconnected", Toast.LENGTH_SHORT).show();
-                    break;
-                case UsbService.ACTION_USB_NOT_SUPPORTED: // USB NOT SUPPORTED
-                    Toast.makeText(context, "USB device not supported", Toast.LENGTH_SHORT).show();
-                    break;
-            }
-        }
-    };
-
-    private final ServiceConnection usbConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName arg0, IBinder arg1) {
-            mUsbService = ((UsbService.UsbBinder) arg1).getService();
-            mUsbService.setHandler(mHandler);
-        }
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            mUsbService = null;
-        }
-    };
-
-    private void startService(Class<?> service, ServiceConnection serviceConnection, Bundle extras) {
-        if (!UsbService.SERVICE_CONNECTED) {
-            Intent startService = new Intent(this, service);
-            if (extras != null && !extras.isEmpty()) {
-                Set<String> keys = extras.keySet();
-                for (String key : keys) {
-                    String extra = extras.getString(key);
-                    startService.putExtra(key, extra);
-                }
-            }
-            startService(startService);
-        }
-        Intent bindingIntent = new Intent(this, service);
-        bindService(bindingIntent, serviceConnection, Context.BIND_AUTO_CREATE);
-    }
-
-    private void setFilters() {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(UsbService.ACTION_USB_PERMISSION_GRANTED);
-        filter.addAction(UsbService.ACTION_NO_USB);
-        filter.addAction(UsbService.ACTION_USB_DISCONNECTED);
-        filter.addAction(UsbService.ACTION_USB_NOT_SUPPORTED);
-        filter.addAction(UsbService.ACTION_USB_PERMISSION_NOT_GRANTED);
-        registerReceiver(mUsbReceiver, filter);
-    }
-
     private static class MyHandler extends Handler {
         private final WeakReference<ColorBlobDetectionActivity> mActivity;
 
@@ -469,17 +395,6 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case UsbService.MESSAGE_FROM_SERIAL_PORT:
-                    String data = (String) msg.obj;
-                    Log.d(TAG, "Received data from serial: " + data);
-                    Toast.makeText(mActivity.get(), "DATA_RCV: " + data, Toast.LENGTH_SHORT).show();
-                    break;
-                case UsbService.CTS_CHANGE:
-                    Toast.makeText(mActivity.get(), "CTS_CHANGE",Toast.LENGTH_LONG).show();
-                    break;
-                case UsbService.DSR_CHANGE:
-                    Toast.makeText(mActivity.get(), "DSR_CHANGE",Toast.LENGTH_LONG).show();
-                    break;
                 case Constants.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
                         case BluetoothService.STATE_CONNECTED:
@@ -503,14 +418,14 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
                     }
                     break;
                 case Constants.MESSAGE_WRITE:
-                    byte[] writeBuf = (byte[]) msg.obj;
+                    /*byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
-                    String writeMessage = new String(writeBuf);
+                    String writeMessage = new String(writeBuf);*/
                     break;
                 case Constants.MESSAGE_READ:
-                    byte[] readBuf = (byte[]) msg.obj;
+                    /*byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
-                    String readMessage = new String(readBuf, 0, msg.arg1);
+                    String readMessage = new String(readBuf, 0, msg.arg1);*/
                     break;
                 case Constants.MESSAGE_TOAST:
                     Toast.makeText(mActivity.get(), msg.getData().getString(Constants.TOAST),
