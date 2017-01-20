@@ -75,6 +75,7 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     private BluetoothService                   mBluetoothService = null;
     private String                             mBluetoothDeviceName = null;
     private BluetoothDevice                    mBtDevice = null;
+    private boolean                            mIsObstacle = false;
 
     private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -397,20 +398,16 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
-                        case BluetoothService.STATE_CONNECTED:
-                            Toast.makeText(mActivity.get(), "Device connected!",
+                        case BluetoothService.STATE_PAIRED:
+                            Toast.makeText(mActivity.get(), "Device paired!",
                                     Toast.LENGTH_SHORT).show();
                             break;
                         case BluetoothService.STATE_CONNECTING:
-                            Toast.makeText(mActivity.get(), "Connecting device ...",
+                            Toast.makeText(mActivity.get(), "Connecting device...",
                                     Toast.LENGTH_SHORT).show();
                             break;
-                        case BluetoothService.STATE_SCANNING:
-                            Toast.makeText(mActivity.get(), "Scanning device ...",
-                                    Toast.LENGTH_SHORT).show();
-                            break;
-                        case BluetoothService.STATE_PAIRED:
-                            Toast.makeText(mActivity.get(), "Device paired!",
+                        case BluetoothService.STATE_CONNECTED:
+                            Toast.makeText(mActivity.get(), "Device connected!",
                                     Toast.LENGTH_SHORT).show();
                             break;
                         case BluetoothService.STATE_NONE:
@@ -423,9 +420,15 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
                     String writeMessage = new String(writeBuf);*/
                     break;
                 case Constants.MESSAGE_READ:
-                    /*byte[] readBuf = (byte[]) msg.obj;
+                    byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
-                    String readMessage = new String(readBuf, 0, msg.arg1);*/
+                    String readMessage = new String(readBuf, 0, msg.arg1);
+                    Log.i(TAG, "Obstacle found = " + readMessage);
+                    int isObstacle = Integer.parseInt(readMessage);
+                    if (isObstacle != 0)
+                        mActivity.get().mIsObstacle = true;
+                    else
+                        mActivity.get().mIsObstacle = false;
                     break;
                 case Constants.MESSAGE_TOAST:
                     Toast.makeText(mActivity.get(), msg.getData().getString(Constants.TOAST),
@@ -443,7 +446,8 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
                 mCarController.updateTargetPWM(mScreenCenter,
                         mTargetCenter,
                         mForwardBoundaryPercent,
-                        mReverseBoundaryPercent);
+                        mReverseBoundaryPercent,
+                        mIsObstacle);
                 mCountOutOfFrame = 0;
             } else {
                 mCountOutOfFrame++;

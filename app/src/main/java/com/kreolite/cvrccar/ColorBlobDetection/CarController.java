@@ -97,16 +97,16 @@ public class CarController {
 	public void updateTargetPWM(Point screenCenter,
                                 Point targetCenter,
                                 double forwardBoundaryPercent,
-                                double reverseBoundaryPercent) throws InterruptedException {
+                                double reverseBoundaryPercent,
+                                boolean isObstacle) throws InterruptedException {
 
         double panSteeringConvert;
-        // if (!_irSensors.foundObstacle())
 
         // Compute pan
         updatePanPwm(screenCenter, targetCenter);
 
         // Compute throttle
-        if (targetCenter.y < (screenCenter.y - forwardBoundaryPercent*screenCenter.y * 2))
+        if (targetCenter.y < (screenCenter.y - forwardBoundaryPercent*screenCenter.y * 2) && !isObstacle)
             mPwmMotor = MOTOR_FORWARD_PWM;
         else if (targetCenter.y > (screenCenter.y + reverseBoundaryPercent * screenCenter.y * 2))
             mPwmMotor = MOTOR_REVERSE_PWM;
@@ -172,35 +172,4 @@ public class CarController {
         }
         mPwmPan = constrain(mPwmPan, MAX_LEFT_PAN_PWM, MAX_RIGHT_PAN_PWM);
     }
-
-	/*class IRSensors {
-		double _sideLeftIR, _sideRightIR, _frontRightIR, _frontLeftIR;
-
-		public boolean foundObstacle() {
-			boolean foundObstacle = false;
-
-			if (_frontRightIR > 0.9) {
-				mPwmSteering = MAX_LEFT_STEERING_PWM;
-				// Log.e(_TAG, Double.toString(_frontRightIR));
-				foundObstacle = true;
-			} else if (_frontLeftIR > 0.9) {
-				mPwmSteering = MAX_LEFT_STEERING_PWM;
-				foundObstacle = true;
-			} else if (_sideLeftIR > 1.1) {
-				mPwmSteering = MAX_RIGHT_STEERING_PWM - 100;
-				foundObstacle = true;
-			} else if (_sideRightIR > 1.1) {
-				mPwmSteering = MAX_LEFT_STEERING_PWM - 100;
-				foundObstacle = true;
-			}
-			return foundObstacle;
-		}
-
-		public void updateIRSensorsVoltage(float sideLeftIR, float sideRightIR, float frontRightIR, float frontLeftIR) {
-			_sideLeftIR = sideLeftIR;
-			_sideRightIR = sideRightIR;
-			_frontRightIR = frontRightIR;
-			_frontLeftIR = frontLeftIR;
-		}
-	}*/
 }

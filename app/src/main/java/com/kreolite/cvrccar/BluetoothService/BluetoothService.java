@@ -57,10 +57,9 @@ public class BluetoothService {
 
     // Constants that indicate the current connection state
     public static final int STATE_NONE = 0;       // we're doing nothing
-    public static final int STATE_SCANNING = 1;   // now scanning paired devices
-    public static final int STATE_PAIRED = 2;     // our device is paired
-    public static final int STATE_CONNECTING = 3; // now initiating an outgoing connection
-    public static final int STATE_CONNECTED = 4;  // now connected to a remote device
+    public static final int STATE_PAIRED = 1;     // our device is paired
+    public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
+    public static final int STATE_CONNECTED = 3;  // now connected to a remote device
 
     /**
      * Constructor. Prepares a new BT session.
@@ -130,11 +129,10 @@ public class BluetoothService {
             bundle.putString(Constants.TOAST, "No paired devices!");
             msg.setData(bundle);
             mHandler.sendMessage(msg);
-            setState(STATE_NONE, true);
+            setState(STATE_NONE, false);
         }
         else if (mState == STATE_NONE)
         {
-            setState(STATE_SCANNING, true);
             mDevicePaired = false;
             for (BluetoothDevice iterator : bondedDevices)
             {
@@ -154,7 +152,7 @@ public class BluetoothService {
                 bundle.putString(Constants.TOAST, "Device is not paired!");
                 msg.setData(bundle);
                 mHandler.sendMessage(msg);
-                setState(STATE_NONE, true);
+                setState(STATE_NONE, false);
             }
             else setState(STATE_PAIRED, true);
         }
@@ -230,7 +228,7 @@ public class BluetoothService {
             mConnectedThread.cancel();
             mConnectedThread = null;
         }
-        setState(STATE_NONE, true);
+        setState(STATE_NONE, false);
     }
 
     /**
