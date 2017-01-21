@@ -424,11 +424,11 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     Log.i(TAG, "Obstacle found = " + readMessage);
-                    int isObstacle = Integer.parseInt(readMessage);
+                    /*int isObstacle = Integer.parseInt(readMessage);
                     if (isObstacle != 0)
                         mActivity.get().mIsObstacle = true;
                     else
-                        mActivity.get().mIsObstacle = false;
+                        mActivity.get().mIsObstacle = false;*/
                     break;
                 case Constants.MESSAGE_TOAST:
                     Toast.makeText(mActivity.get(), msg.getData().getString(Constants.TOAST),
