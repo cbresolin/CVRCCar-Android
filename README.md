@@ -64,7 +64,7 @@ upwards
 - 25% for reverse boundary means 25% of screen height starting from screen mid height downwards
 
 ## Obstacle detection
-Arduino used to act on the car returns if an obstacle is detected tahnks to ultrasonic sensors.
+Arduino used to act on the car returns if an obstacle is detected thanks to ultrasonic sensors.
 Throttle is set to neutral if an object is detected within 30cm in front of car.
 
 ## Communication
