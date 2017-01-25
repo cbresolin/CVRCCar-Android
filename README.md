@@ -1,6 +1,8 @@
 # CVRCCar-Android
 Android app using OpenCV to control RC car over BT serial link
 
+![img_1089](https://cloud.githubusercontent.com/assets/19686240/22287899/f41f05fe-e2f4-11e6-8f29-7797587446c1.JPG)
+
 # Presentation
 This Android app makes a RC car following a tracked object based on its color.
 The actual car control is implemented by https://github.com/cbresolin/CVRCCar-Arduino
@@ -27,7 +29,7 @@ If for some reason the tracked object is no more in camera view, a scanning proc
 is launched. Camera is turning back and forth to search for the object. As soon
 as the object is found again, tracking resumes and car is driving towards the object.
 
-### steering
+### Steering
 Car steering is set according to pan values. Steering is set proportionally to pan.
 Steering maximum/minimum is reached before pan maximum/minimum does.
 This is to ensure car reacts quickly enough to always keep object in camera view.
@@ -44,6 +46,9 @@ For example:
 - 10% for forward boundary means 10% of screen height starting from screen mid height
 upwards
 - 25% for reverse boundary means 25% of screen height starting from screen mid height downwards
+
+Arduino returns if an obstacle is detected.
+Throttle is set to neutral if an object is detected within 30cm in front of car.
 
 ## Communication
 Communication between Android app and Arduino is serial using Bluetooth.
