@@ -1,12 +1,20 @@
 # CVRCCar-Android
 Android app using OpenCV to control RC car over BT serial link
 
-![img_1089](https://cloud.githubusercontent.com/assets/19686240/22287899/f41f05fe-e2f4-11e6-8f29-7797587446c1.JPG)
+![img_1097](https://cloud.githubusercontent.com/assets/19686240/22289701/4f6b66a2-e2fd-11e6-86bc-d92de522154c.JPG)
 
 # Presentation
 This Android app makes a RC car following a tracked object based on its color.
 The actual car control is implemented by https://github.com/cbresolin/CVRCCar-Arduino
 project based on Arduino Uno.
+
+## Front view
+
+![img_1092](https://cloud.githubusercontent.com/assets/19686240/22289714/6197c73a-e2fd-11e6-9b9a-e3ff58a0d328.JPG)
+
+## Rear view
+
+![img_1094](https://cloud.githubusercontent.com/assets/19686240/22289724/6f8dbc50-e2fd-11e6-97d2-6611d01afec7.JPG)
 
 # Features
 
@@ -55,7 +63,8 @@ For example:
 upwards
 - 25% for reverse boundary means 25% of screen height starting from screen mid height downwards
 
-Arduino returns if an obstacle is detected.
+## Obstacle detection
+Arduino used to act on the car returns if an obstacle is detected tahnks to ultrasonic sensors.
 Throttle is set to neutral if an object is detected within 30cm in front of car.
 
 ## Communication
