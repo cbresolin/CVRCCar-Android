@@ -40,6 +40,14 @@ Camera screen is split in 3 horizontal sections (from bottom to top):
 - neutral section; car throttle shall go to neutral
 - forward section; car throttle shall go forward
 
+#### Yellow object detection (car throttle goes neutral)
+
+![screenshot_20170125-113401](https://cloud.githubusercontent.com/assets/19686240/22288120/c6200972-e2f5-11e6-8af7-d56a395cd863.png)
+
+#### Green object detection (car throttle goes forward)
+
+![screenshot_20170125-113456](https://cloud.githubusercontent.com/assets/19686240/22288151/dd3a046e-e2f5-11e6-9dc5-992a57762299.png)
+
 Those 3 sections boundaries are set by user thanks to this app settings.
 They are expressed in % of total screen height (whatever screen resolution).
 For example:
@@ -60,6 +68,8 @@ object.
 - Screen resolutions (4 choices)
 - Forward & Reverse boundaries
 - Minimum radius avoiding noise
+
+![screenshot_20170125-113141](https://cloud.githubusercontent.com/assets/19686240/22288084/a54e995c-e2f5-11e6-9cb2-a8f63abbf747.png)
 
 # Reference
 - https://www.androidexperiments.com/experiment/autonomous-android-vehicle
