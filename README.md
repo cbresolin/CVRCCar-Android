@@ -1,5 +1,5 @@
 # CVRCCar-Android
-Android app using OpenCV to control RC car over BT serial link
+Android app using OpenCV to control RC car over BT serial link. Video available [here!](https://youtu.be/XAKMAzVuPok)
 
 ![img_1097](https://cloud.githubusercontent.com/assets/19686240/22289701/4f6b66a2-e2fd-11e6-86bc-d92de522154c.JPG)
 
